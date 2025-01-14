@@ -19,6 +19,7 @@
 
 ## Workflow
 1. **작업 브랜치 생성 및 이동**
+    - [브랜치 생성 관련 자료](https://www.notion.so/Branch-ac2597a3e18a406b99c89b0e0d312546)
    ```bash
    git checkout -b <branch-name>
    ```
