@@ -34,6 +34,7 @@
    - 커밋:
      ```bash
      git commit -m "<commit-message>"
+     예시 : git commit -m "[feat] 결제 API 개발 #발행한 이슈키"
      ```
    - **주의**: 커밋 메시지가 [commit convention](<https://www.notion.so/Git-b876e446a62a420cad5de055e8ed1bc8>)을 따르지 않으면 git hook에 의해 커밋이 차단됩니다.
 
