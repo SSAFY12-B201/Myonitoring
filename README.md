@@ -35,13 +35,15 @@ git checkout -b seoyun2da
 git add payments.py
 git commit -m "[feat] 결제 API 개발 #PROJ-205"
 
-# 3. 원격 저장소로 푸시
+# 3. 원격 저장소로 푸시 (작업 내용 자유롭게 푸시)
 git push origin seoyun2da
 
-# 4. 병합 전 dev 동기화
+# 4. MR 전에는 아래 단계를 추가로 수행
+# 4-1. 병합 전 dev 최신 상태로 동기화
 git checkout dev
 git pull origin dev
 
+# 4-2. 작업 브랜치에 최신 상태의 dev를 병합
 git checkout seoyun2da
 git merge dev
 
