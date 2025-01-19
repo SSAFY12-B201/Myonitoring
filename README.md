@@ -35,13 +35,15 @@ git checkout -b seoyun2da
 git add payments.py
 git commit -m "[feat] 결제 API 개발 #PROJ-205"
 
-# 3. 원격 저장소로 푸시
+# 3. 원격 저장소로 푸시 (작업 내용 자유롭게 푸시)
 git push origin seoyun2da
 
-# 4. 병합 전 dev 동기화
+# 4. MR 전에는 아래 단계를 추가로 수행
+# 4-1. 병합 전 dev 최신 상태로 동기화
 git checkout dev
 git pull origin dev
 
+# 4-2. 작업 브랜치에 최신 상태의 dev를 병합
 git checkout seoyun2da
 git merge dev
 
@@ -122,6 +124,7 @@ git push origin --delete seoyun2da
    ```
 
 7. **MR 생성 및 dev로 병합**
+   - [MR 작성 방법](<https://www.notion.so/PR-Pull-Request-48e7e51a1ebd42baac9a007cff3f879e>)에 따라 MR을 작성합니다.
    - **MR 제목 형식:**
      - `[Type] 작업 내용 (Jira 이슈 키)`
    - **MR 설명 템플릿:**
@@ -162,7 +165,6 @@ git push origin --delete seoyun2da
        - Fixes #[이슈번호]  
        - Resolves #[이슈번호]  
        ```
-      - [MR 작성 방법](<https://www.notion.so/PR-Pull-Request-48e7e51a1ebd42baac9a007cff3f879e>)에 따라 MR을 작성합니다.
    
    - 코드 병합은 `dev` 브랜치에서 진행합니다.
    - 배포 시, `master` 브랜치에 병합하는 것을 원칙으로 합니다.
