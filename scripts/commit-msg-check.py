@@ -17,7 +17,7 @@ with open(commit_msg_filepath, 'r', encoding='utf-8') as file:
 print(f"검사할 커밋 메시지: {commit_msg}")
 
 # 커밋 메시지 패턴 정의
-pattern = r"^\[(feat|fix|docs|style|refactor|test|chore)\] .+( #[A-Z]+-[0-9]+)?$"
+pattern = r"^\[(feat|fix|docs|style|refactor|test|chore|ci|perf|revert)\] .+( #[A-Z]+-[0-9]+)?$"
 
 # 정규식 검증
 if not re.match(pattern, commit_msg):
