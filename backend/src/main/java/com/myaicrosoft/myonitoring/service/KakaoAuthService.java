@@ -19,7 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Collections;
 import java.util.Map;
 
-@Service
+@Service("kakao")
 @RequiredArgsConstructor
 public class KakaoAuthService implements OAuth2AuthService {
 

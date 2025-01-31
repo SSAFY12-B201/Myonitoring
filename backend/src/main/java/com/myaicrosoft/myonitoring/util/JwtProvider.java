@@ -30,12 +30,17 @@ public class JwtProvider {
 
     public JwtProvider(
             @Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-validity-in-seconds}") long accessTokenValidityInSeconds,
-            @Value("${jwt.refresh-token-validity-in-seconds}") long refreshTokenValidityInSeconds) {
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
-        this.key = Keys.hmacShaKeyFor(keyBytes);
-        this.accessTokenValidityInMilliseconds = accessTokenValidityInSeconds * 1000;
-        this.refreshTokenValidityInMilliseconds = refreshTokenValidityInSeconds * 1000;
+            @Value("${jwt.access-token-validity-in-seconds}") String accessTokenValidityInSeconds,
+            @Value("${jwt.refresh-token-validity-in-seconds}") String refreshTokenValidityInSeconds) {
+        // 안전한 키 생성
+        this.key = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+        
+        try {
+            this.accessTokenValidityInMilliseconds = Long.parseLong(accessTokenValidityInSeconds) * 1000;
+            this.refreshTokenValidityInMilliseconds = Long.parseLong(refreshTokenValidityInSeconds) * 1000;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid token validity duration", e);
+        }
     }
 
     public TokenDto generateTokenDto(Authentication authentication) {
