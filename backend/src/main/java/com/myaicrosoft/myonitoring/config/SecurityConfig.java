@@ -43,13 +43,8 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/oauth2/**").permitAll()
+                .requestMatchers("/auth/**").permitAll()
                 .anyRequest().authenticated())
-            .oauth2Login(oauth2 -> oauth2
-                .authorizationEndpoint(endpoint -> endpoint
-                    .baseUri("/oauth2/authorization"))
-                .redirectionEndpoint(endpoint -> endpoint
-                    .baseUri("/oauth2/callback/*")))
             .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
                 UsernamePasswordAuthenticationFilter.class);
 
