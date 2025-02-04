@@ -66,9 +66,27 @@ public class KakaoAuthService implements OAuth2AuthService {
             throw new RuntimeException("Failed to get email from Kakao");
         }
 
-        // 3. 이메일과 추가 정보로 회원가입
-        registrationDto.setEmail(email);
-        User user = userService.registerUser(registrationDto, User.Provider.KAKAO);
+        // 3. 이메일로 기존 회원 조회
+        User user;
+        boolean isNewUser = !userRepository.existsByEmail(email);
+        
+        if (isNewUser) {
+            // 신규 회원인 경우 회원가입 처리
+            if (registrationDto == null) {
+                throw new IllegalArgumentException("Registration information is required for new users");
+            }
+            registrationDto.setEmail(email);
+            user = userService.registerUser(registrationDto, User.Provider.KAKAO);
+        } else {
+            // 기존 회원인 경우 정보 조회
+            user = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+            
+            // 카카오로 가입한 사용자가 맞는지 확인
+            if (user.getProvider() != User.Provider.KAKAO) {
+                throw new RuntimeException("This email is already registered with different provider: " + user.getProvider());
+            }
+        }
 
         // 4. JWT 토큰 발급
         Authentication authentication = new UsernamePasswordAuthenticationToken(
