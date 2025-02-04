@@ -1,5 +1,7 @@
 package com.myaicrosoft.myonitoring.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myaicrosoft.myonitoring.model.dto.TokenDto;
 import com.myaicrosoft.myonitoring.model.entity.User;
 import com.myaicrosoft.myonitoring.repository.UserRepository;
@@ -27,6 +29,7 @@ public class KakaoAuthService implements OAuth2AuthService {
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String clientId;
@@ -40,14 +43,18 @@ public class KakaoAuthService implements OAuth2AuthService {
     @Override
     @Transactional
     public TokenDto authenticate(String code) {
-        // 1. 카카오 액세스 토큰 + ID 토큰 받기
-        String kakaoTokens = getKakaoTokens(code);
-        Map<String, String> tokens = parseKakaoTokens(kakaoTokens);
-        String idToken = tokens.get("id_token");
+        // 1. 카카오 액세스 토큰 받기
+        String kakaoTokenResponse = getKakaoTokens(code);
+        Map<String, String> tokens = parseKakaoTokens(kakaoTokenResponse);
+        String accessToken = tokens.get("access_token");
 
-        // 2. ID 토큰 검증 및 사용자 정보 추출
-        Map<String, Object> claims = verifyAndExtractClaims(idToken);
-        String email = claims.get("email").toString();
+        // 2. 액세스 토큰으로 사용자 정보 가져오기
+        Map<String, Object> userInfo = getKakaoUserInfo(accessToken);
+        String email = extractEmail(userInfo);
+
+        if (email == null || email.isEmpty()) {
+            throw new RuntimeException("Failed to get email from Kakao");
+        }
 
         // 3. 사용자 정보 저장 또는 업데이트
         User user = userRepository.findByEmail(email)
@@ -92,21 +99,44 @@ public class KakaoAuthService implements OAuth2AuthService {
     }
 
     private Map<String, String> parseKakaoTokens(String tokensJson) {
-        // TODO: JSON 파싱 구현
-        // 실제 구현에서는 ObjectMapper를 사용하여 JSON을 파싱해야 합니다.
-        return Map.of(
-                "access_token", "dummy_access_token",
-                "id_token", "dummy_id_token",
-                "refresh_token", "dummy_refresh_token"
-        );
+        try {
+            return objectMapper.readValue(tokensJson, Map.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to parse Kakao tokens", e);
+        }
     }
 
-    private Map<String, Object> verifyAndExtractClaims(String idToken) {
-        // TODO: JWT 검증 및 클레임 추출 구현
-        // 실제 구현에서는 JWT 라이브러리를 사용하여 토큰을 검증하고 클레임을 추출해야 합니다.
-        return Map.of(
-                "email", "user@example.com"
+    private Map<String, Object> getKakaoUserInfo(String accessToken) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.GET,
+                request,
+                String.class
         );
+
+        if (response.getStatusCode() == HttpStatus.OK) {
+            try {
+                return objectMapper.readValue(response.getBody(), Map.class);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Failed to parse Kakao user info", e);
+            }
+        }
+        throw new RuntimeException("Failed to get Kakao user info");
+    }
+
+    private String extractEmail(Map<String, Object> userInfo) {
+        try {
+            Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
+            return kakaoAccount.get("email").toString();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to extract email from Kakao user info", e);
+        }
     }
 
     @Override
