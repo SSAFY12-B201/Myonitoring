@@ -1,8 +1,16 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SplashScreen from "./pages/SplashScreen";
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true);
+
+  useEffect(() => {
+    // API 호출 (한 번만 실행됨)
+    fetch("/api/hello")
+      .then((response) => response.json())
+      .then((data) => console.log("API Response:", data))
+      .catch((error) => console.error("API Error:", error));
+  }, []);
 
   return (
     <>
