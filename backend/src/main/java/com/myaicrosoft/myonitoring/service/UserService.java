@@ -1,5 +1,6 @@
 package com.myaicrosoft.myonitoring.service;
 
+import com.myaicrosoft.myonitoring.model.dto.UserRegistrationDto;
 import com.myaicrosoft.myonitoring.model.dto.UserResponseDto;
 import com.myaicrosoft.myonitoring.model.entity.User;
 import com.myaicrosoft.myonitoring.repository.UserRepository;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 
@@ -22,6 +24,10 @@ public class UserService implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        if (!StringUtils.hasText(email)) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
         
@@ -33,30 +39,45 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public User registerUser(String email, User.Provider provider) {
-        if (userRepository.existsByEmail(email)) {
-            User existingUser = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
-            
-            // 이미 같은 제공자로 가입한 경우
-            if (existingUser.getProvider() == provider) {
-                return existingUser;
-            }
-            
-            // 다른 제공자로 가입한 경우 에러 발생
-            throw new RuntimeException("Email already registered with " + existingUser.getProvider());
+    public User registerUser(UserRegistrationDto registrationDto, User.Provider provider) {
+        // 입력값 검증
+        if (!StringUtils.hasText(registrationDto.getEmail())) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        if (!StringUtils.hasText(registrationDto.getNickname())) {
+            throw new IllegalArgumentException("Nickname cannot be empty");
+        }
+        if (provider == null) {
+            throw new IllegalArgumentException("Provider cannot be null");
         }
 
+        // 이미 존재하는 계정인지 확인
+        if (userRepository.existsByEmail(registrationDto.getEmail())) {
+            throw new RuntimeException("Account already exists");
+        }
+
+        // 새 계정 생성
         User user = new User();
-        user.setEmail(email);
+        user.setEmail(registrationDto.getEmail());
         user.setProvider(provider);
         user.setRole(User.Role.USER);
-        user.setPassword(""); // OAuth2 사용자는 비밀번호 불필요
+        user.setPassword(""); // OAuth2 사용자는 비밀번호가 필요 없음
+        user.setNickname(registrationDto.getNickname());
+        user.setAddress(registrationDto.getAddress());
+        user.setPhoneNumber(registrationDto.getPhoneNumber());
+
         return userRepository.save(user);
     }
 
     @Transactional
     public void updateRefreshToken(String email, String refreshToken) {
+        if (!StringUtils.hasText(email)) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        if (!StringUtils.hasText(refreshToken)) {
+            throw new IllegalArgumentException("Refresh token cannot be empty");
+        }
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
         user.setRefreshToken(refreshToken);
@@ -65,6 +86,10 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserInfo(String email) {
+        if (!StringUtils.hasText(email)) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
         return UserResponseDto.from(user);

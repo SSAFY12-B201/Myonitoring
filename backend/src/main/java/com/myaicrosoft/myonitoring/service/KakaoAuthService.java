@@ -3,6 +3,7 @@ package com.myaicrosoft.myonitoring.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.myaicrosoft.myonitoring.model.dto.TokenDto;
+import com.myaicrosoft.myonitoring.model.dto.UserRegistrationDto;
 import com.myaicrosoft.myonitoring.model.entity.User;
 import com.myaicrosoft.myonitoring.repository.UserRepository;
 import com.myaicrosoft.myonitoring.util.JwtProvider;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -42,11 +44,19 @@ public class KakaoAuthService implements OAuth2AuthService {
 
     @Override
     @Transactional
-    public TokenDto authenticate(String code) {
+    public TokenDto signIn(String code, UserRegistrationDto registrationDto) {
+        if (code == null || code.isEmpty()) {
+            throw new IllegalArgumentException("Authorization code cannot be null or empty");
+        }
+
         // 1. 카카오 액세스 토큰 받기
         String kakaoTokenResponse = getKakaoTokens(code);
         Map<String, String> tokens = parseKakaoTokens(kakaoTokenResponse);
         String accessToken = tokens.get("access_token");
+
+        if (accessToken == null || accessToken.isEmpty()) {
+            throw new RuntimeException("Failed to get access token from Kakao");
+        }
 
         // 2. 액세스 토큰으로 사용자 정보 가져오기
         Map<String, Object> userInfo = getKakaoUserInfo(accessToken);
@@ -56,9 +66,9 @@ public class KakaoAuthService implements OAuth2AuthService {
             throw new RuntimeException("Failed to get email from Kakao");
         }
 
-        // 3. 사용자 정보 저장 또는 업데이트
-        User user = userRepository.findByEmail(email)
-                .orElseGet(() -> userService.registerUser(email, User.Provider.KAKAO));
+        // 3. 이메일과 추가 정보로 회원가입
+        registrationDto.setEmail(email);
+        User user = userService.registerUser(registrationDto, User.Provider.KAKAO);
 
         // 4. JWT 토큰 발급
         Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -86,23 +96,27 @@ public class KakaoAuthService implements OAuth2AuthService {
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
 
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                "https://kauth.kakao.com/oauth/token",
-                request,
-                String.class
-        );
+        try {
+            ResponseEntity<String> response = restTemplate.postForEntity(
+                    "https://kauth.kakao.com/oauth/token",
+                    request,
+                    String.class
+            );
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return response.getBody();
+            }
+            throw new RuntimeException("Failed to get Kakao tokens: " + response.getStatusCode());
+        } catch (HttpClientErrorException e) {
+            throw new RuntimeException("Failed to get Kakao tokens: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
         }
-        throw new RuntimeException("Failed to get Kakao tokens");
     }
 
     private Map<String, String> parseKakaoTokens(String tokensJson) {
         try {
             return objectMapper.readValue(tokensJson, Map.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("Failed to parse Kakao tokens", e);
+            throw new RuntimeException("Failed to parse Kakao tokens: " + e.getMessage(), e);
         }
     }
 
@@ -113,35 +127,48 @@ public class KakaoAuthService implements OAuth2AuthService {
 
         HttpEntity<String> request = new HttpEntity<>(headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(
-                "https://kapi.kakao.com/v2/user/me",
-                HttpMethod.GET,
-                request,
-                String.class
-        );
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    "https://kapi.kakao.com/v2/user/me",
+                    HttpMethod.GET,
+                    request,
+                    String.class
+            );
 
-        if (response.getStatusCode() == HttpStatus.OK) {
-            try {
+            if (response.getStatusCode() == HttpStatus.OK) {
                 return objectMapper.readValue(response.getBody(), Map.class);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Failed to parse Kakao user info", e);
             }
+            throw new RuntimeException("Failed to get Kakao user info: " + response.getStatusCode());
+        } catch (HttpClientErrorException e) {
+            throw new RuntimeException("Failed to get Kakao user info: " + e.getStatusCode() + " - " + e.getResponseBodyAsString());
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to parse Kakao user info: " + e.getMessage(), e);
         }
-        throw new RuntimeException("Failed to get Kakao user info");
     }
 
     private String extractEmail(Map<String, Object> userInfo) {
         try {
             Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
-            return kakaoAccount.get("email").toString();
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to extract email from Kakao user info", e);
+            if (kakaoAccount == null) {
+                throw new RuntimeException("Kakao account information not found");
+            }
+            Object email = kakaoAccount.get("email");
+            if (email == null) {
+                throw new RuntimeException("Email not found in Kakao account");
+            }
+            return email.toString();
+        } catch (ClassCastException e) {
+            throw new RuntimeException("Invalid Kakao user info format", e);
         }
     }
 
     @Override
     @Transactional
     public TokenDto refreshToken(String refreshToken) {
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            throw new IllegalArgumentException("Refresh token cannot be null or empty");
+        }
+
         // 1. Refresh Token 검증
         if (!jwtProvider.validateToken(refreshToken)) {
             throw new RuntimeException("Invalid refresh token");
