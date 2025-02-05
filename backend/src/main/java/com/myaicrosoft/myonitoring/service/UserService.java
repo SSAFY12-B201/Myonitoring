@@ -2,9 +2,11 @@ package com.myaicrosoft.myonitoring.service;
 
 import com.myaicrosoft.myonitoring.model.dto.UserRegistrationDto;
 import com.myaicrosoft.myonitoring.model.dto.UserResponseDto;
+import com.myaicrosoft.myonitoring.model.dto.UserUpdateDto;
 import com.myaicrosoft.myonitoring.model.entity.User;
 import com.myaicrosoft.myonitoring.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -15,6 +17,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -93,5 +96,28 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
         return UserResponseDto.from(user);
+    }
+
+    @Transactional
+    public UserResponseDto updateUser(String email, UserUpdateDto updateDto) {
+        // 입력값 검증
+        if (!StringUtils.hasText(email)) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+        if (!StringUtils.hasText(updateDto.getNickname())) {
+            throw new IllegalArgumentException("Nickname cannot be empty");
+        }
+
+        // 사용자 조회
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        // 정보 업데이트
+        user.setNickname(updateDto.getNickname());
+        user.setAddress(updateDto.getAddress());
+
+        // 저장 및 응답
+        User savedUser = userRepository.save(user);
+        return UserResponseDto.from(savedUser);
     }
 } 
