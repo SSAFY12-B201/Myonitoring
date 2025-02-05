@@ -10,19 +10,20 @@ export default defineConfig({
       devOptions: {
         enabled: true,
       },
+      // PWA의 설치와 앱의 구성 정보를 담고 있는 설정
       manifest: {
-        name: 'My PWA App',
-        short_name: 'PWA App',
-        description: 'My awesome Progressive Web App!',
+        name: 'Myonitoring',
+        short_name: 'Myonitoring',
+        description: 'Cat Health Management Automatic Feeder Application',
         theme_color: '#ffffff',
         icons: [
           {
-            src: '/pwa-192x192.png',
+            src: '/logo_cat.png',
             sizes: '192x192',
             type: 'image/png',
           },
           {
-            src: '/pwa-512x512.png',
+            src: '/logo_cat.png',
             sizes: '512x512',
             type: 'image/png',
           },
