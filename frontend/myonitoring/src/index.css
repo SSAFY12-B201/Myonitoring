@@ -22,20 +22,17 @@
 /* 글로벌 스타일 */
 body {
   margin: 0;
-  font-family: var(--font-secondary);
+  font-family: var(--font-secondary); /* Tailwind 기본값과 일치 */
 }
-
 
 /* 반응형 레이아웃 */
 .container {
-  @apply mx-auto px-4;
+  @apply mx-auto px-4 max-w-screen-md; /* 최대 너비 고정 */
 }
 
 @media (min-width: 640px) {
   .container {
-    @apply px-6;
-    max-width: none;
-    font-size: larger;
-    color:red ;
-}
+    @apply px-6; /* 여백만 변경 */
+    color: red; /* 필요하다면 유지 */
+  }
 }
