@@ -138,4 +138,12 @@ public class UserService implements UserDetailsService {
         
         log.info("User deleted successfully: {}", email);
     }
-}
+
+    public void logout(String email, String accessToken) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        // 로그아웃 시 refresh token 삭제
+        user.setRefreshToken(null);
+        userRepository.save(user);
+    }
+} 

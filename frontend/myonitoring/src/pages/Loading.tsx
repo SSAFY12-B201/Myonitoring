@@ -1,6 +1,6 @@
 import React from "react";
 
-const LoadingScreen: React.FC = () => {
+const Loading: React.FC = () => {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-white">
       <img
@@ -13,4 +13,4 @@ const LoadingScreen: React.FC = () => {
   );
 };
 
-export default LoadingScreen;
+export default Loading;
