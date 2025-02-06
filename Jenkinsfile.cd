@@ -16,6 +16,9 @@ pipeline {
                             ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
                                 cd ${DEPLOY_DIR}
                                 
+                                echo "Building nginx image..."
+                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml build nginx
+                                
                                 echo "Pulling latest images..."
                                 docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
                                 
@@ -37,7 +40,6 @@ pipeline {
         stage('Health Check') {
             steps {
                 script {
-                    // 컨테이너 시작 대기
                     sleep(time: 30, unit: 'SECONDS')
                     
                     withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
@@ -63,6 +65,23 @@ pipeline {
         }
         failure {
             echo 'Deployment failed!'
+            
+            script {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                    sh """
+                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
+                            cd ${DEPLOY_DIR}
+                            
+                            echo "Rolling back to previous state..."
+                            docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+                            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+                        '
+                    """
+                }
+            }
+        }
+        always {
+            cleanWs()
         }
     }
 }
