@@ -5,6 +5,9 @@ pipeline {
         EC2_HOST = 'ip-172-26-8-191'
         EC2_USER = 'ubuntu'
         DEPLOY_DIR = '/home/ubuntu/Myonitoring'
+        DOCKER_REGISTRY = "kst1040"
+        BACKEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-backend"
+        FRONTEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-frontend"
     }
     
     stages {
@@ -18,13 +21,10 @@ pipeline {
                             ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
                                 cd ${DEPLOY_DIR}
                                 
-                                echo "Building nginx image..."
-                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml build nginx
-                                
                                 echo "Pulling latest images..."
-                                echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
-                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
-                                
+                                docker image pull ${BACKEND_IMAGE}:latest
+                                docker image pull ${FRONTEND_IMAGE}:latest
+
                                 echo "Stopping current containers..."
                                 docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
                                 
