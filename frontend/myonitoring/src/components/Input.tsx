@@ -2,7 +2,7 @@ import React from "react";
 
 interface InputProps {
   label: string; // 입력 필드의 레이블
-  type: "text" | "date" | "time" | "tel" | "select"; // 입력 필드의 타입
+  type: "text" | "date" | "time" | "tel" | "select" | "textarea" | "number"; // 입력 필드의 타입
   value: string; // 입력된 값
   onChange: (value: string) => void; // 값 변경 핸들러
   placeholder?: string; // 플레이스홀더 텍스트
@@ -28,8 +28,20 @@ const Input: React.FC<InputProps> = ({
         {label}
       </label>
 
-      {/* 입력 필드 */}
-      {type === "select" ? (
+      {/* 다중 줄 텍스트 (textarea) */}
+      {type === "textarea" ? (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={`w-full px-4 py-2 border ${
+            error ? "border-red-500" : "border-gray-300"
+          } rounded-lg focus:outline-none focus:ring-2 ${
+            error ? "focus:ring-red-500" : "focus:ring-gray-500"
+          } ${className}`}
+          rows={4} // 기본적으로 4줄 높이 제공
+        />
+      ) : type === "select" ? (
         <select
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -37,7 +49,7 @@ const Input: React.FC<InputProps> = ({
             error ? "border-red-500" : "border-gray-300"
           } rounded-lg focus:outline-none focus:ring-2 ${
             error ? "focus:ring-red-500" : "focus:ring-gray-500"
-          } ${className}`} // 추가 클래스 병합
+          } ${className}`}
         >
           <option value="" disabled>
             {placeholder || "선택하세요"}
@@ -58,7 +70,7 @@ const Input: React.FC<InputProps> = ({
             error ? "border-red-500" : "border-gray-300"
           } rounded-lg focus:outline-none focus:ring-2 ${
             error ? "focus:ring-red-500" : "focus:ring-gray-500"
-          } ${className}`} // 추가 클래스 병합
+          } ${className}`}
         />
       )}
     </div>

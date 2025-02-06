@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import naverIcon from "../assets/images/naver_icon.png";
 import kakaoIcon from "../assets/images/kakao_icon.png";
-import GoogleIcon from "../assets/images/Google_icon.png";
+import googleIcon from "../assets/images/Google_icon.png";
 
 const LoginSignUp: React.FC = () => {
   // 현재 활성화된 탭 상태 (login 또는 signup)
@@ -60,7 +60,7 @@ const LoginSignUp: React.FC = () => {
     },
     {
       id: "google",
-      icon: GoogleIcon,
+      icon: googleIcon,
       alt: "구글 로고",
       text: activeTab === "login" ? "구글 로그인" : "구글로 가입하기기",
       bgColor: "#FFFFFF", // 구글 색상 코드 (흰색)
