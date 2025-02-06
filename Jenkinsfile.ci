@@ -42,10 +42,14 @@ pipeline {
             }
             steps {
                 dir('frontend/myonitoring') {
-                    sh '''
-                        npm install
-                        npm run build
-                    '''
+                    script {
+                        docker.image('node:18').inside {
+                            sh '''
+                                npm install
+                                npm run build
+                            '''
+                        }
+                    }
                 }
             }
         }
