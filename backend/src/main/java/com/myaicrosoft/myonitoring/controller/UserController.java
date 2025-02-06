@@ -29,4 +29,10 @@ public class UserController {
         UserResponseDto updatedUser = userService.updateUser(userDetails.getUsername(), updateDto);
         return ResponseEntity.ok(updatedUser);
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@AuthenticationPrincipal UserDetails userDetails) {
+        userService.logout(userDetails.getUsername());
+        return ResponseEntity.ok().build();
+    }
 } 

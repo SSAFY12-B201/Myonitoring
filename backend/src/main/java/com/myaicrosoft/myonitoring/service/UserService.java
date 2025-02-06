@@ -120,4 +120,13 @@ public class UserService implements UserDetailsService {
         User savedUser = userRepository.save(user);
         return UserResponseDto.from(savedUser);
     }
+
+    @Transactional
+    public void logout(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        // Clear the refresh token on logout
+        user.setRefreshToken(null);
+        userRepository.save(user);
+    }
 } 
