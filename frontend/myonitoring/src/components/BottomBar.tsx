@@ -15,7 +15,7 @@ const BottomBar: React.FC = () => {
   ];
 
   return (
-    <div className="flex justify-around items-center shadow-md py-2 fixed bottom-0 w-full">
+    <div className="flex justify-around bg-white items-center shadow-md py-2  w-full">
       {tabs.map((tab) => (
         <div
           key={tab.id}

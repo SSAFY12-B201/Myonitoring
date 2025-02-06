@@ -4,7 +4,7 @@ interface SplashScreenProps {
   onFinish: () => void; // 스플래시 화면이 끝나면 실행할 함수
 }
 
-const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
+const Splash: React.FC<SplashScreenProps> = ({ onFinish }) => {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
@@ -30,4 +30,4 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
   );
 };
 
-export default SplashScreen;
+export default Splash;

@@ -10,7 +10,7 @@ const barClass ="flex items-center justify-between bg-white border border-[#D0D0
 const titleClass = "block text-lg font-bold"
 const descriptionClass = "text-sm text-gray-500"
 
-const MainPage: React.FC = () => {
+const Home: React.FC = () => {
   const currentDate = new Date().toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
@@ -88,7 +88,7 @@ const MainPage: React.FC = () => {
                 </span>
                 이 발견되었습니다.
               </span>
-            </div>
+            </div>h
           </div>
           <ChevronRightIcon style={{ color: "#FFD700" }} />
         </div>
@@ -114,4 +114,4 @@ const MainPage: React.FC = () => {
   );
 };
 
-export default MainPage;
+export default Home;
