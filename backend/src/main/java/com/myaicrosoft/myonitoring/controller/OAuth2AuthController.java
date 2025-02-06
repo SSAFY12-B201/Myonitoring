@@ -3,8 +3,11 @@ package com.myaicrosoft.myonitoring.controller;
 import com.myaicrosoft.myonitoring.model.dto.TokenDto;
 import com.myaicrosoft.myonitoring.model.dto.UserRegistrationDto;
 import com.myaicrosoft.myonitoring.service.OAuth2AuthService;
+import com.myaicrosoft.myonitoring.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -15,6 +18,7 @@ import java.util.Map;
 public class OAuth2AuthController {
 
     private final Map<String, OAuth2AuthService> authServices;
+    private final UserService userService;
 
     @PostMapping("/{provider}/signin")
     public ResponseEntity<TokenDto> signInWithProvider(
@@ -42,5 +46,11 @@ public class OAuth2AuthController {
         OAuth2AuthService anyAuthService = authServices.values().iterator().next();
         TokenDto tokenDto = anyAuthService.refreshToken(refreshToken);
         return ResponseEntity.ok(tokenDto);
+    }
+
+    @PostMapping("/signout")
+    public ResponseEntity<Void> signOut(@AuthenticationPrincipal UserDetails userDetails) {
+        userService.logout(userDetails.getUsername());
+        return ResponseEntity.ok().build();
     }
 } 

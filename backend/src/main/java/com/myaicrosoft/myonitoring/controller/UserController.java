@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -29,10 +29,4 @@ public class UserController {
         UserResponseDto updatedUser = userService.updateUser(userDetails.getUsername(), updateDto);
         return ResponseEntity.ok(updatedUser);
     }
-
-    @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@AuthenticationPrincipal UserDetails userDetails) {
-        userService.logout(userDetails.getUsername());
-        return ResponseEntity.ok().build();
-    }
-} 
+}
