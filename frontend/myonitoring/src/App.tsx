@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import Agreement from "./pages/Agreements";
 import AgreementDetail from "./pages/AgreementDetail";
 // import Home from "./pages/Home";
-import PersonalInfo from "./pages/PersonalInfo";
+import PersonalInfo from "./pages/UserInfo";
 
 const App: React.FC = () => {
   return (

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // React Router 사용
 import WideButton from "../components/WideButton";
 import Header from "../components/Header";
+import ContentSection from "../components/ContentSection";
 
 const Agreement = () => {
   const [allChecked, setAllChecked] = useState(false);
@@ -45,88 +46,90 @@ const Agreement = () => {
       <Header title="약관 동의" onBack={() => navigate(-1)} />
 
       {/* 설명 */}
-      <main className="p-6 flex-grow">
-        <h2 className="text-lg font-semibold mb-2">
-          서비스 이용을 위해 아래 약관에 동의해주세요.
-        </h2>
-        <p className="text-xs text-gray-400 mb-6">
-          묘니터링 서비스 이용을 위해서는 아래의 약관 내용 동의가 필요합니다.
-        </p>
+      <ContentSection>
+        <main className="flex-grow">
+          <h2 className="text-lg font-semibold mb-2">
+            서비스 이용을 위해 아래 약관에 동의해주세요.
+          </h2>
+          <p className="text-xs text-gray-400 mb-6">
+            묘니터링 서비스 이용을 위해서는 아래의 약관 내용 동의가 필요합니다.
+          </p>
 
-        {/* 약관 리스트 */}
-        <div className="space-y-4">
-          {/* 전체 동의 */}
-          <label className="flex items-center py-3 border-b">
-            <input
-              type="checkbox"
-              checked={allChecked}
-              onChange={handleAllCheck}
-              className="w-5 h-5 accent-yellow mr-3"
-            />
-            <span className="text-sm">약관 전체 동의</span>
-          </label>
-
-          {/* 이용 약관 동의 */}
-          <label className="flex justify-between items-center py-3 border-b">
-            <div className="flex items-center">
+          {/* 약관 리스트 */}
+          <div className="space-y-4">
+            {/* 전체 동의 */}
+            <label className="flex items-center py-3 border-b">
               <input
                 type="checkbox"
-                checked={terms.termsOfService}
-                onChange={() => handleIndividualCheck("termsOfService")}
+                checked={allChecked}
+                onChange={handleAllCheck}
                 className="w-5 h-5 accent-yellow mr-3"
               />
-              <span className="text-sm">서비스 이용 동의 (필수)</span>
-            </div>
-            <button
-              onClick={() => navigateToDetail("termsOfService")}
-              className="text-yellow text-sm"
-            >
-              {">"}
-            </button>
-          </label>
+              <span className="text-sm">약관 전체 동의</span>
+            </label>
 
-          {/* 개인정보 수집 및 이용 동의 */}
-          <label className="flex justify-between items-center py-3 border-b">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                checked={terms.privacyPolicy}
-                onChange={() => handleIndividualCheck("privacyPolicy")}
-                className="w-5 h-5 accent-yellow mr-3"
-              />
-              <span className="text-sm">개인정보 수집 이용 동의 (필수)</span>
-            </div>
-            <button
-              onClick={() => navigateToDetail("privacyPolicy")}
-              className="text-yellow text-sm"
-            >
-              {">"}
-            </button>
-          </label>
+            {/* 이용 약관 동의 */}
+            <label className="flex justify-between items-center py-3 border-b">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={terms.termsOfService}
+                  onChange={() => handleIndividualCheck("termsOfService")}
+                  className="w-5 h-5 accent-yellow mr-3"
+                />
+                <span className="text-sm">서비스 이용 동의 (필수)</span>
+              </div>
+              <button
+                onClick={() => navigateToDetail("termsOfService")}
+                className="text-yellow text-sm"
+              >
+                {">"}
+              </button>
+            </label>
 
-          {/* 광고성 정보 수집 동의 */}
-          <label className="flex justify-between items-center py-3 border-b">
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                checked={terms.marketingInfo}
-                onChange={() => handleIndividualCheck("marketingInfo")}
-                className="w-5 h-5 accent-yellow mr-3"
-              />
-              <span className="text-sm">광고성 정보 수신 동의</span>
-            </div>
-            <button
-              onClick={() => navigateToDetail("marketingInfo")}
-              className="text-yellow text-sm"
-            >
-              {">"}
-            </button>
-          </label>
-        </div>
-      </main>
+            {/* 개인정보 수집 및 이용 동의 */}
+            <label className="flex justify-between items-center py-3 border-b">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={terms.privacyPolicy}
+                  onChange={() => handleIndividualCheck("privacyPolicy")}
+                  className="w-5 h-5 accent-yellow mr-3"
+                />
+                <span className="text-sm">개인정보 수집 이용 동의 (필수)</span>
+              </div>
+              <button
+                onClick={() => navigateToDetail("privacyPolicy")}
+                className="text-yellow text-sm"
+              >
+                {">"}
+              </button>
+            </label>
+
+            {/* 광고성 정보 수집 동의 */}
+            <label className="flex justify-between items-center py-3 border-b">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={terms.marketingInfo}
+                  onChange={() => handleIndividualCheck("marketingInfo")}
+                  className="w-5 h-5 accent-yellow mr-3"
+                />
+                <span className="text-sm">광고성 정보 수신 동의</span>
+              </div>
+              <button
+                onClick={() => navigateToDetail("marketingInfo")}
+                className="text-yellow text-sm"
+              >
+                {">"}
+              </button>
+            </label>
+          </div>
+        </main>
+      </ContentSection>
 
       {/* 하단 버튼 */}
-      <footer className="p-4">
+      <footer className="fixed bottom-0 left-0 w-full p-4 bg-white">
         {/* WideButton 컴포넌트 사용 */}
         <WideButton
           text="다음"
