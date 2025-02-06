@@ -5,7 +5,7 @@ import com.myaicrosoft.myonitoring.model.dto.CatDetailResponseDto;
 import com.myaicrosoft.myonitoring.model.dto.CatResponseDto;
 import com.myaicrosoft.myonitoring.model.dto.CatUpdateRequest;
 import lombok.RequiredArgsConstructor;
-import myonitoring_prac.myonitoring_prac_jpa.model.dto.*;
+import com.myaicrosoft.myonitoring.model.dto.*;
 import com.myaicrosoft.myonitoring.model.entity.Cat;
 import com.myaicrosoft.myonitoring.model.entity.Device;
 import com.myaicrosoft.myonitoring.repository.CatRepository;
