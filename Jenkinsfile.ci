@@ -24,11 +24,7 @@ pipeline {
         
         stage('Build Backend') {
             when { 
-                allOf {
-                    expression { return env.gitlabActionType == 'OPEN' }
-                    expression { return env.gitlabTargetBranch == 'ci/test' }
-                    // changeset "backend/**"
-                }
+                changeset "backend/**"
             }
             steps {
                 dir('backend') {
@@ -42,11 +38,7 @@ pipeline {
         
         stage('Build Frontend') {
             when { 
-                allOf {
-                    expression { return env.gitlabActionType == 'OPEN' }
-                    expression { return env.gitlabTargetBranch == 'ci/test' }
-                    // changeset "frontend/**"
-                }
+                changeset "frontend/**"
             }
             steps {
                 dir('frontend/myonitoring') {
