@@ -52,7 +52,7 @@ pipeline {
                         // 캐시를 활용한 프론트엔드 이미지 빌드
                         def frontendImage = docker.build(
                             "${FRONTEND_IMAGE}:${GIT_COMMIT_SHORT}",
-                            "--cache-from ${FRONTEND_IMAGE}:latest ./frontend/myonitoring"
+                            "--cache-from ${FRONTEND_IMAGE}:latest ./frontend"
                         )
                         
                         // 커밋해시와 latest 태그로 푸시
