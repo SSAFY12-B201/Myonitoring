@@ -12,7 +12,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    image: myonitoring-frontend:latest
+    image: kst1040/myonitoring-frontend:latest
     expose:
       - "80"
 
@@ -20,7 +20,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    image: myonitoring-backend:latest
+    image: kst1040/myonitoring-backend:latest
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
