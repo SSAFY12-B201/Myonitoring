@@ -53,7 +53,7 @@ pipeline {
                 }
             }
             steps {
-                dir('frontend') {
+                dir('frontend/myonitoring') {
                     sh '''
                         npm install
                         npm run build
