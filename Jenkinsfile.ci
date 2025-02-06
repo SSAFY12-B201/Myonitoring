@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Debug Info') {
+            steps {
+                script {
+                    echo "Build Cause: ${currentBuild.getBuildCauses()}"
+                    echo "Object Kind: ${env.gitlabObjectKind}"
+                    echo "Source Branch: ${env.gitlabSourceBranch}"
+                    echo "Target Branch: ${env.gitlabTargetBranch}"
+                    echo "Action Type: ${env.gitlabActionType}"
+                }
+            }
+        }
+        
+        stage('Checkout') {
+            steps {
+                git branch: 'ci/test', 
+                    credentialsId: 'gitlab-user-pwd', 
+                    url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git'
+            }
+        }
+        
+        stage('Build Backend') {
+            when { 
+                allOf {
+                    expression { return env.gitlabActionType == 'OPEN' }
+                    expression { return env.gitlabTargetBranch == 'ci/test' }
+                    // changeset "backend/**"
+                }
+            }
+            steps {
+                dir('backend') {
+                    sh '''
+                        chmod +x ./gradlew
+                        ./gradlew clean build
+                    '''
+                }
+            }
+        }
+        
+        stage('Build Frontend') {
+            when { 
+                allOf {
+                    expression { return env.gitlabActionType == 'OPEN' }
+                    expression { return env.gitlabTargetBranch == 'ci/test' }
+                    // changeset "frontend/**"
+                }
+            }
+            steps {
+                dir('frontend/myonitoring') {
+                    sh '''
+                        npm install
+                        npm run build
+                    '''
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}
