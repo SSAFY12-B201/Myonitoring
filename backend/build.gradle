@@ -38,7 +38,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	testImplementation 'com.h2database:h2'
+	testRuntimeOnly 'com.h2database:h2'
 	implementation 'com.mysql:mysql-connector-j' // mysql 버전은 변경 가능
 }
 
