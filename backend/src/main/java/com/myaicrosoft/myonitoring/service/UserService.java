@@ -122,7 +122,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void logout(String email) {
+    public void logout(String email, String accessToken) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
         // Clear the refresh token on logout
