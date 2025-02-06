@@ -3,24 +3,19 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
-    image: myonitoring-nginx:latest
     depends_on:
       - frontend
       - backend
+    ports:
+      - "80:80"
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    image: kst1040/myonitoring-frontend:latest
+    image: kst1040/myonitoring-frontend:latest  # build 제거하고 image만 사용
     expose:
       - "80"
 
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    image: kst1040/myonitoring-backend:latest
+    image: kst1040/myonitoring-backend:latest  # build 제거하고 image만 사용
     environment:
       - MYSQL_DATABASE=${MYSQL_DATABASE}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
@@ -53,6 +48,7 @@ services:
       interval: 10s
       retries: 5
     ports:
-      - 3306:3306
+      - "3306:3306"
+
 volumes:
   mysql_data:
