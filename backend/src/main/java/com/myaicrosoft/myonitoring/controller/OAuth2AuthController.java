@@ -1,6 +1,7 @@
 package com.myaicrosoft.myonitoring.controller;
 
 import com.myaicrosoft.myonitoring.model.dto.TokenDto;
+import com.myaicrosoft.myonitoring.model.dto.UserRegistrationDto;
 import com.myaicrosoft.myonitoring.service.OAuth2AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,16 +16,17 @@ public class OAuth2AuthController {
 
     private final Map<String, OAuth2AuthService> authServices;
 
-    @PostMapping("/{provider}/callback")
-    public ResponseEntity<TokenDto> oauthCallback(
+    @PostMapping("/{provider}/signin")
+    public ResponseEntity<TokenDto> signInWithProvider(
             @PathVariable String provider,
-            @RequestParam String code) {
+            @RequestParam String code,
+            @RequestBody UserRegistrationDto registrationDto) {
         OAuth2AuthService authService = authServices.get(provider.toLowerCase());
         if (authService == null) {
             throw new RuntimeException("Unsupported OAuth2 provider: " + provider);
         }
         
-        TokenDto tokenDto = authService.authenticate(code);
+        TokenDto tokenDto = authService.signIn(code, registrationDto);
         return ResponseEntity.ok(tokenDto);
     }
 
