@@ -122,10 +122,27 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    public void deleteUser(String email) {
+        if (!StringUtils.hasText(email)) {
+            throw new IllegalArgumentException("Email cannot be empty");
+        }
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+
+        // 회원 삭제 전 로깅
+        log.info("Deleting user with email: {}", email);
+        
+        // 회원 삭제
+        userRepository.delete(user);
+        
+        log.info("User deleted successfully: {}", email);
+    }
+
     public void logout(String email, String accessToken) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-        // Clear the refresh token on logout
+        // 로그아웃 시 refresh token 삭제
         user.setRefreshToken(null);
         userRepository.save(user);
     }
