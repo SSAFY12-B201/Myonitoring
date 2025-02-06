@@ -2,45 +2,56 @@ pipeline {
     agent any
     
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
-        BACKEND_IMAGE = "kst1040/myonitoring-backend"
-        FRONTEND_IMAGE = "kst1040/myonitoring-frontend"
+        EC2_HOST = 'ip-172-26-8-191'
+        EC2_USER = 'ubuntu'
+        DEPLOY_DIR = '/home/ubuntu/Myonitoring'
     }
     
     stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'ci/test', 
-                    credentialsId: 'gitlab-user-pwd', 
-                    url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git'
-            }
-        }
-        
-        stage('Build & Push Docker Images') {
+        stage('Deploy') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        def backendImage = docker.build("${BACKEND_IMAGE}:latest", "backend")
-                        backendImage.push()
-                        
-                        def frontendImage = docker.build("${FRONTEND_IMAGE}:latest", "frontend/myonitoring")
-                        frontendImage.push()
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                        sh """
+                            ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
+                                cd ${DEPLOY_DIR}
+                                
+                                echo "Pulling latest images..."
+                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
+                                
+                                echo "Stopping current containers..."
+                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+                                
+                                echo "Starting new containers..."
+                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+                                
+                                echo "Cleaning up old images..."
+                                docker image prune -f
+                            '
+                        """
                     }
                 }
             }
         }
         
-        stage('Deploy') {
+        stage('Health Check') {
             steps {
-                withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
-                    sh """
-                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ubuntu@ip-172-26-8-191 '
-                            cd /home/ubuntu/Myonitoring
-                            docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
-                            docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
-                            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-                        '
-                    """
+                script {
+                    // 컨테이너 시작 대기
+                    sleep(time: 30, unit: 'SECONDS')
+                    
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                        sh """
+                            ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
+                                if ! docker-compose -f ${DEPLOY_DIR}/docker-compose.yml -f ${DEPLOY_DIR}/docker-compose.prod.yml ps | grep -q "Up"; then
+                                    echo "Container health check failed"
+                                    exit 1
+                                else
+                                    echo "All containers are running"
+                                fi
+                            '
+                        """
+                    }
                 }
             }
         }
@@ -48,10 +59,10 @@ pipeline {
     
     post {
         success {
-            sh 'docker image prune -f'
+            echo 'Deployment successful!'
         }
-        always {
-            cleanWs()
+        failure {
+            echo 'Deployment failed!'
         }
     }
 }
