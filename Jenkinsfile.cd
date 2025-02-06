@@ -1,87 +1,34 @@
-pipeline {
-    agent any
-    
-    environment {
-        EC2_HOST = 'ip-172-26-8-191'
-        EC2_USER = 'ubuntu'
-        DEPLOY_DIR = '/home/ubuntu/Myonitoring'
-    }
-    
-    stages {
-        stage('Deploy') {
-            steps {
-                script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
-                        sh """
-                            ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
-                                cd ${DEPLOY_DIR}
-                                
-                                echo "Building nginx image..."
-                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml build nginx
-                                
-                                echo "Pulling latest images..."
-                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
-                                
-                                echo "Stopping current containers..."
-                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
-                                
-                                echo "Starting new containers..."
-                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-                                
-                                echo "Cleaning up old images..."
-                                docker image prune -f
-                            '
-                        """
-                    }
-                }
+stage('Deploy') {
+    steps {
+        script {
+            withCredentials([
+                sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY'),
+                usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')
+            ]) {
+                sh """
+                    ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
+                        cd ${DEPLOY_DIR}
+                        
+                        echo "Docker Hub Login..."
+                        echo "\$DOCKER_PASSWORD" | docker login -u "\$DOCKER_USER" --password-stdin
+                        
+                        echo "Building nginx image..."
+                        docker-compose -f docker-compose.yml -f docker-compose.prod.yml build nginx
+                        
+                        echo "Pulling latest images..."
+                        docker-compose -f docker-compose.yml -f docker-compose.prod.yml pull
+                        
+                        echo "Stopping current containers..."
+                        docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+                        
+                        echo "Starting new containers..."
+                        docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+                        
+                        echo "Cleaning up old images..."
+                        docker image prune -f
+                    '
+                """
             }
-        }
-        
-        stage('Health Check') {
-            steps {
-                script {
-                    sleep(time: 30, unit: 'SECONDS')
-                    
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
-                        sh """
-                            ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
-                                if ! docker-compose -f ${DEPLOY_DIR}/docker-compose.yml -f ${DEPLOY_DIR}/docker-compose.prod.yml ps | grep -q "Up"; then
-                                    echo "Container health check failed"
-                                    exit 1
-                                else
-                                    echo "All containers are running"
-                                fi
-                            '
-                        """
-                    }
-                }
-            }
-        }
-    }
-    
-    post {
-        success {
-            echo 'Deployment successful!'
-        }
-        failure {
-            echo 'Deployment failed!'
-            
-            script {
-                withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
-                    sh """
-                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
-                            cd ${DEPLOY_DIR}
-                            
-                            echo "Rolling back to previous state..."
-                            docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
-                            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
-                        '
-                    """
-                }
-            }
-        }
-        always {
-            cleanWs()
         }
     }
 }
