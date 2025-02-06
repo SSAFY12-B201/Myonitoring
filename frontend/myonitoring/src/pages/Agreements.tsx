@@ -36,7 +36,7 @@ const Agreement = () => {
   };
 
   // 다음 단계로 이동하는 함수
-  const navigateToPersonalInfo = () => {
+  const HandleNext = () => {
     navigate("/personal-info"); // PersonalInfo 페이지로 이동
   };
 
@@ -133,7 +133,7 @@ const Agreement = () => {
         {/* WideButton 컴포넌트 사용 */}
         <WideButton
           text="다음"
-          onClick={() => navigateToPersonalInfo()}
+          onClick={() => HandleNext()}
           disabled={!terms.termsOfService || !terms.privacyPolicy} // 필수 항목 체크 여부에 따라 활성화/비활성화
           bgColor={
             terms.termsOfService && terms.privacyPolicy

@@ -35,7 +35,7 @@ const UserInfo = () => {
     }
 
     // 모든 필드가 채워졌다면 다음 단계로 이동
-    navigate("/medical-info");
+    navigate("/cat-info");
   };
 
   return (
@@ -47,7 +47,7 @@ const UserInfo = () => {
         <div>
           {/* 설명 */}
           <h2 className="text-lg font-semibold mb-2">처음 가입하시네요!</h2>
-          <p className="text-xs text-gray-400 mb-6">
+          <p className="text-xs text-gray-400 mb-4">
             회원님의 추가 정보를 입력해주세요.
           </p>
 
@@ -127,7 +127,7 @@ const UserInfo = () => {
           textColor="text-white"
           bgColor={
             userInfo.nickname && userInfo.phoneNumber && userInfo.address
-              ? "bg-blue-500"
+              ? "bg-darkGray"
               : "bg-gray-300 cursor-not-allowed"
           }
           onClick={handleNext}
