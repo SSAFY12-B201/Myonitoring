@@ -29,4 +29,10 @@ public class UserController {
         UserResponseDto updatedUser = userService.updateUser(userDetails.getUsername(), updateDto);
         return ResponseEntity.ok(updatedUser);
     }
-}
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteMyAccount(@AuthenticationPrincipal UserDetails userDetails) {
+        userService.deleteUser(userDetails.getUsername());
+        return ResponseEntity.noContent().build();
+    }
+} 
