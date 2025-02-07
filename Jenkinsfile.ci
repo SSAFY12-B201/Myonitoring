@@ -21,43 +21,23 @@ pipeline {
             }
         }
         
-        stage('Build & Push Backend') {
-            when { 
-                changeset "backend/**"
-            }
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        // 캐시를 활용한 백엔드 이미지 빌드
-                        def backendImage = docker.build(
-                            "${BACKEND_IMAGE}:${GIT_COMMIT_SHORT}",
-                            "--cache-from ${BACKEND_IMAGE}:latest ./backend"
-                        )
-                        
-                        // 커밋해시와 latest 태그로 푸시
-                        backendImage.push()
-                        backendImage.push('latest')
+        stage('Build & Push Images') {
+            parallel {
+                stage('Backend') {
+                    when { changeset "backend/**" }
+                    steps {
+                        script {
+                            buildAndPushImage("${BACKEND_IMAGE}", "./backend")
+                        }
                     }
                 }
-            }
-        }
-        
-        stage('Build & Push Frontend') {
-            when { 
-                changeset "frontend/**"
-            }
-            steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        // 캐시를 활용한 프론트엔드 이미지 빌드
-                        def frontendImage = docker.build(
-                            "${FRONTEND_IMAGE}:${GIT_COMMIT_SHORT}",
-                            "--cache-from ${FRONTEND_IMAGE}:latest ./frontend"
-                        )
-                        
-                        // 커밋해시와 latest 태그로 푸시
-                        frontendImage.push()
-                        frontendImage.push('latest')
+                
+                stage('Frontend') {
+                    when { changeset "frontend/**" }
+                    steps {
+                        script {
+                            buildAndPushImage("${FRONTEND_IMAGE}", "./frontend")
+                        }
                     }
                 }
             }
@@ -75,5 +55,17 @@ pipeline {
             sh 'docker image prune -f'
             cleanWs()
         }
+    }
+}
+
+def buildAndPushImage(String imageName, String context) {
+    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
+        def image = docker.build(
+            "${imageName}:${GIT_COMMIT_SHORT}",
+            "--cache-from ${imageName}:latest ${context}"
+        )
+        
+        image.push()
+        image.push('latest')
     }
 }

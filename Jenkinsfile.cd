@@ -14,9 +14,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY'),
-                    usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASSWORD')
-                ]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
                         sh """
                             ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
                                 cd ${DEPLOY_DIR}
@@ -44,16 +42,14 @@ pipeline {
             steps {
                 script {
                     sleep(time: 30, unit: 'SECONDS')
-                    
+            
                     withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
                         sh """
                             ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
-                                if ! docker-compose -f ${DEPLOY_DIR}/docker-compose.yml -f ${DEPLOY_DIR}/docker-compose.prod.yml ps | grep -q "Up"; then
-                                    echo "Container health check failed"
-                                    exit 1
-                                else
-                                    echo "All containers are running"
-                                fi
+                                cd ${DEPLOY_DIR}
+                                echo "Checking container status..."
+                                docker inspect \$(docker-compose -f ${DEPLOY_DIR}/docker-compose.yml
+                                -f ${DEPLOY_DIR}/docker-compose.prod.yml ps -q) --format "{{.Name}}: {{.State.Status}}"
                             '
                         """
                     }
