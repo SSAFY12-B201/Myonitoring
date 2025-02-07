@@ -6,7 +6,7 @@ import Agreement from "./pages/onboarding/Agreements"; // 약관 동의 화면
 import AgreementDetail from "./pages/onboarding/AgreementDetail"; // 약관 상세 화면
 import UserInfo from "./pages/onboarding/UserInfo"; // 개인정보 등록 화면
 import CatInfo from "./pages/onboarding/CatInfo"; // 고양이 정보 등록 화면
-import Greeting from "./pages/onboarding/greeting"; // 그리팅 화면
+import Greeting from "./pages/onboarding/Greeting"; // 그리팅 화면
 import Home from "./pages/Home"; // 홈 화면
 
 const App: React.FC = () => {

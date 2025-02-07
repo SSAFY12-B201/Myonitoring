@@ -132,7 +132,7 @@ const CatInfo = () => {
               type="select"
               value={catInfo.gender || ""}
               onChange={(value) => {
-                dispatch(updateCatInfo({ gender: value }));
+                dispatch(updateCatInfo({ gender: undefined })); // 타입 수정 필요요
                 setErrors({ ...errors, gender: false });
               }}
               options={["남아", "여아"]}
@@ -146,7 +146,7 @@ const CatInfo = () => {
               type="select"
               value={catInfo.neutered || ""}
               onChange={(value) => {
-                dispatch(updateCatInfo({ neutered: value }));
+                dispatch(updateCatInfo({ neutered: undefined })); // 타입 수정 필요
                 setErrors({ ...errors, neutered: false });
               }}
               options={["중성화 전", "중성화 완료"]}
