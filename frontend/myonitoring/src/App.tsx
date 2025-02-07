@@ -15,7 +15,7 @@ const App: React.FC = () => {
 
   const handleSplashFinish = () => {
     setShowSplash(false); // 스플래시 종료
-    navigate("/login"); // 로그인 화면으로 이동
+    navigate("/login"); // 로그인 화면 이동동
   };
 
   if (showSplash) {
