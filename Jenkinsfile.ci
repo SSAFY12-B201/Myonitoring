@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'dev', 
+                git branch: 'ci/test', 
                     credentialsId: 'gitlab-user-pwd', 
                     url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git'
             }
