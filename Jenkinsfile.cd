@@ -48,8 +48,12 @@ pipeline {
                             ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
                                 cd ${DEPLOY_DIR}
                                 echo "Checking container status..."
-                                docker inspect \$(docker-compose -f ${DEPLOY_DIR}/docker-compose.yml
-                                -f ${DEPLOY_DIR}/docker-compose.prod.yml ps -q) --format "{{.Name}}: {{.State.Status}}"
+                                CONTAINERS=\$(docker-compose -f docker-compose.yml -f docker-compose.prod.yml ps -q)
+                                if [ -z "\$CONTAINERS" ]; then
+                                    echo "No running containers found!"
+                                    exit 1
+                                fi
+                                docker inspect \$CONTAINERS --format "{{.Name}}: {{.State.Status}}"
                             '
                         """
                     }
