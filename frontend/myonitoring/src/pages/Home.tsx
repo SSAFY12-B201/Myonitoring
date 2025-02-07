@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import LocalDiningIcon from "@mui/icons-material/LocalDining";
 import WarningIcon from "@mui/icons-material/Warning";
 import EyeIcon from "@mui/icons-material/Visibility";
@@ -6,6 +6,7 @@ import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import TopBar from "../components/TopBar";
 import BottomBar from "../components/BottomBar";
+import background from '/main_background.png'
 
 // 공통 클래스 정의
 const barClass =
@@ -21,7 +22,13 @@ const Home: React.FC = () => {
   });
 
   return (
-    <>
+    <div style={{
+      backgroundImage: "url('/home_background.png')", // public 폴더의 이미지 경로
+      backgroundSize: "cover", // 요소 크기에 맞게 조정
+      backgroundPosition: "center", // 중앙 정렬
+      height: "100vh", // 화면 전체 높이
+      width: "100%", // 전체 너비
+    }}>
     <TopBar />
       <div className="relative min-h-screen">
         {/* 날짜 바 */}
@@ -116,7 +123,7 @@ const Home: React.FC = () => {
         </div>
       </div>
     <BottomBar />
-    </>
+    </div>
   );
 };
 

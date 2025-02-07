@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // React Router 사용
-import WideButton from "../components/WideButton";
-import Header from "../components/Header";
-import ContentSection from "../components/ContentSection";
+import WideButton from "../../components/WideButton";
+import Header from "../../components/Header";
+import ContentSection from "../../components/ContentSection";
 
 const Agreement = () => {
   const [allChecked, setAllChecked] = useState(false);
@@ -37,7 +37,7 @@ const Agreement = () => {
 
   // 다음 단계로 이동하는 함수
   const HandleNext = () => {
-    navigate("/personal-info"); // PersonalInfo 페이지로 이동
+    navigate(`/user-info`); // UserInfo 페이지로 이동
   };
 
   return (
