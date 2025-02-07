@@ -3,6 +3,7 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
+    image: myonitoring-nginx:latest 
     depends_on:
       - frontend
       - backend
