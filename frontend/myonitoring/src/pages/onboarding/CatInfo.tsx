@@ -26,7 +26,6 @@ const CatInfo = () => {
     weight: false,
     characteristics: false,
   });
-
   const handleNext = () => {
     // 각 필드의 오류 상태 업데이트
     const newErrors = {

@@ -41,6 +41,14 @@ const LoginSignUp: React.FC = () => {
       </p>
     );
 
+  const handleKakaoLogin = () => {
+    const REST_API_KEY = "a7094ccb1f819d4bc1cc92d0dd5919eb"; // 카카오 REST API 키
+    const REDIRECT_URI = "http://localhost:8080/oauth2/callback/kakao"; // Redirect URI
+    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+    window.location.href = KAKAO_AUTH_URL; // 카카오 로그인 페이지로 리디렉션
+  };
+
   // 소셜 로그인 버튼 내용
   const socialButtons = [
     {
@@ -57,6 +65,7 @@ const LoginSignUp: React.FC = () => {
       alt: "카카오 로고",
       text: activeTab === "login" ? "카카오 로그인" : "카카오로 가입하기",
       bgColor: "#FDDC3F", // 카카오 색상 코드
+      onClick: handleKakaoLogin, // 카카오 로그인 핸들러 추가
     },
     {
       id: "google",
@@ -102,13 +111,14 @@ const LoginSignUp: React.FC = () => {
           {socialButtons.map((button) => (
             <div key={button.id} className="w-full flex justify-center">
               <button
+                onClick={button.onClick} // 버튼 클릭 이벤트 추가
                 className={`flex items-center justify-center gap-2 py-[12px] px-[16px] rounded-md shadow ${button.bgColor}`}
                 style={{
                   width: "250px",
                   height: "48px",
                   minWidth: "250px",
                   backgroundColor: button.bgColor, // 인라인 스타일로 배경색 설정
-                  color: button.textColor
+                  color: button.textColor,
                 }} // 버튼 크기 고정
               >
                 <img src={button.icon} alt={button.alt} className="w-5 h-5" />
