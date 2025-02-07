@@ -11,7 +11,7 @@ const ReportTabBar = () => {
   // 공통 스타일 변수
   const baseStyle =
     "w-40 h-10 rounded-full font-bold text-sm flex items-center justify-center";
-  const activeStyle = "bg-yellow-200 text-black shadow-sm";
+  const activeStyle = "bg-yellow text-black shadow-sm";
   const inactiveStyle = "bg-white text-gray-400 shadow-md";
 
   return (

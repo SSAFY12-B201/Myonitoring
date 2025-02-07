@@ -6,6 +6,7 @@ import CumulativeStatistics from "../components/GraphComponents/CumulativeStatis
 import DateNavigationBar from "../components/GraphComponents/DateNavigationBar"; // 날짜 이동 바 컴포넌트
 import feedingData from "../dummyData/feeding_data.json"; // JSON 데이터 가져오기
 import BottomBar from "../components/BottomBar";
+import ContentSection from "../components/ContentSection";
 
 interface Interval {
   time: string;
@@ -85,7 +86,6 @@ const Graph: React.FC = () => {
 
   return (
     <>
-    
     <div className="min-h-screen">
       <TopBar />
       
