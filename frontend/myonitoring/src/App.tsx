@@ -8,6 +8,8 @@ import UserInfo from "./pages/onboarding/UserInfo"; // 개인정보 등록 화�
 import CatInfo from "./pages/onboarding/CatInfo"; // 고양이 정보 등록 화면
 import Greeting from "./pages/onboarding/Greeting"; // 그리팅 화면
 import Home from "./pages/Home"; // 홈 화면
+import Redirect from "./pages/auth/Redirect";
+
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true); // 스플래시 화면 표시 여부
@@ -26,6 +28,10 @@ const App: React.FC = () => {
     <Routes>
       {/* 로그인 및 회원가입 */}
       <Route path="/login" element={<LoginSignUp />} />
+
+      {/* 로그인 리다이렉트 화면 */}
+      <Route path="/oauth2/callback/kakao" element={<Redirect/>} />
+
 
       {/* 약관 동의 및 상세 */}
       <Route path="/agreements" element={<Agreement />} />

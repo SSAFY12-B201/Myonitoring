@@ -42,8 +42,8 @@ const LoginSignUp: React.FC = () => {
     );
 
   const handleKakaoLogin = () => {
-    const REST_API_KEY = "a7094ccb1f819d4bc1cc92d0dd5919eb"; // 카카오 REST API 키
-    const REDIRECT_URI = "http://localhost:8080/oauth2/callback/kakao"; // Redirect URI
+    const REST_API_KEY = import.meta.env.VITE_KAKAO_API_KEY; // 카카오 REST API 키
+    const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URL; // Redirect URI
     const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
     window.location.href = KAKAO_AUTH_URL; // 카카오 로그인 페이지로 리디렉션
