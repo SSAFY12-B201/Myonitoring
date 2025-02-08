@@ -13,8 +13,9 @@ interface CatInfoState {
   characteristics: string; // 특징 (텍스트, 선택)
 }
 
+// 초기 상태 값 설정
 const initialState: CatInfoState = {
-  image: null, // 초기값은 null
+  image: null,
   name: "",
   breed: "",
   gender: "",
@@ -25,18 +26,29 @@ const initialState: CatInfoState = {
   characteristics: "",
 };
 
+// Slice 생성
 const catSlice = createSlice({
   name: "cat",
   initialState,
   reducers: {
+    /**
+     * 고양이 정보 업데이트
+     * @param state 현재 상태
+     * @param action 업데이트할 필드와 값
+     */
     updateCatInfo(state, action: PayloadAction<Partial<CatInfoState>>) {
       return { ...state, ...action.payload }; // 상태 업데이트
     },
+    /**
+     * 고양이 정보 초기화
+     * @returns 초기 상태로 리셋
+     */
     resetCatInfo() {
-      return initialState; // 초기 상태로 리셋
+      return initialState;
     },
   },
 });
 
+// 액션 및 리듀서 내보내기
 export const { updateCatInfo, resetCatInfo } = catSlice.actions;
 export default catSlice.reducer;

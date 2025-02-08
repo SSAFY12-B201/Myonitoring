@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom"; // React Router 사용
-import Header from "../components/Header";
-import termsDetails from "../data/TermsDetails";
-import ContentSection from "../components/ContentSection";
+import Header from "../../components/Header";
+import termsDetails from "../../data/TermsDetails";
+import ContentSection from "../../components/ContentSection";
 
 const AgreementDetail = () => {
   const navigate = useNavigate(); // 화면 전환을 위한 useNavigate 훅
