@@ -19,7 +19,7 @@ const CatEyeInfo: React.FC = () => {
         묘니터링 AI 분석 결과 <span className="text-red-500">의심 증상 발견</span>
       </h1>
       {/* 부제목 */}
-      <p className="text-sm text-gray-600 mt-2">아래와 같은 증상이 있을 수 있습니다.</p>
+      <p className="text-sm text-gray-800 mt-2">아래와 같은 증상이 있을 수 있습니다.</p>
       {/* 확인일 */}
       <p className="text-sm text-gray-600 mt-1">확인일 {formattedDate}</p>
     </div>
