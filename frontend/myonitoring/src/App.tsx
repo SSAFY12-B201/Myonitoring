@@ -9,7 +9,8 @@ import CatInfo from "./pages/onboarding/CatInfo"; // 고양이 정보 등록 화
 import Greeting from "./pages/onboarding/Greeting"; // 그리팅 화면
 import Home from "./pages/Home"; // 홈 화면
 import Redirect from "./pages/auth/Redirect";
-
+import Reservation from "./pages/reservation/Reservation";
+import MedicalRecords from "./pages/medical-records/MedicalRecords";
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true); // 스플래시 화면 표시 여부
@@ -17,7 +18,7 @@ const App: React.FC = () => {
 
   const handleSplashFinish = () => {
     setShowSplash(false); // 스플래시 종료
-    navigate("/login"); // 로그인 화면 이동동
+    navigate("/medical-records"); // 로그인 화면 이동
   };
 
   if (showSplash) {
@@ -27,27 +28,35 @@ const App: React.FC = () => {
   return (
     <Routes>
       {/* 로그인 및 회원가입 */}
-      <Route path="/login" element={<LoginSignUp />} />
+      {/* <Route path="/login" element={<LoginSignUp />} /> */}
 
       {/* 로그인 리다이렉트 화면 */}
-      <Route path="/oauth2/callback/kakao" element={<Redirect/>} />
+      {/* <Route path="/oauth2/callback/kakao" element={<Redirect/>} /> */}
 
 
       {/* 약관 동의 및 상세 */}
-      <Route path="/agreements" element={<Agreement />} />
-      <Route path="/agreement-detail" element={<AgreementDetail />} />
+      {/* <Route path="/agreements" element={<Agreement />} /> */}
+      {/* <Route path="/agreement-detail" element={<AgreementDetail />} /> */}
 
       {/* 개인정보 등록 */}
-      <Route path="/user-info" element={<UserInfo />} />
+      {/* <Route path="/user-info" element={<UserInfo />} /> */}
 
       {/* 고양이 정보 등록 */}
-      <Route path="/cat-info" element={<CatInfo />} />
+      {/* <Route path="/cat-info" element={<CatInfo />} /> */}
 
       {/* 그리팅 화면 */}
-      <Route path="/greeting" element={<Greeting />} />
+      {/* <Route path="/greeting" element={<Greeting />} /> */}
 
       {/* 홈 화면 */}
-      <Route path="/home" element={<Home />} />
+      {/* <Route path="/home" element={<Home />} /> */}
+
+      {/* 배급 예약 화면 */}
+      {/* <Route path="/reservation" element={<Reservation />} /> */}
+
+      {/* 의료기록 조회 화면 */}
+      <Route path="/medical-records" element={<MedicalRecords />} />
+
+
     </Routes>
   );
 };
