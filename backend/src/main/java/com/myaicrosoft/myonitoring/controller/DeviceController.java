@@ -17,7 +17,7 @@ import java.util.List;
  * 기기(Device) 관련 요청을 처리하는 REST 컨트롤러 클래스
  */
 @RestController
-@RequestMapping("${app.api-prefix}/devices")
+@RequestMapping("/devices")
 @RequiredArgsConstructor
 public class DeviceController {
 

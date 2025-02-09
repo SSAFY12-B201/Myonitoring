@@ -9,7 +9,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("${app.api-prefix}/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
 

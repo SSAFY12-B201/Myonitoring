@@ -16,7 +16,7 @@ import java.util.List;
  */
 @RestController
 @RequiredArgsConstructor // final 필드에 대한 생성자를 자동으로 생성
-@RequestMapping("/intake") // Intake 관련 API의 엔드포인트 설정
+@RequestMapping("/intake") // "/api/intake" -> "/intake"로 수정
 public class IntakeController {
 
     private final IntakeService intakeService;

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequiredArgsConstructor // final 필드에 대한 생성자를 자동으로 생성
-@RequestMapping("/data-collection") // 데이터 수집 관련 API의 엔드포인트 설정
+@RequestMapping("/data-collection") // "/api/data-collection" -> "/data-collection"로 수정
 public class DataCollectionController {
 
     private final DataCollectionService dataCollectionService;
