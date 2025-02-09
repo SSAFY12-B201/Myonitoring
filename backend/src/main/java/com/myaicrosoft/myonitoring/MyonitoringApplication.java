@@ -9,12 +9,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Collections;
 
 /**
  * Spring Boot 애플리케이션의 진입점 클래스
@@ -31,7 +25,6 @@ public class MyonitoringApplication {
 	@Bean
 	public CommandLineRunner initAdminUser(
 			UserRepository userRepository,
-			PasswordEncoder passwordEncoder,
 			JwtProvider jwtProvider
 	) {
 		return args -> {
@@ -40,24 +33,16 @@ public class MyonitoringApplication {
 			if (!userRepository.existsByEmail(adminEmail)) {
 				User adminUser = User.builder()
 						.email(adminEmail)
-						.password(passwordEncoder.encode("b201_nyang")) // 비밀번호 암호화
 						.nickname("관리자")
 						.role(User.Role.ADMIN)
-						.provider(User.Provider.LOCAL)
+						.provider(User.Provider.KAKAO)
 						.build();
 				
 				// Admin 계정 저장
 				adminUser = userRepository.save(adminUser);
 				
-				// Authentication 객체 생성
-				Authentication authentication = new UsernamePasswordAuthenticationToken(
-					adminUser.getEmail(),
-					null,
-					Collections.singleton(new SimpleGrantedAuthority("ROLE_" + adminUser.getRole().name()))
-				);
-				
 				// 토큰 생성
-				TokenDto tokenDto = jwtProvider.generateTokenDto(authentication);
+				TokenDto tokenDto = jwtProvider.generateTokenDto(adminUser);
 				
 				// Refresh Token을 DB에 저장
 				adminUser.setRefreshToken(tokenDto.getRefreshToken());
@@ -65,7 +50,6 @@ public class MyonitoringApplication {
 
 				System.out.println("Admin account created successfully!");
 				System.out.println("Email: " + adminEmail);
-				System.out.println("Password: b201_nyang");
 				System.out.println("Access Token: " + tokenDto.getAccessToken());
 				System.out.println("Refresh Token: " + tokenDto.getRefreshToken());
 			}

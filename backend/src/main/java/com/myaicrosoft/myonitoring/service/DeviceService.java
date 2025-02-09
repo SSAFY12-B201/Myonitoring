@@ -25,6 +25,7 @@ public class DeviceService {
 
     private final DeviceRepository deviceRepository;
     private final UserRepository userRepository;
+    private final SecurityUtil securityUtil;
 
     /**
      * 기기를 생성하고 저장하는 로직
@@ -77,7 +78,7 @@ public class DeviceService {
 
         // 기기의 소유자 확인
         boolean isOwner = device.getUsers().stream()
-                .anyMatch(user -> user.getId().equals(SecurityUtil.getCurrentUserId()));
+                .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
         if (!isOwner) {
             throw new IllegalArgumentException("해당 기기의 조회 권한이 없습니다.");
         }
@@ -115,7 +116,7 @@ public class DeviceService {
 
         // 기기의 소유자 확인
         boolean isOwner = device.getUsers().stream()
-                .anyMatch(user -> user.getId().equals(SecurityUtil.getCurrentUserId()));
+                .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
         if (!isOwner) {
             throw new IllegalArgumentException("해당 기기의 삭제 권한이 없습니다.");
         }

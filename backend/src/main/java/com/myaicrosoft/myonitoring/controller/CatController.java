@@ -18,11 +18,12 @@ import java.util.List;
  * 고양이(Cat) 관련 요청을 처리하는 REST 컨트롤러 클래스
  */
 @RestController
-@RequiredArgsConstructor // final 필드에 대한 생성자를 자동으로 생성
-@RequestMapping("/cats") // Cat 관련 API의 엔드포인트 설정
+@RequestMapping("${app.api-prefix}/cats")
+@RequiredArgsConstructor
 public class CatController {
 
     private final CatService catService;
+    private final SecurityUtil securityUtil;
 
     /**
      * 고양이 생성 API
@@ -32,7 +33,7 @@ public class CatController {
      */
     @PostMapping
     public ResponseEntity<Cat> createCat(@RequestBody CatCreateRequest request) {
-        Long userId = SecurityUtil.getCurrentUserId();
+        Long userId = securityUtil.getCurrentUserId();
         Cat cat = catService.createCat(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(cat);
     }
@@ -44,7 +45,7 @@ public class CatController {
      */
     @GetMapping
     public ResponseEntity<List<CatResponseDto>> getCatsByUser() {
-        Long userId = SecurityUtil.getCurrentUserId();
+        Long userId = securityUtil.getCurrentUserId();
         List<CatResponseDto> cats = catService.getCatsByUserId(userId);
         return ResponseEntity.ok(cats);
     }

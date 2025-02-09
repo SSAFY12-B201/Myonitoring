@@ -26,6 +26,7 @@ public class CatService {
 
     private final CatRepository catRepository;
     private final DeviceRepository deviceRepository;
+    private final SecurityUtil securityUtil;
 
     /**
      * 고양이를 생성하고 저장하는 로직
@@ -90,7 +91,7 @@ public class CatService {
         Device device = cat.getDevice();
         if (device != null) {
             boolean isOwner = device.getUsers().stream()
-                    .anyMatch(user -> user.getId().equals(SecurityUtil.getCurrentUserId()));
+                    .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
             if (!isOwner) {
                 throw new IllegalArgumentException("해당 고양이의 조회 권한이 없습니다.");
             }
@@ -127,7 +128,7 @@ public class CatService {
         Device device = existingCat.getDevice();
         if (device != null) {
             boolean isOwner = device.getUsers().stream()
-                    .anyMatch(user -> user.getId().equals(SecurityUtil.getCurrentUserId()));
+                    .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
             if (!isOwner) {
                 throw new IllegalArgumentException("해당 고양이의 수정 권한이 없습니다.");
             }
@@ -174,7 +175,7 @@ public class CatService {
         Device device = cat.getDevice();
         if (device != null) {
             boolean isOwner = device.getUsers().stream()
-                    .anyMatch(user -> user.getId().equals(SecurityUtil.getCurrentUserId()));
+                    .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
             if (!isOwner) {
                 throw new IllegalArgumentException("해당 고양이의 삭제 권한이 없습니다.");
             }

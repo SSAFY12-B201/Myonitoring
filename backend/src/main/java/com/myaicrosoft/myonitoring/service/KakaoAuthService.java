@@ -13,6 +13,7 @@ import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -89,13 +90,7 @@ public class KakaoAuthService implements OAuth2AuthService {
         }
 
         // 4. JWT 토큰 발급
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user.getEmail(),
-                null,
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-        );
-
-        TokenDto tokenDto = jwtProvider.generateTokenDto(authentication);
+        TokenDto tokenDto = jwtProvider.generateTokenDto(user);
         userService.updateRefreshToken(user.getEmail(), tokenDto.getRefreshToken());
 
         return tokenDto;
@@ -197,13 +192,7 @@ public class KakaoAuthService implements OAuth2AuthService {
                 .orElseThrow(() -> new RuntimeException("Refresh token not found"));
 
         // 3. 새로운 토큰 발급
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user.getEmail(),
-                null,
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-        );
-
-        TokenDto tokenDto = jwtProvider.generateTokenDto(authentication);
+        TokenDto tokenDto = jwtProvider.generateTokenDto(user);
         userService.updateRefreshToken(user.getEmail(), tokenDto.getRefreshToken());
 
         return tokenDto;

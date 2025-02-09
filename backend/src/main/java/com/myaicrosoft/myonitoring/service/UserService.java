@@ -104,17 +104,17 @@ public class UserService implements UserDetailsService {
         if (!StringUtils.hasText(email)) {
             throw new IllegalArgumentException("Email cannot be empty");
         }
-        if (!StringUtils.hasText(updateDto.getNickname())) {
-            throw new IllegalArgumentException("Nickname cannot be empty");
-    }
 
         // 사용자 조회
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
         // 정보 업데이트
+        if (StringUtils.hasText(updateDto.getNickname())) {
             user.setNickname(updateDto.getNickname());
-            user.setAddress(updateDto.getAddress());
+        }
+        user.setAddress(updateDto.getAddress());
+        user.setPhoneNumber(updateDto.getPhoneNumber());
 
         // 저장 및 응답
         User savedUser = userRepository.save(user);

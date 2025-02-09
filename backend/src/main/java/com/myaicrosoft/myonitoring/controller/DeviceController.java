@@ -17,11 +17,12 @@ import java.util.List;
  * 기기(Device) 관련 요청을 처리하는 REST 컨트롤러 클래스
  */
 @RestController
-@RequiredArgsConstructor // final 필드에 대한 생성자를 자동으로 생성
-@RequestMapping("/devices") // Device 관련 API의 엔드포인트 설정
+@RequestMapping("${app.api-prefix}/devices")
+@RequiredArgsConstructor
 public class DeviceController {
 
     private final DeviceService deviceService;
+    private final SecurityUtil securityUtil;
 
     /**
      * 기기 생성 API
@@ -31,7 +32,7 @@ public class DeviceController {
      */
     @PostMapping
     public ResponseEntity<Device> createDevice(@RequestBody DeviceCreateRequest request) {
-        Long userId = SecurityUtil.getCurrentUserId();
+        Long userId = securityUtil.getCurrentUserId();
         Device device = deviceService.createDevice(request, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(device);
     }
@@ -43,7 +44,7 @@ public class DeviceController {
      */
     @GetMapping
     public ResponseEntity<List<DeviceResponseDto>> getDevicesByUser() {
-        Long userId = SecurityUtil.getCurrentUserId();
+        Long userId = securityUtil.getCurrentUserId();
         List<DeviceResponseDto> devices = deviceService.getDevicesByUserId(userId);
         return ResponseEntity.ok(devices);
     }
