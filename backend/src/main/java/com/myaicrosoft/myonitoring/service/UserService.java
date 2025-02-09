@@ -29,11 +29,11 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         if (!StringUtils.hasText(email)) {
             throw new IllegalArgumentException("Email cannot be empty");
-        }
+    }
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-        
+
         return new org.springframework.security.core.userdetails.User(
             user.getEmail(),
             user.getPassword(),
@@ -57,7 +57,7 @@ public class UserService implements UserDetailsService {
         // 이미 존재하는 계정인지 확인
         if (userRepository.existsByEmail(registrationDto.getEmail())) {
             throw new RuntimeException("Account already exists");
-        }
+    }
 
         // 새 계정 생성
         User user = new User();
@@ -106,15 +106,15 @@ public class UserService implements UserDetailsService {
         }
         if (!StringUtils.hasText(updateDto.getNickname())) {
             throw new IllegalArgumentException("Nickname cannot be empty");
-        }
+    }
 
         // 사용자 조회
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
         // 정보 업데이트
-        user.setNickname(updateDto.getNickname());
-        user.setAddress(updateDto.getAddress());
+            user.setNickname(updateDto.getNickname());
+            user.setAddress(updateDto.getAddress());
 
         // 저장 및 응답
         User savedUser = userRepository.save(user);
@@ -135,7 +135,7 @@ public class UserService implements UserDetailsService {
         
         // 회원 삭제
         userRepository.delete(user);
-        
+
         log.info("User deleted successfully: {}", email);
     }
 
@@ -145,5 +145,19 @@ public class UserService implements UserDetailsService {
         // 로그아웃 시 refresh token 삭제
         user.setRefreshToken(null);
         userRepository.save(user);
+    }
+
+    /**
+     * 사용자 ID로 특정 사용자 조회
+     *
+     * @param id 조회할 사용자의 ID
+     * @return 조회된 사용자에 대한 응답 DTO
+     * @throws IllegalArgumentException 사용자가 존재하지 않을 경우 예외 발생
+     */
+    @Transactional(readOnly = true)
+    public UserResponseDto getUserById(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 사용자를 찾을 수 없습니다. ID: " + id));
+        return UserResponseDto.from(user);
     }
 } 
