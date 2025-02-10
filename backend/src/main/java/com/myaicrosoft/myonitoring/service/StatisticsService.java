@@ -72,7 +72,7 @@ public class StatisticsService {
         // Statistics 엔티티 생성 및 저장
         Statistics statistics = Statistics.builder()
                 .cat(cat)
-                .StatDate(statDate)
+                .statDate(statDate)
                 .totalIntake(totalIntake)
                 .change7d(change7d)
                 .change30d(change30d)
