@@ -23,6 +23,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.5",
     "recharts": "^2.15.1",
+    "react-switch": "^7.1.0",
     "vite-plugin-pwa": "^0.21.1"
   },
   "devDependencies": {

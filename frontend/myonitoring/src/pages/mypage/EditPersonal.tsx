@@ -43,7 +43,7 @@ const EditPersonal = () => {
 
   return (
     <>
-      <Header title="마이 페이지" onBack={() => navigate("/")} />
+      <Header title="마이 페이지" onBack={() => navigate(-1)} />
       <ContentSection>
         <div className="max-w-md mx-auto bg-white pb-6">
           {/* 이름 */}

@@ -13,6 +13,7 @@ import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -49,55 +50,46 @@ public class KakaoAuthService implements OAuth2AuthService {
             throw new IllegalArgumentException("Authorization code cannot be null or empty");
         }
 
-        // 1. 카카오 액세스 토큰 받기
-        String kakaoTokenResponse = getKakaoTokens(code);
-        Map<String, String> tokens = parseKakaoTokens(kakaoTokenResponse);
-        String accessToken = tokens.get("access_token");
+        // 카카오 토큰 받기
+        String tokensJson = getKakaoTokens(code);
+        Map<String, String> tokens = parseKakaoTokens(tokensJson);
+        String kakaoAccessToken = tokens.get("access_token");
 
-        if (accessToken == null || accessToken.isEmpty()) {
-            throw new RuntimeException("Failed to get access token from Kakao");
-        }
-
-        // 2. 액세스 토큰으로 사용자 정보 가져오기
-        Map<String, Object> userInfo = getKakaoUserInfo(accessToken);
+        // 카카오 사용자 정보 받기
+        Map<String, Object> userInfo = getKakaoUserInfo(kakaoAccessToken);
         String email = extractEmail(userInfo);
-
-        if (email == null || email.isEmpty()) {
-            throw new RuntimeException("Failed to get email from Kakao");
-        }
-
-        // 3. 이메일로 기존 회원 조회
-        User user;
-        boolean isNewUser = !userRepository.existsByEmail(email);
         
-        if (isNewUser) {
+        // 이메일로 사용자 찾기
+        User user = userRepository.findByEmail(email).orElse(null);
+        
+        if (user == null) {
             // 신규 회원인 경우 회원가입 처리
-            if (registrationDto == null) {
-                throw new IllegalArgumentException("Registration information is required for new users");
-            }
+            Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
+            Map<String, Object> properties = (Map<String, Object>) userInfo.get("properties");
+            
+            // 카카오 정보로 기본값 설정
+            String nickname = properties != null ? (String) properties.get("nickname") : null;
+            
+            // DTO에 카카오 정보 설정
+            registrationDto = new UserRegistrationDto();
             registrationDto.setEmail(email);
+            registrationDto.setNickname(nickname != null ? nickname : email.split("@")[0]);
+            
             user = userService.registerUser(registrationDto, User.Provider.KAKAO);
         } else {
-            // 기존 회원인 경우 정보 조회
-            user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
-            
-            // 카카오로 가입한 사용자가 맞는지 확인
+            // 기존 회원인 경우 provider 확인
             if (user.getProvider() != User.Provider.KAKAO) {
                 throw new RuntimeException("This email is already registered with different provider: " + user.getProvider());
             }
         }
 
-        // 4. JWT 토큰 발급
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user.getEmail(),
-                null,
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-        );
-
-        TokenDto tokenDto = jwtProvider.generateTokenDto(authentication);
-        userService.updateRefreshToken(user.getEmail(), tokenDto.getRefreshToken());
-
+        // JWT 토큰 생성
+        TokenDto tokenDto = jwtProvider.generateTokenDto(user);
+        
+        // Refresh Token 저장
+        user.setRefreshToken(tokenDto.getRefreshToken());
+        userRepository.save(user);
+        
         return tokenDto;
     }
 
@@ -197,13 +189,7 @@ public class KakaoAuthService implements OAuth2AuthService {
                 .orElseThrow(() -> new RuntimeException("Refresh token not found"));
 
         // 3. 새로운 토큰 발급
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
-                user.getEmail(),
-                null,
-                Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
-        );
-
-        TokenDto tokenDto = jwtProvider.generateTokenDto(authentication);
+        TokenDto tokenDto = jwtProvider.generateTokenDto(user);
         userService.updateRefreshToken(user.getEmail(), tokenDto.getRefreshToken());
 
         return tokenDto;
