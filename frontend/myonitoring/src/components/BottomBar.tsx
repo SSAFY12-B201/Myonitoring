@@ -10,10 +10,10 @@ const BottomBar: React.FC = () => {
   // 탭 데이터 정의
   const tabs = [
     { id: "schedule", label: "예약", icon: <Schedule />, path: "/reservation" },
-    { id: "report", label: "리포트", icon: <BarChart />, path: "/report" },
+    { id: "report", label: "리포트", icon: <BarChart />, path: "/graph" },
     { id: "home", label: "홈", icon: <Home />, path: "/home" },
     { id: "medical", label: "의료", icon: <MedicalServices />, path: "/medical-records" },
-    { id: "profile", label: "내 정보", icon: <Person />, path: "/profile" },
+    { id: "profile", label: "내 정보", icon: <Person />, path: "/my-page" },
   ];
 
   // 현재 경로에 따라 활성화된 탭 설정

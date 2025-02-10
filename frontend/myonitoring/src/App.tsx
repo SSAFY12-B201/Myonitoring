@@ -12,6 +12,12 @@ import Redirect from "./pages/auth/Redirect";
 import Reservation from "./pages/reservation/Reservation";
 import MedicalRecords from "./pages/medical-records/MedicalRecords";
 import MedicalRecordDetail from "./pages/medical-records/MedicalRecordsDetail";
+import Graph from "./pages/report/Graph";
+import StatisticsPage from "./pages/report/Statistics";
+import MyPage from "./pages/mypage/Mypage";
+import EditPersonal from "./pages/mypage/EditPersonal";
+import DeviceSettings from "./pages/mypage/DeviceSettings";
+import Notification from "./pages/Notification";
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true); // 스플래시 화면 표시 여부
@@ -34,7 +40,6 @@ const App: React.FC = () => {
       {/* 로그인 리다이렉트 화면 */}
       {/* <Route path="/oauth2/callback/kakao" element={<Redirect/>} /> */}
 
-
       {/* 약관 동의 및 상세 */}
       {/* <Route path="/agreements" element={<Agreement />} /> */}
       {/* <Route path="/agreement-detail" element={<AgreementDetail />} /> */}
@@ -53,15 +58,29 @@ const App: React.FC = () => {
 
       {/* 배급 예약 화면 */}
       <Route path="/reservation" element={<Reservation />} />
-      
+
+      {/* 그래프 화면 */}
+      <Route path="/graph" element={<Graph />} />
+
+      {/* 통계 화면 */}
+      <Route path="/statistics" element={<StatisticsPage />} />
 
       {/* 의료기록 조회 화면 */}
       <Route path="/medical-records" element={<MedicalRecords />} />
 
       {/* 의료기록 상세 화면 */}
       <Route path="/medical-records/:id" element={<MedicalRecordDetail />} />
-    </Routes>
 
+      {/* 마이페이지 화면 */}
+      <Route path="/my-page" element={<MyPage />} />
+      {/* 개인정보 수정 화면 */}
+      <Route path="/edit-personal" element={<EditPersonal />} />
+      {/* 연동 기기 설정 화면 */}
+      <Route path="/device" element={<DeviceSettings />} />
+
+      {/* 알림 페이지 */}
+      <Route path="/notification" element={<Notification />} />
+    </Routes>
   );
 };
 

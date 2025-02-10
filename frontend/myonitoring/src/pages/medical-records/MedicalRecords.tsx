@@ -37,15 +37,7 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
   };
 
   return (
-    <div
-      style={{
-        backgroundImage: "url('/gradient_background.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100vh",
-        width: "100%",
-      }}
-    >
+    <div className="min-h-screen flex flex-col pb-[60px] bg-cover bg-center" style={{ backgroundImage: "url('/gradient_background.png')" }}>
       {/* 상단 바 */}
       <TopBar />
 
@@ -144,6 +136,8 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
           )}
         </div>
       </ContentSection>
+
+      {/* 하단 바 */}
       <BottomBar />
     </div>
   );
