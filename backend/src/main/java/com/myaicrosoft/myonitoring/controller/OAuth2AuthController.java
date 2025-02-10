@@ -27,13 +27,14 @@ public class OAuth2AuthController {
     public ResponseEntity<TokenDto> signInWithProvider(
             @PathVariable String provider,
             @RequestParam String code,
+            @RequestBody UserRegistrationDto registrationDto,
             HttpServletResponse response) {
         OAuth2AuthService authService = authServices.get(provider.toLowerCase());
         if (authService == null) {
             throw new RuntimeException("Unsupported OAuth2 provider: " + provider);
         }
         
-        TokenDto tokenDto = authService.signIn(code, new UserRegistrationDto());
+        TokenDto tokenDto = authService.signIn(code, registrationDto);
         
         // HTTP-only cookie에 refresh token 저장
         ResponseCookie cookie = ResponseCookie.from("refresh_token", tokenDto.getRefreshToken())

@@ -3,7 +3,7 @@ pipeline {
    
    environment {
        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
-       FIREBASE_KEY = credentials('firebase-service-account')
+       FIREBASE_KEY = credentials('myonitoring-firebase-adminsdk-fbsvc-78c9791370.json')
        DOCKER_REGISTRY = "kst1040"
        BACKEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-backend"
        FRONTEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-frontend"
