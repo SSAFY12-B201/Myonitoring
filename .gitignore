@@ -9,7 +9,8 @@ instance/*
 *.so
 
 # Firebase
-**/src/main/resources/myonitoring-firebase-adminsdk-fbsvc-78c9791370.json
+backend/src/main/resources/myonitoring-firebase-adminsdk-fbsvc-78c9791370.json
+
 
 # Distribution / packaging
 .Python
