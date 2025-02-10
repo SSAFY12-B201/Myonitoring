@@ -1,71 +1,78 @@
 pipeline {
-    agent any
-    
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
-        DOCKER_REGISTRY = "kst1040"
-        BACKEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-backend"
-        FRONTEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-frontend"
-        GIT_COMMIT_SHORT = sh(
-            script: "printf \$(git rev-parse --short HEAD)",
-            returnStdout: true
-        )
-    }
-    
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'dev', 
-                    credentialsId: 'gitlab-user-pwd', 
-                    url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git'
-            }
-        }
-        
-        stage('Build & Push Images') {
-            parallel {
-                stage('Backend') {
-                    when { changeset "backend/**" }
-                    steps {
-                        script {
-                            buildAndPushImage("${BACKEND_IMAGE}", "./backend")
-                        }
-                    }
-                }
-                
-                stage('Frontend') {
-                    when { changeset "frontend/**" }
-                    steps {
-                        script {
-                            buildAndPushImage("${FRONTEND_IMAGE}", "./frontend")
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    post {
-        success {
-            echo 'CI Pipeline succeeded! Images have been built and pushed to Docker Hub.'
-        }
-        failure {
-            echo 'CI Pipeline failed! Check the logs for details.'
-        }
-        always {
-            sh 'docker image prune -f'
-            cleanWs()
-        }
-    }
+   agent any
+   
+   environment {
+       DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+       FIREBASE_KEY = credentials('firebase-service-account')
+       DOCKER_REGISTRY = "kst1040"
+       BACKEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-backend"
+       FRONTEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-frontend"
+       GIT_COMMIT_SHORT = sh(
+           script: "printf \$(git rev-parse --short HEAD)",
+           returnStdout: true
+       )
+   }
+   
+   stages {
+       stage('Checkout') {
+           steps {
+               git branch: 'dev', 
+                   credentialsId: 'gitlab-user-pwd', 
+                   url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git'
+           }
+       }
+       
+       stage('Prepare Firebase Credentials') {
+           steps {
+               sh 'cp $FIREBASE_KEY backend/src/main/resources/myonitoring-firebase-adminsdk-fbsvc-78c9791370.json'
+           }
+       }
+       
+       stage('Build & Push Images') {
+           parallel {
+               stage('Backend') {
+                   when { changeset "backend/**" }
+                   steps {
+                       script {
+                           buildAndPushImage("${BACKEND_IMAGE}", "./backend")
+                       }
+                   }
+               }
+               
+               stage('Frontend') {
+                   when { changeset "frontend/**" }
+                   steps {
+                       script {
+                           buildAndPushImage("${FRONTEND_IMAGE}", "./frontend")
+                       }
+                   }
+               }
+           }
+       }
+   }
+   
+   post {
+       success {
+           echo 'CI Pipeline succeeded! Images have been built and pushed to Docker Hub.'
+       }
+       failure {
+           echo 'CI Pipeline failed! Check the logs for details.'
+       }
+       always {
+           sh 'docker image prune -f'
+           cleanWs()
+       }
+   }
 }
 
 def buildAndPushImage(String imageName, String context) {
-    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-        def image = docker.build(
-            "${imageName}:${GIT_COMMIT_SHORT}",
-            "--cache-from ${imageName}:latest ${context}"
-        )
-        
-        image.push()
-        image.push('latest')
-    }
+   docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
+       def image = docker.build(
+           "${imageName}:${GIT_COMMIT_SHORT}",
+           "--cache-from ${imageName}:latest ${context}"
+       )
+       
+       image.push()
+       image.push('latest')
+   }
 }
