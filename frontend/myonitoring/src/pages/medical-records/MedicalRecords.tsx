@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { useNavigate } from "react-router-dom"; // React Router 사용
 import {
   setFilterType,
   filterRecords,
@@ -8,9 +9,11 @@ import { AiOutlinePlus, AiOutlineCalendar } from "react-icons/ai"; // 아이콘 
 import { BsClock } from "react-icons/bs";
 import TopBar from "../../components/TopBar";
 import ContentSection from "../../components/ContentSection";
+import BottomBar from "../../components/BottomBar";
 
 const MedicalRecords = ({ catId }: { catId?: string }) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   // Redux 상태에서 필터링된 의료기록 가져오기
   const medicalRecords = useAppSelector(
@@ -23,10 +26,14 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
     dispatch(filterRecords()); // 초기 필터링 (전체)
   }, [dispatch]);
 
+  // 필터 타입 변경 시 필터링 실행
+  useEffect(() => {
+    dispatch(filterRecords()); // filterType이 변경될 때마다 필터링 실행
+  }, [filterType, dispatch]);
+
   // 필터 변경 핸들러
   const handleFilterChange = (type: "전체" | "정기검진" | "치료" | "기타") => {
     dispatch(setFilterType(type)); // 필터 타입 설정
-    dispatch(filterRecords()); // 필터링 실행
   };
 
   return (
@@ -68,7 +75,7 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
         </div>
 
         {/* 탭 메뉴 */}
-        <div className="flex justify-around  text-sm border-gray-300 mb-4">
+        <div className="flex justify-around text-sm border-gray-300 mb-4">
           {["전체", "정기검진", "치료", "기타"].map((type) => (
             <button
               key={type}
@@ -94,6 +101,7 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
             medicalRecords.map((record) => (
               <div
                 key={record.id}
+                onClick={() => navigate(`/medical-records/${record.id}`)}
                 className="border border-gray-200 rounded-lg p-4 shadow-sm bg-white flex justify-between items-start"
               >
                 {/* 왼쪽 정보 */}
@@ -123,10 +131,20 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
               </div>
             ))
           ) : (
-            <p className="text-center text-gray-500">의료 기록이 없습니다.</p>
+            <div className="flex flex-col items-center justify-center mt-24 h-full">
+              <img
+                src="/sleeping_cat.png"
+                alt="로고 이미지"
+                className="w-35 h-32 animate-fade-in"
+              />
+              <h1 className="text-xs font-Gidugu text-gray-900 mt-4">
+                의료기록이 없습니다...
+              </h1>
+            </div>
           )}
         </div>
       </ContentSection>
+      <BottomBar />
     </div>
   );
 };

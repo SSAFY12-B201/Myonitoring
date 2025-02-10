@@ -8,13 +8,19 @@ import {
   addReservation,
   deleteReservation,
 } from "../../redux/slices/reservationsSlice";
+import BottomBar from "../../components/BottomBar";
 
 // 24시간 형식을 12시간 형식으로 변환하는 함수
-const formatTimeTo12Hour = (time: string): { period: string; formattedTime: string } => {
+const formatTimeTo12Hour = (
+  time: string
+): { period: string; formattedTime: string } => {
   const [hour, minute] = time.split(":").map(Number);
   const period = hour >= 12 ? "오후" : "오전";
   const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-  return { period, formattedTime: `${formattedHour}:${minute.toString().padStart(2, "0")}` };
+  return {
+    period,
+    formattedTime: `${formattedHour}:${minute.toString().padStart(2, "0")}`,
+  };
 };
 
 const Reservation: React.FC = () => {
@@ -93,6 +99,7 @@ const Reservation: React.FC = () => {
         </div>
       </ContentSection>
 
+      <BottomBar />
       {/* 예약 설정 모달 */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-700 bg-opacity-50">
@@ -160,14 +167,13 @@ const Reservation: React.FC = () => {
 
 // ReservationItemProps 타입 정의
 interface ReservationItemProps {
-    id: string;
-    time: string;
-    amount: number;
-    isActive: boolean;
-    onToggle: (id: string) => void;
-    onDelete: (id: string) => void;
-  }
-  
+  id: string;
+  time: string;
+  amount: number;
+  isActive: boolean;
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
+}
 
 // ReservationItem 컴포넌트 내장
 const ReservationItem: React.FC<ReservationItemProps> = ({
@@ -232,11 +238,19 @@ const ReservationItem: React.FC<ReservationItemProps> = ({
         {/* 시간 정보 */}
         <div className="flex items-center space-x-2">
           {/* 오전/오후 정보 */}
-          <span className={`text-xs mt-1 ${isActive ? "text-gray-500" : "text-gray-300"}`}>
+          <span
+            className={`text-xs mt-1 ${
+              isActive ? "text-gray-500" : "text-gray-300"
+            }`}
+          >
             {period}
           </span>
           {/* 시각 숫자 */}
-          <span className={`text-xl font-bold ${isActive ? "text-black" : "text-gray-300"}`}>
+          <span
+            className={`text-xl font-bold ${
+              isActive ? "text-black" : "text-gray-300"
+            }`}
+          >
             {formattedTime}
           </span>
         </div>
@@ -244,7 +258,11 @@ const ReservationItem: React.FC<ReservationItemProps> = ({
         {/* 급식량과 토글 버튼 */}
         <div className="flex items-center space-x-2">
           {/* 급식량 정보 */}
-          <p className={`text-lg me-3 ${isActive ? "text-black" : "text-gray-300"}`}>
+          <p
+            className={`text-lg me-3 ${
+              isActive ? "text-black" : "text-gray-300"
+            }`}
+          >
             {amount}g
           </p>
 

@@ -33,7 +33,7 @@ const initialState: MedicalRecordsState = {
     {
       id: "2",
       catId: "cat1",
-      type: "치료",
+      type: "기타",
       title: "결막염 치료",
       description: "결막염 약 처방 및 치료",
       hospital: "행복동물병원",
@@ -49,6 +49,16 @@ const initialState: MedicalRecordsState = {
       hospital: "행복동물병원",
       date: "2024-12-29",
       time: "10:00",
+    },
+    {
+      id: "4",
+      catId: "cat1",
+      type: "기타",
+      title: "예방 접종",
+      description: "예방 접종 1회차차",
+      hospital: "행복동물병원",
+      date: "2024-11-15",
+      time: "16:00",
     },
   ],
   filteredRecords: [], // 초기에는 전체 데이터를 표시

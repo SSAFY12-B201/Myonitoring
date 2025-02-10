@@ -11,6 +11,7 @@ import Home from "./pages/Home"; // 홈 화면
 import Redirect from "./pages/auth/Redirect";
 import Reservation from "./pages/reservation/Reservation";
 import MedicalRecords from "./pages/medical-records/MedicalRecords";
+import MedicalRecordDetail from "./pages/medical-records/MedicalRecordsDetail";
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true); // 스플래시 화면 표시 여부
@@ -18,7 +19,7 @@ const App: React.FC = () => {
 
   const handleSplashFinish = () => {
     setShowSplash(false); // 스플래시 종료
-    navigate("/medical-records"); // 로그인 화면 이동
+    navigate("/home"); // 로그인 화면 이동
   };
 
   if (showSplash) {
@@ -48,16 +49,19 @@ const App: React.FC = () => {
       {/* <Route path="/greeting" element={<Greeting />} /> */}
 
       {/* 홈 화면 */}
-      {/* <Route path="/home" element={<Home />} /> */}
+      <Route path="/home" element={<Home />} />
 
       {/* 배급 예약 화면 */}
-      {/* <Route path="/reservation" element={<Reservation />} /> */}
+      <Route path="/reservation" element={<Reservation />} />
+      
 
       {/* 의료기록 조회 화면 */}
       <Route path="/medical-records" element={<MedicalRecords />} />
 
-
+      {/* 의료기록 상세 화면 */}
+      <Route path="/medical-records/:id" element={<MedicalRecordDetail />} />
     </Routes>
+
   );
 };
 
