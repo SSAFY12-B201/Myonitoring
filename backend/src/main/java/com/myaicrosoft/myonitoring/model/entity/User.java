@@ -4,14 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Entity
 @Table(name = "users")
 public class User {
@@ -27,8 +23,8 @@ public class User {
     @Column(nullable = false, unique = true, length = 255)
     private String email;
 
-    @Column(length = 255)
-    private String password;  // 소셜 로그인 사용자는 비밀번호 불필요
+    @Column(nullable = false, length = 255)
+    private String password; // 암호화된 비밀번호
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

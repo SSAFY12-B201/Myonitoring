@@ -12,5 +12,4 @@ import lombok.AllArgsConstructor;
 public class UserUpdateDto {
     private String nickname;
     private String address;
-    private String phoneNumber;
 } 
