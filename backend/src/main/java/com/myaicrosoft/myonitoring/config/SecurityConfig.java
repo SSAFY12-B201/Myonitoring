@@ -30,9 +30,6 @@ public class SecurityConfig {
     @Value("${allowed.origins}")
     private String allowedOrigins;
 
-    @Value("${app.api-prefix}")
-    private String apiPrefix;
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -46,9 +43,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(apiPrefix + "/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers(apiPrefix + "/admin/**").hasRole("ADMIN")
-                .requestMatchers(apiPrefix + "/**").authenticated()
+                .requestMatchers("/auth/**","/api/**").permitAll()
                 .anyRequest().authenticated())
             .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),
                 UsernamePasswordAuthenticationFilter.class);
