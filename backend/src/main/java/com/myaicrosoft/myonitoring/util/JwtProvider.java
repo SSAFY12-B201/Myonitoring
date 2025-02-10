@@ -135,4 +135,23 @@ public class JwtProvider {
             return e.getClaims();
         }
     }
+
+    public String generateAccessToken(User user) {
+        long now = (new Date()).getTime();
+        Date accessTokenExpiresIn = new Date(now + accessTokenValidityInMilliseconds);
+
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim("id", user.getId())
+                .claim("role", user.getRole().name())
+                .claim("authorities", Collections.singleton("ROLE_" + user.getRole().name()))
+                .setIssuedAt(new Date(now))
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    public long getAccessTokenExpirationTime() {
+        return accessTokenValidityInMilliseconds;
+    }
 } 

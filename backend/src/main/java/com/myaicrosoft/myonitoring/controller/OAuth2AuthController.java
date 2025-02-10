@@ -44,17 +44,31 @@ public class OAuth2AuthController {
             .build();
     }
 
-    @PostMapping("/{provider}/signin")
-    public ResponseEntity<TokenDto> signInWithProvider(
+    @PostMapping("/{provider}/authenticate")
+    public ResponseEntity<Map<String, Object>> authenticate(
             @PathVariable String provider,
-            @RequestParam String code,
+            @RequestParam String code) {
+        OAuth2AuthService authService = authServices.get(provider.toLowerCase());
+        if (authService == null) {
+            throw new RuntimeException("Unsupported OAuth2 provider: " + provider);
+        }
+        
+        Map<String, Object> authInfo = authService.authenticate(code);
+        return ResponseEntity.ok(authInfo);
+    }
+    
+    @PostMapping("/{provider}/register")
+    public ResponseEntity<TokenDto> register(
+            @PathVariable String provider,
+            @RequestParam String authToken,
+            @RequestBody UserRegistrationDto registrationDto,
             HttpServletResponse response) {
         OAuth2AuthService authService = authServices.get(provider.toLowerCase());
         if (authService == null) {
             throw new RuntimeException("Unsupported OAuth2 provider: " + provider);
         }
         
-        TokenDto tokenDto = authService.signIn(code, new UserRegistrationDto());
+        TokenDto tokenDto = authService.register(authToken, registrationDto);
         
         // HTTP-only cookie에 refresh token 저장
         ResponseCookie cookie = createRefreshTokenCookie(tokenDto.getRefreshToken(), 7 * 24 * 60 * 60); // 7 days
