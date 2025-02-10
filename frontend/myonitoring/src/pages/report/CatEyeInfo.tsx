@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import TopBar from '../components/TopBar';
-import BottomBar from '../components/BottomBar';
-import ContentSection from '../components/ContentSection';
-import EyeInfoBox from '../components/GraphComponents/EyeInfoBox';
+import TopBar from '../../components/TopBar';
+import BottomBar from '../../components/BottomBar';
+import ContentSection from '../../components/ContentSection';
+import EyeInfoBox from '../../components/GraphComponents/EyeInfoBox';
 
 // 질병명 매핑 (영어 -> 한국어)
 const diseaseNamesMap = {
@@ -31,7 +31,7 @@ const CatEyeInfo: React.FC = () => {
 
   // JSON 데이터 불러오기
   useEffect(() => {
-    import('../dummyData/cateye_data.json')
+    import('../../dummyData/cateye_data.json')
       .then((response) => setData(response as CatEyeData))
       .catch((error) => console.error("JSON 데이터 로드 실패:", error));
   }, []);

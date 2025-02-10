@@ -1,7 +1,7 @@
 import React from "react";
-import ReportTabBar from "../components/GraphComponents/ReportTabBar";
-import TopBar from "../components/TopBar";
-import BottomBar from "../components/BottomBar";
+import ReportTabBar from "../../components/GraphComponents/ReportTabBar";
+import TopBar from "../../components/TopBar";
+import BottomBar from "../../components/BottomBar";
 
 const StatisticsPage: React.FC = () => {
   // 임의의 데이터 설정

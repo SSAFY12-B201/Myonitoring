@@ -1,4 +1,3 @@
-import React from "react";
 import { useNavigate } from "react-router-dom"; // 페이지 이동을 위한 useNavigate 훅
 import Header from "../../components/Header";
 import ContentSection from "../../components/ContentSection";

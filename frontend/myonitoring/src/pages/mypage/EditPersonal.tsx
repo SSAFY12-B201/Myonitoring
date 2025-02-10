@@ -114,7 +114,7 @@ const EditPersonal = () => {
       </ContentSection>
 
       {/* 저장 버튼 */}
-      <footer className="fixed bottom-[15px] left-[0] w-full px-[10px]">
+      <footer className="fixed bottom-2 left-0 w-full p-4">
         <WideButton
           text="저장하기"
           onClick={handleSave}
