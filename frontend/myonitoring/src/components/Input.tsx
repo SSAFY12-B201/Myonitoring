@@ -2,7 +2,7 @@ import React from "react";
 
 interface InputProps {
   label: string; // 입력 필드의 레이블
-  type: "text" | "date" | "time" | "tel" | "select" | "textarea" | "number"; // 입력 필드의 타입
+  type: "text" | "date" | "time" | "tel" | "select" | "textarea" | "number" | "email"; // 입력 필드의 타입
   value: string; // 입력된 값
   onChange: (value: string) => void; // 값 변경 핸들러
   placeholder?: string; // 플레이스홀더 텍스트

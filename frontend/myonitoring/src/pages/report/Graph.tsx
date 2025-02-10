@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import ReportTabBar from "../components/GraphComponents/ReportTabBar"; // 기존 탭 바 컴포넌트
-import TopBar from "../components/TopBar";
-import CumulativeStatistics from "../components/GraphComponents/CumulativeStatistics";
-import DateNavigationBar from "../components/GraphComponents/DateNavigationBar"; // 날짜 이동 바 컴포넌트
-import feedingData from "../dummyData/feeding_data.json"; // JSON 데이터 가져오기
-import BottomBar from "../components/BottomBar";
-import ContentSection from "../components/ContentSection";
+import ReportTabBar from "../../components/GraphComponents/ReportTabBar"; // 기존 탭 바 컴포넌트
+import TopBar from "../../components/TopBar";
+import CumulativeStatistics from "../../components/GraphComponents/CumulativeStatistics";
+import DateNavigationBar from "../../components/GraphComponents/DateNavigationBar"; // 날짜 이동 바 컴포넌트
+import feedingData from "../../dummyData/feeding_data.json"; // JSON 데이터 가져오기
+import BottomBar from "../../components/BottomBar";
 
 interface Interval {
   time: string;
