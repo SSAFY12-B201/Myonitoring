@@ -20,17 +20,17 @@ import DeviceSettings from "./pages/mypage/DeviceSettings";
 import Notification from "./pages/Notification";
 
 const App: React.FC = () => {
-  const [showSplash, setShowSplash] = useState(true); // 스플래시 화면 표시 여부
-  const navigate = useNavigate();
+  // const [showSplash, setShowSplash] = useState(true); // 스플래시 화면 표시 여부
+  // const navigate = useNavigate();
 
-  const handleSplashFinish = () => {
-    setShowSplash(false); // 스플래시 종료
-    navigate("/home"); // 로그인 화면 이동
-  };
+  // const handleSplashFinish = () => {
+  //   setShowSplash(false); // 스플래시 종료
+  //   navigate("/login"); // 로그인 화면 이동
+  // };
 
-  if (showSplash) {
-    return <Splash onFinish={handleSplashFinish} />;
-  }
+  // if (showSplash) {
+  //   return <Splash onFinish={handleSplashFinish} />;
+  // }
 
   return (
     <Routes>
@@ -38,7 +38,7 @@ const App: React.FC = () => {
       {/* <Route path="/login" element={<LoginSignUp />} /> */}
 
       {/* 로그인 리다이렉트 화면 */}
-      {/* <Route path="/oauth2/callback/kakao" element={<Redirect/>} /> */}
+      {/* <Route path="/kakao-redirect" element={<Redirect/>} /> */}
 
       {/* 약관 동의 및 상세 */}
       {/* <Route path="/agreements" element={<Agreement />} /> */}
@@ -54,6 +54,7 @@ const App: React.FC = () => {
       {/* <Route path="/greeting" element={<Greeting />} /> */}
 
       {/* 홈 화면 */}
+      <Route path="/" element={<Home />} />
       <Route path="/home" element={<Home />} />
 
       {/* 배급 예약 화면 */}

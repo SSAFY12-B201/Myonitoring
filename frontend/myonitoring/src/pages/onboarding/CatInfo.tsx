@@ -101,7 +101,11 @@ const CatInfo = () => {
           <form className="pt-5 space-y-4">
             {/* 이름 입력 */}
             <Input
-              label="이름"
+               label={
+                <>
+                  이름<span className="text-red-500"> *</span>
+                </>
+              }
               type="text"
               value={catInfo.name || ""}
               onChange={(value) => {
@@ -115,7 +119,7 @@ const CatInfo = () => {
 
             {/* 묘종 입력 */}
             <Input
-              label="묘종 (선택)"
+              label="묘종"
               type="text"
               value={catInfo.breed || ""}
               onChange={(value) => {
@@ -127,7 +131,11 @@ const CatInfo = () => {
 
             {/* 성별 입력 */}
             <Input
-              label="성별"
+              label={
+                <>
+                  성별<span className="text-red-500"> *</span>
+                </>
+              }
               type="select"
               value={catInfo.gender || ""}
               onChange={(value) => {
@@ -141,7 +149,11 @@ const CatInfo = () => {
 
             {/* 중성화 여부 */}
             <Input
-              label="중성화 여부"
+              label={
+                <>
+                  중성화 여부<span className="text-red-500"> *</span>
+                </>
+              }
               type="select"
               value={catInfo.neutered || ""}
               onChange={(value) => {
@@ -155,7 +167,11 @@ const CatInfo = () => {
 
             {/* 생년월일 입력 */}
             <Input
-              label="생년월일"
+              label={
+                <>
+                  생년월일<span className="text-red-500"> *</span>
+                </>
+              }
               type="date"
               value={catInfo.birthdate || ""}
               onChange={(value) => {
@@ -168,7 +184,11 @@ const CatInfo = () => {
 
             {/* 나이 입력 */}
             <Input
-              label="나이"
+              label={
+                <>
+                  나이<span className="text-red-500"> *</span>
+                </>
+              }
               type="number"
               value={catInfo.age?.toString() || ""}
               onChange={(value) => {
@@ -187,7 +207,11 @@ const CatInfo = () => {
 
             {/* 몸무게 입력 */}
             <Input
-              label="몸무게"
+              label={
+                <>
+                  몸무게<span className="text-red-500"> *</span>
+                </>
+              }
               type="number"
               value={catInfo.weight?.toString() || ""}
               onChange={(value) => {
@@ -206,7 +230,7 @@ const CatInfo = () => {
 
             {/* 특징 입력 */}
             <Input
-              label="특징 (선택)"
+              label="특징"
               type="textarea"
               value={catInfo.characteristics || ""}
               onChange={(value) => {

@@ -37,7 +37,10 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col pb-[60px] bg-cover bg-center" style={{ backgroundImage: "url('/gradient_background.png')" }}>
+    <div
+      className="min-h-screen flex flex-col pb-[60px] bg-cover bg-center"
+      style={{ backgroundImage: "url('/gradient_background.png')" }}
+    >
       {/* 상단 바 */}
       <TopBar />
 
@@ -98,24 +101,23 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
               >
                 {/* 왼쪽 정보 */}
                 <div>
-                  {/* 분류 태그 */}
-                  <span
-                    className={`inline-block px-3 py-[2px] text-xs font-bold rounded ${
-                      record.type === "정기검진"
-                        ? "bg-yellow text-white" // 정기검진: 노란색
-                        : record.type === "치료"
-                        ? "bg-orange text-white" // 치료: 주황색
-                        : "bg-blue text-white" // 기타: 파란색
-                    }`}
-                  >
-                    {record.type}
-                  </span>
-                  {/* 제목 */}
-                  <h3 className="mt-2 font-semibold text-base">
-                    {record.title}
-                  </h3>
+                  {/* 분류 태그와 제목을 가로로 나란히 배치 */}
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-block px-3 py-[2px] text-xs font-bold rounded ${
+                        record.type === "정기검진"
+                          ? "bg-yellow text-white" // 정기검진: 노란색
+                          : record.type === "치료"
+                          ? "bg-orange text-white" // 치료: 주황색
+                          : "bg-blue text-white" // 기타: 파란색
+                      }`}
+                    >
+                      {record.type}
+                    </span>
+                    <h3 className="font-semibold text-base">{record.title}</h3>
+                  </div>
                   {/* 날짜 및 시간 */}
-                  <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
+                  <p className="text-sm text-gray-500 mt-2 flex items-center gap-2">
                     <AiOutlineCalendar size={14} /> {record.date}{" "}
                     <BsClock size={14} /> {record.time}
                   </p>

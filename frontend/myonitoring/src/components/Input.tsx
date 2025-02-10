@@ -1,7 +1,7 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
 interface InputProps {
-  label: string; // 입력 필드의 레이블
+  label: ReactNode; // 입력 필드의 레이블 (문자열 또는 JSX 요소)
   type: "text" | "date" | "time" | "tel" | "select" | "textarea" | "number" | "email"; // 입력 필드의 타입
   value: string; // 입력된 값
   onChange: (value: string) => void; // 값 변경 핸들러

@@ -35,7 +35,11 @@ const MedicalRecordDetail = () => {
       <ContentSection>
         {/* 분류 */}
         <Input
-          label="분류 *"
+          label={
+            <>
+              분류<span className="text-red-500"> *</span>
+            </>
+          }
           type="select"
           value={record.type}
           onChange={(value) => handleChange("type", value)}
@@ -44,7 +48,11 @@ const MedicalRecordDetail = () => {
 
         {/* 제목 */}
         <Input
-          label="제목 *"
+          label={
+            <>
+              제목<span className="text-red-500"> *</span>
+            </>
+          }
           type="text"
           value={record.title}
           onChange={(value) => handleChange("title", value)}
@@ -60,7 +68,11 @@ const MedicalRecordDetail = () => {
 
         {/* 병원 */}
         <Input
-          label="병원 *"
+          label={
+            <>
+              병원<span className="text-red-500"> *</span>
+            </>
+          }
           type="text"
           value={record.hospital}
           onChange={(value) => handleChange("hospital", value)}
@@ -68,7 +80,11 @@ const MedicalRecordDetail = () => {
 
         {/* 날짜 */}
         <Input
-          label="날짜 *"
+          label={
+            <>
+              날짜<span className="text-red-500"> *</span>
+            </>
+          }
           type="date"
           value={record.date}
           onChange={(value) => handleChange("date", value)}
@@ -76,7 +92,11 @@ const MedicalRecordDetail = () => {
 
         {/* 시간 */}
         <Input
-          label="시간 *"
+          label={
+            <>
+              시간<span className="text-red-500"> *</span>
+            </>
+          }
           type="time"
           value={record.time}
           onChange={(value) => handleChange("time", value)}
@@ -85,10 +105,7 @@ const MedicalRecordDetail = () => {
 
       {/* 하단 버튼 */}
       <footer className="bottom-0 left-0 w-full p-4">
-        <WideButton
-          text="저장"
-          textColor="text-white"
-        />
+        <WideButton text="저장" textColor="text-white" />
       </footer>
     </div>
   );
