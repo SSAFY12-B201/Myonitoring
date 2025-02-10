@@ -3,48 +3,40 @@ import Header from "../components/Header";
 import { useNavigate } from "react-router-dom";
 import ContentSection from "../components/ContentSection";
 import { useAppSelector } from "../redux/hooks";
+import { CheckCircle, XCircle, Info, AlertTriangle } from "lucide-react";
 
 const Notification: React.FC = () => {
   const navigate = useNavigate(); // 뒤로가기 네비게이션
-  const notifications = useAppSelector((state) => state.notification.notifications);
+  const notifications = useAppSelector(
+    (state) => state.notification.notifications
+  );
 
   // 날짜별로 알림 그룹화
-  const groupedNotifications = notifications.reduce((groups: any, notification) => {
-    const date = notification.date;
-    if (!groups[date]) {
-      groups[date] = [];
-    }
-    groups[date].push(notification);
-    return groups;
-  }, {});
+  const groupedNotifications = notifications.reduce(
+    (groups: any, notification) => {
+      const date = notification.date;
+      if (!groups[date]) {
+        groups[date] = [];
+      }
+      groups[date].push(notification);
+      return groups;
+    },
+    {}
+  );
 
   // 알림 유형에 따른 아이콘 및 색상 반환
   const getIcon = (type: string) => {
+    const iconStyle = "w-5 h-5 flex-shrink-0"; // ✅ 크기 유지
+
     switch (type) {
       case "error":
-        return (
-          <div className="bg-red-500 text-white w-8 h-8 flex items-center justify-center rounded-full">
-            ✖
-          </div>
-        );
+        return <XCircle className={`text-red-500 ${iconStyle}`} />;
       case "success":
-        return (
-          <div className="bg-green-500 text-white w-8 h-8 flex items-center justify-center rounded-full">
-            ✔
-          </div>
-        );
+        return <CheckCircle className={`text-green-500 ${iconStyle}`} />;
       case "warning":
-        return (
-          <div className="bg-yellow text-white w-8 h-8 flex items-center justify-center rounded-full">
-            !
-          </div>
-        );
+        return <AlertTriangle className={`text-orange ${iconStyle}`} />;
       case "info":
-        return (
-          <div className="bg-blue text-white w-8 h-8 flex items-center justify-center rounded-full">
-            ℹ
-          </div>
-        );
+        return <Info className={`text-blue ${iconStyle}`} />;
       default:
         return null;
     }
@@ -72,12 +64,16 @@ const Notification: React.FC = () => {
                     className="flex items-start bg-white p-4 rounded-lg shadow-sm border border-gray-200"
                   >
                     {/* 아이콘 */}
-                    {getIcon(item.type)}
+                    <div className="pt-1">{getIcon(item.type)}</div>
 
                     {/* 내용 */}
                     <div className="ml-4">
-                      <h3 className="text-sm font-bold text-gray-800">{item.title}</h3>
-                      <p className="text-xs text-gray-500 mt-1">{item.description}</p>
+                      <h3 className="text-sm font-bold text-gray-800">
+                        {item.title}
+                      </h3>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {item.description}
+                      </p>
                     </div>
                   </div>
                 ))}
