@@ -1,9 +1,8 @@
-import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../redux/hooks";
 import { updateRecord } from "../../redux/slices/medicalRecordsSlice";
 import Input from "../../components/Input";
-import ContentSection from "../../components/ContentSection";
+import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
 import Header from "../../components/Header";
 
@@ -32,7 +31,7 @@ const MedicalRecordDetail = () => {
       <Header title="의료기록 수정" onBack={() => navigate(-1)} />
 
       {/* 상세 정보 입력 폼 */}
-      <ContentSection>
+      <ExceptTopContentSection>
         {/* 분류 */}
         <Input
           label="분류 *"
@@ -81,7 +80,7 @@ const MedicalRecordDetail = () => {
           value={record.time}
           onChange={(value) => handleChange("time", value)}
         />
-      </ContentSection>
+      </ExceptTopContentSection>
 
       {/* 하단 버튼 */}
       <footer className="bottom-0 left-0 w-full p-4">

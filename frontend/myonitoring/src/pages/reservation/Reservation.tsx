@@ -59,15 +59,7 @@ const Reservation: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        backgroundImage: "url('/gradient_background.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100vh",
-        width: "100%",
-      }}
-    >
+    <div className="min-h-screen flex flex-col bg-cover bg-center" style={{ backgroundImage: "url('/gradient_background.png')" }}>
       {/* 상단 바 */}
       <TopBar />
 
@@ -229,7 +221,7 @@ const ReservationItem: React.FC<ReservationItemProps> = ({
 
       {/* 예약 정보 */}
       <div
-        className={`flex items-center justify-between p-4 mb-4 bg-white rounded-lg border border-gray-300 shadow-sm transform transition-transform`}
+        className={`flex items-center justify-between p-4 mb-4 bg-white rounded-lg border border-gray-200 shadow-sm transform transition-transform`}
         style={{ transform: `translateX(${translateX}px)` }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}

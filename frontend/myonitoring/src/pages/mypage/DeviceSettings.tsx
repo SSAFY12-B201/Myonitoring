@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"; // 페이지 이동을 위한 useNavigate 훅
 import Header from "../../components/Header";
-import ContentSection from "../../components/ContentSection";
+import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
 
 // 샘플 데이터 (device_data.json)
@@ -45,7 +45,7 @@ const DeviceSettings = () => {
   return (
     <>
       <Header title="연동 기기 설정" onBack={() => navigate(-1)} />
-      <ContentSection>
+      <ExceptTopContentSection>
         <div className="max-w-md mx-auto mt-4">
           {/* 연동된 기기 리스트 */}
           <div className="space-y-4 mb-20">
@@ -95,7 +95,7 @@ const DeviceSettings = () => {
             />
           </footer>
         </div>
-      </ContentSection>
+      </ExceptTopContentSection>
     </>
   );
 };

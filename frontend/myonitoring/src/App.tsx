@@ -18,6 +18,7 @@ import MyPage from "./pages/mypage/Mypage";
 import EditPersonal from "./pages/mypage/EditPersonal";
 import DeviceSettings from "./pages/mypage/DeviceSettings";
 import Notification from "./pages/Notification";
+import CatEyeInfo from "./pages/report/CatEyeInfo";
 
 const App: React.FC = () => {
   const [showSplash, setShowSplash] = useState(true); // 스플래시 화면 표시 여부
@@ -64,6 +65,9 @@ const App: React.FC = () => {
 
       {/* 통계 화면 */}
       <Route path="/statistics" element={<StatisticsPage />} />
+
+      {/* 눈건강 화면 */}
+      <Route path="/cateyeinfo" element={<CatEyeInfo />} />
 
       {/* 의료기록 조회 화면 */}
       <Route path="/medical-records" element={<MedicalRecords />} />

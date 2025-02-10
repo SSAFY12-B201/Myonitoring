@@ -2,7 +2,7 @@ import React from "react";
 import { FaCog, FaFileAlt, FaChevronRight } from "react-icons/fa"; // react-icons에서 아이콘 가져오기
 import { useNavigate } from "react-router-dom"; // 페이지 이동을 위한 useNavigate 훅
 import Header from "../../components/Header";
-import ContentSection from "../../components/ContentSection";
+import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import BottomBar from "../../components/BottomBar";
 
 const MyPage = () => {
@@ -11,7 +11,7 @@ const MyPage = () => {
     return (
         <>
         <Header title="마이 페이지" onBack={() => navigate(-1)}/>
-        <ContentSection>
+        <ExceptTopContentSection>
             <div className="max-w-md mx-auto bg-white">
               {/* 계정 설정 */}
               <div className="mb-8">
@@ -61,7 +61,7 @@ const MyPage = () => {
                 </ul>
               </div>
             </div>
-        </ContentSection>
+        </ExceptTopContentSection>
         <BottomBar/>
         </>
     );

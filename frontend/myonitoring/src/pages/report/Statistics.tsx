@@ -17,7 +17,6 @@ const Statistics: React.FC = () => {
   let warningContent = "섭취량 특이사항이 발견되지 않았습니다.";
   let warningStyle = {
     bgColor: "bg-white",
-    borderColor: "border-gray-300",
     titleColor: "text-black",
     contentColor: "text-gray-600",
     highlightColor: "",
@@ -31,7 +30,6 @@ const Statistics: React.FC = () => {
       "건강상의 이상 신호가 간주됩니다. 전문적인 상담을 받는 것이 권장됩니다.";
     warningStyle = {
       bgColor: "bg-[#FFE5AA]",
-      borderColor: "border-[#FFC107]",
       titleColor: "text-black",
       contentColor: "text-gray-600",
       highlightColor: "text-red-500",
@@ -44,7 +42,6 @@ const Statistics: React.FC = () => {
       "건강상의 이상 신호가 간주됩니다. 전문적인 상담을 받는 것이 권장됩니다.";
     warningStyle = {
       bgColor: "bg-[#FFBF29]",
-      borderColor: "border-[#FF9F00]",
       titleColor: "text-black",
       contentColor: "text-gray-600",
       highlightColor: "text-red-500",
@@ -52,7 +49,7 @@ const Statistics: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen mb-16">
       <TopBar />
       <ReportTabBar />
       <div className="px-6 py-5 mt-2">
@@ -129,7 +126,7 @@ const Statistics: React.FC = () => {
 
         {/* 경고 알림 박스 */}
         <div
-          className={`mt-8 rounded-lg p-4 mb-6 border ${warningStyle.bgColor} ${warningStyle.borderColor}`}
+          className={`mt-8 rounded-lg p-4 mb-6 ${warningStyle.bgColor}`}
         >
           <p className={`font-bold text-md mb-2 ${warningStyle.titleColor}`}>
             {warningMessage.split(/(증가|감소)/).map((word, idx) =>
