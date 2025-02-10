@@ -9,8 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -102,18 +104,27 @@ public class OAuth2AuthController {
     }
 
     @PostMapping("/signout")
-    public ResponseEntity<Void> signOut(
-            @AuthenticationPrincipal UserDetails userDetails,
-            @RequestHeader("Authorization") String bearerToken,
+    public ResponseEntity<Map<String, String>> signOut(
+            @CookieValue(name = "refresh_token", required = false) String refreshToken,
+            Authentication authentication,
             HttpServletResponse response) {
-        if (bearerToken.startsWith("Bearer ")) {
-            String accessToken = bearerToken.substring(7);
-            userService.logout(userDetails.getUsername(), accessToken);
+        try {
+            log.info("Signing out user...");
+            String email = authentication != null ? authentication.getName() : null;
             
-            // Clear refresh token cookie
+            // DB에서 리프레시 토큰 제거 및 로그아웃 처리
+            userService.logout(email, refreshToken);
+            
+            // 리프레시 토큰 쿠키 삭제
             ResponseCookie cookie = createRefreshTokenCookie("", 0);
+            log.info("Created deletion cookie: {}", cookie.toString());
             response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            
+            return ResponseEntity.ok(Map.of("message", "Successfully logged out"));
+        } catch (Exception e) {
+            log.error("Logout failed: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(Map.of("error", "Logout failed: " + e.getMessage()));
         }
-        return ResponseEntity.ok().build();
     }
 } 
