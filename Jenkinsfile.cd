@@ -1,0 +1,90 @@
+pipeline {
+    agent any
+    
+    environment {
+        EC2_HOST = 'ip-172-26-8-191'
+        EC2_USER = 'ubuntu'
+        DEPLOY_DIR = '/home/ubuntu/Myonitoring'
+        DOCKER_REGISTRY = "kst1040"
+        BACKEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-backend"
+        FRONTEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-frontend"
+    }
+    
+    stages {
+        stage('Deploy') {
+            steps {
+                script {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                        sh """
+                            ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
+                                cd ${DEPLOY_DIR}
+                                
+                                echo "Pulling latest images..."
+                                docker image pull ${BACKEND_IMAGE}:latest
+                                docker image pull ${FRONTEND_IMAGE}:latest
+
+                                echo "Stopping current containers..."
+                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+                                
+                                echo "Starting new containers..."
+                                docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+                                
+                                echo "Cleaning up old images..."
+                                docker image prune -f
+                            '
+                        """
+                    }
+                }
+            }
+        }
+        
+        stage('Health Check') {
+            steps {
+                script {
+                    sleep(time: 30, unit: 'SECONDS')
+            
+                    withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                        sh """
+                            ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
+                                cd ${DEPLOY_DIR}
+                                echo "Checking container status..."
+                                CONTAINERS=\$(docker-compose -f docker-compose.yml -f docker-compose.prod.yml ps -q)
+                                if [ -z "\$CONTAINERS" ]; then
+                                    echo "No running containers found!"
+                                    exit 1
+                                fi
+                                docker inspect \$CONTAINERS --format "{{.Name}}: {{.State.Status}}"
+                            '
+                        """
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed!'
+            
+            script {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ec2-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+                    sh """
+                        ssh -i \$SSH_KEY -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} '
+                            cd ${DEPLOY_DIR}
+                            
+                            echo "Rolling back to previous state..."
+                            docker-compose -f docker-compose.yml -f docker-compose.prod.yml down
+                            docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+                        '
+                    """
+                }
+            }
+        }
+        always {
+            cleanWs()
+        }
+    }
+}

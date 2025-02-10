@@ -1,0 +1,12 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ],
+  "compilerOptions": {
+    // ... 기존 설정들
+    "noUnusedLocals": false,    // 추가
+    "noUnusedParameters": false // 추가
+  }
+}
