@@ -59,7 +59,7 @@ services:
       interval: 10s
       retries: 5
     ports:
-      - "3306:3306"
+      - "3307:3306"
 
 volumes:
   mysql_data:
