@@ -23,18 +23,43 @@ const Input: React.FC<InputProps> = ({
   errorMessage = "", // 에러 메시지 기본값 빈 문자열
   className = "", // 추가적인 클래스명 기본값 빈 문자열
 }) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const inputValue = e.target.value;
+
+    if (type === "tel") {
+      // 핸드폰 번호 형식 검증 (숫자와 하이픈만 허용)
+      const phoneNumberRegex = /^[0-9-]*$/;
+      if (!phoneNumberRegex.test(inputValue)) return; // 잘못된 형식 차단
+
+      // 하이픈 자동 추가 (010-0000-0000 형식)
+      let formattedValue = inputValue.replace(/[^0-9]/g, ""); // 숫자만 남김
+      if (formattedValue.length > 3 && formattedValue.length <= 7) {
+        formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(3)}`;
+      } else if (formattedValue.length > 7) {
+        formattedValue = `${formattedValue.slice(0, 3)}-${formattedValue.slice(
+          3,
+          7
+        )}-${formattedValue.slice(7, 11)}`;
+      }
+      onChange(formattedValue);
+      return;
+    }
+
+    onChange(inputValue); // 값 업데이트
+  };
+
   return (
     <div className={`mb-${error ? "2" : "6"}`}>
       {/* 레이블 */}
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        {label}
-      </label>
+      <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
 
       {/* 다중 줄 텍스트 (textarea) */}
       {type === "textarea" ? (
         <textarea
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={handleInputChange}
           placeholder={placeholder}
           className={`w-full px-4 py-2 border ${
             error ? "border-red-500" : "border-gray-300"
@@ -46,7 +71,7 @@ const Input: React.FC<InputProps> = ({
       ) : type === "select" ? (
         <select
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={handleInputChange}
           className={`w-full px-4 py-2 border ${
             error ? "border-red-500" : "border-gray-300"
           } rounded-lg focus:outline-none focus:ring-2 ${
@@ -66,7 +91,7 @@ const Input: React.FC<InputProps> = ({
         <input
           type={type}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={handleInputChange}
           placeholder={placeholder}
           className={`w-full px-4 py-2 border ${
             error ? "border-red-500" : "border-gray-300"

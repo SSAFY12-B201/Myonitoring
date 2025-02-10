@@ -119,7 +119,7 @@ const Graph: React.FC = () => {
       </div>
 
       {/* 구분선인데 있어도 ㄱㅊ 없어도 ㄱㅊㅊ */}
-      <hr className="mx-5 m-3 border-gray-300"/>
+      <hr className="mx-6 m-3 border-gray-300"/>
       
       {/* 누적 통계 및 배급량 표시 */}
       <div className="w-full max-w-4xl px-4 mt-2 mx-auto">

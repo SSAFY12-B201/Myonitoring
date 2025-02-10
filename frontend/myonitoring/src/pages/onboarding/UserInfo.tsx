@@ -25,7 +25,7 @@ const UserInfo = () => {
     // 각 필드의 오류 상태 업데이트
     const newErrors = {
       nickname: !userInfo.nickname,
-      phoneNumber: !userInfo.phoneNumber,
+      phoneNumber: !userInfo.phoneNumber || userInfo.phoneNumber.length !== 13, // 전화번호 길이 검증 추가
       address: !userInfo.address,
     };
     setErrors(newErrors);
@@ -79,7 +79,7 @@ const UserInfo = () => {
               }}
               placeholder="010-0000-0000"
               error={errors.phoneNumber}
-              errorMessage="핸드폰 번호를 입력해주세요."
+              errorMessage="올바른 핸드폰 번호를 입력해주세요."
             />
 
             {/* 주소 입력 */}

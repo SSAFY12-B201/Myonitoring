@@ -103,9 +103,8 @@ const CatEyeInfo: React.FC = () => {
           {/* 제목과 내용 */}
           <h2 className="text-lg font-bold text-black mb-2 mt-8">왜 고양이 안구 건강이 중요한가요?</h2>
           <p className="text-sm text-gray-600 leading-relaxed">
-            고양이의 경우 건강 진단으로 식욕, 안구 건강이 가장 확실한 신호 입니다.
-            증상 결과에 표시된 % 수치는 묘니터링 AI를 통해 분석한 증상이 있을 확률로
-            아래와 같이 구분해 제공하고 있어요.
+            고양이의 경우 건강 진단으로 식욕, 안구 건강이 가장 확실한 신호입니다.
+            증상 결과에 표시된 % 수치는 묘니터링 AI를 통해 분석한 증상이 있을 확률입니다.
           </p>
         </div>
 

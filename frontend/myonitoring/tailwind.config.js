@@ -15,6 +15,7 @@ export default {
     },
     fontFamily: {
       Gidugu: ["Gidugu"],
+      primary: ["'Noto Sans KR'", "sans-serif"], // Noto Sans KR 추가
     },
   },
   plugins: [],
