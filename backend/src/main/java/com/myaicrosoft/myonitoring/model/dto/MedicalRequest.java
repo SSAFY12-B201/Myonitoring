@@ -7,10 +7,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 /**
- * 의료 기록 생성 요청 DTO 클래스
+ * 의료 기록 생성 및 수정 요청 DTO 클래스
  */
 @Data
-public class MedicalCreateRequest {
+public class MedicalRequest {
     private MedicalCategory category; // 필수 필드: 카테고리(CHECKUP, TREATMENT 등)
     private String title;             // 필수 필드: 제목(100자 이내)
     private String description;       // 선택 필드: 설명(TEXT 타입)

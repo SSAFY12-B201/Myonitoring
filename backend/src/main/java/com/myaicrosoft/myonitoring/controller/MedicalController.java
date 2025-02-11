@@ -29,7 +29,7 @@ public class MedicalController {
     @PostMapping("/{catPk}")
     public ResponseEntity<Long> createMedicalRecord(
             @PathVariable("catPk") Long catPk,
-            @RequestBody MedicalCreateRequest request) {
+            @RequestBody MedicalRequest request) {
         Long medicalId = medicalService.createMedicalRecord(catPk, request);
         return ResponseEntity.ok(medicalId);
     }
@@ -74,7 +74,7 @@ public class MedicalController {
     @PutMapping("/detail/{medicalPk}")
     public ResponseEntity<Void> updateMedicalRecord(
             @PathVariable("medicalPk") Long medicalPk,
-            @RequestBody MedicalUpdateRequest request) {
+            @RequestBody MedicalRequest request) {
         medicalService.updateMedicalRecord(medicalPk, request);
         return ResponseEntity.noContent().build();
     }

@@ -27,7 +27,7 @@ public class MedicalService {
      * @param request 의료 기록 생성 요청 데이터 (DTO)
      * @return 생성된 의료 기록의 ID 반환
      */
-    public Long createMedicalRecord(Long catId, MedicalCreateRequest request) {
+    public Long createMedicalRecord(Long catId, MedicalRequest request) {
         Cat cat = catRepository.findById(catId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 고양이를 찾을 수 없습니다. ID: " + catId));
 
@@ -91,7 +91,7 @@ public class MedicalService {
      * @param medicalId 수정할 의료 기록 ID (Primary Key)
      * @param request 수정 요청 데이터 (DTO)
      */
-    public void updateMedicalRecord(Long medicalId, MedicalUpdateRequest request) {
+    public void updateMedicalRecord(Long medicalId, MedicalRequest request) {
         // 1. 의료 기록 조회
         Medical medical = medicalRepository.findById(medicalId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 의료 기록을 찾을 수 없습니다. ID: " + medicalId));
