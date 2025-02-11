@@ -56,14 +56,14 @@ public class KakaoAuthService implements OAuth2AuthService {
         // 카카오 사용자 정보 받기
         Map<String, Object> userInfo = getKakaoUserInfo(kakaoAccessToken);
         String email = extractEmail(userInfo);
-        
+
         // 이메일로 사용자 찾기
         User existingUser = userRepository.findByEmail(email).orElse(null);
-        
+
         Map<String, Object> response = new HashMap<>();
         response.put("auth_token", kakaoAccessToken);
         response.put("email", email);
-        
+
         if (existingUser != null) {
             // 기존 회원인 경우
             if (existingUser.getProvider() != User.Provider.KAKAO) {
@@ -74,12 +74,12 @@ public class KakaoAuthService implements OAuth2AuthService {
             if (!existingUser.isProfileCompleted()) {
                 Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
                 Map<String, Object> properties = (Map<String, Object>) userInfo.get("properties");
-                
+
                 response.put("is_registered", false);
                 response.put("registration_info", Map.of(
-                    "email", email,
-                    "suggested_nickname", properties != null ? properties.get("nickname") : email.split("@")[0],
-                    "required_fields", List.of("nickname", "address", "phoneNumber")
+                        "email", email,
+                        "suggested_nickname", properties != null ? properties.get("nickname") : email.split("@")[0],
+                        "required_fields", List.of("nickname", "address", "phoneNumber")
                 ));
                 return response;
             }
@@ -88,35 +88,35 @@ public class KakaoAuthService implements OAuth2AuthService {
             TokenDto tokenDto = jwtProvider.generateTokenDto(existingUser);
             existingUser.setRefreshToken(tokenDto.getRefreshToken());
             userRepository.save(existingUser);
-            
+
             response.put("is_registered", true);
             response.put("token", tokenDto);
         } else {
             // 신규 회원인 경우 기본 정보만 저장
             Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
             Map<String, Object> properties = (Map<String, Object>) userInfo.get("properties");
-            
+
             // 기본 사용자 생성
             User newUser = User.builder()
-                .email(email)
-                .provider(User.Provider.KAKAO)
-                .role(User.Role.USER)
-                .isProfileCompleted(false)
-                .build();
-            
+                    .email(email)
+                    .provider(User.Provider.KAKAO)
+                    .role(User.Role.USER)
+                    .isProfileCompleted(false)
+                    .build();
+
             // JWT 토큰 생성 및 저장
             TokenDto tokenDto = jwtProvider.generateTokenDto(newUser);
             newUser.setRefreshToken(tokenDto.getRefreshToken());
             userRepository.save(newUser);
-            
+
             response.put("is_registered", false);
             response.put("registration_info", Map.of(
-                "email", email,
-                "suggested_nickname", properties != null ? properties.get("nickname") : email.split("@")[0],
-                "required_fields", List.of("nickname", "address", "phoneNumber")
+                    "email", email,
+                    "suggested_nickname", properties != null ? properties.get("nickname") : email.split("@")[0],
+                    "required_fields", List.of("nickname", "address", "phoneNumber")
             ));
         }
-        
+
         return response;
     }
 
@@ -130,11 +130,11 @@ public class KakaoAuthService implements OAuth2AuthService {
         // 카카오 사용자 정보 다시 확인
         Map<String, Object> userInfo = getKakaoUserInfo(authToken);
         String email = extractEmail(userInfo);
-        
+
         // 이메일로 사용자 찾기
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found. Please authenticate first."));
-        
+
         if (user.isProfileCompleted()) {
             throw new RuntimeException("User profile is already completed");
         }
@@ -144,16 +144,16 @@ public class KakaoAuthService implements OAuth2AuthService {
         user.setAddress(registrationDto.getAddress());
         user.setPhoneNumber(registrationDto.getPhoneNumber());
         user.setProfileCompleted(true);
-        
+
         userRepository.save(user);
-        
+
         // 기존 토큰 재사용 (이미 저장되어 있음)
         return TokenDto.builder()
-            .grantType("Bearer")
-            .accessToken(jwtProvider.generateAccessToken(user))
-            .accessTokenExpiresIn(jwtProvider.getAccessTokenExpirationTime())
-            .refreshToken(user.getRefreshToken())
-            .build();
+                .grantType("Bearer")
+                .accessToken(jwtProvider.generateAccessToken(user))
+                .accessTokenExpiresIn(jwtProvider.getAccessTokenExpirationTime())
+                .refreshToken(user.getRefreshToken())
+                .build();
     }
 
     private String getKakaoTokens(String code) {
