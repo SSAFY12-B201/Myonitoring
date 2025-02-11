@@ -46,6 +46,10 @@ public class User {
     @Column(length = 255)
     private String phoneNumber;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isProfileCompleted = false;
+
     public enum Provider {
         LOCAL, KAKAO, GOOGLE, NAVER
     }
