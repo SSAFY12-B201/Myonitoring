@@ -29,11 +29,11 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         if (!StringUtils.hasText(email)) {
             throw new IllegalArgumentException("Email cannot be empty");
-    }
+        }
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-
+        
         return new org.springframework.security.core.userdetails.User(
             user.getEmail(),
             user.getPassword(),
@@ -57,7 +57,7 @@ public class UserService implements UserDetailsService {
         // 이미 존재하는 계정인지 확인
         if (userRepository.existsByEmail(registrationDto.getEmail())) {
             throw new RuntimeException("Account already exists");
-    }
+        }
 
         // 새 계정 생성
         User user = new User();
@@ -104,17 +104,17 @@ public class UserService implements UserDetailsService {
         if (!StringUtils.hasText(email)) {
             throw new IllegalArgumentException("Email cannot be empty");
         }
+        if (!StringUtils.hasText(updateDto.getNickname())) {
+            throw new IllegalArgumentException("Nickname cannot be empty");
+        }
 
         // 사용자 조회
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
 
         // 정보 업데이트
-        if (StringUtils.hasText(updateDto.getNickname())) {
-            user.setNickname(updateDto.getNickname());
-        }
+        user.setNickname(updateDto.getNickname());
         user.setAddress(updateDto.getAddress());
-        user.setPhoneNumber(updateDto.getPhoneNumber());
 
         // 저장 및 응답
         User savedUser = userRepository.save(user);
@@ -135,7 +135,7 @@ public class UserService implements UserDetailsService {
         
         // 회원 삭제
         userRepository.delete(user);
-
+        
         log.info("User deleted successfully: {}", email);
     }
 

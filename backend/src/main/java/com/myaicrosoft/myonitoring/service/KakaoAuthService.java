@@ -48,14 +48,26 @@ public class KakaoAuthService implements OAuth2AuthService {
             throw new IllegalArgumentException("Authorization code cannot be null or empty");
         }
 
-        // 카카오 토큰 받기
-        String tokensJson = getKakaoTokens(code);
-        Map<String, String> tokens = parseKakaoTokens(tokensJson);
-        String kakaoAccessToken = tokens.get("access_token");
+        // 1. 카카오 액세스 토큰 받기
+        String kakaoTokenResponse = getKakaoTokens(code);
+        Map<String, String> tokens = parseKakaoTokens(kakaoTokenResponse);
+        String accessToken = tokens.get("access_token");
 
-        // 카카오 사용자 정보 받기
-        Map<String, Object> userInfo = getKakaoUserInfo(kakaoAccessToken);
+        if (accessToken == null || accessToken.isEmpty()) {
+            throw new RuntimeException("Failed to get access token from Kakao");
+        }
+
+        // 2. 액세스 토큰으로 사용자 정보 가져오기
+        Map<String, Object> userInfo = getKakaoUserInfo(accessToken);
         String email = extractEmail(userInfo);
+
+        if (email == null || email.isEmpty()) {
+            throw new RuntimeException("Failed to get email from Kakao");
+        }
+
+        // 3. 이메일로 기존 회원 조회
+        User user;
+        boolean isNewUser = !userRepository.existsByEmail(email);
         
         // 이메일로 사용자 찾기
         User existingUser = userRepository.findByEmail(email).orElse(null);
@@ -252,7 +264,13 @@ public class KakaoAuthService implements OAuth2AuthService {
                 .orElseThrow(() -> new RuntimeException("Refresh token not found"));
 
         // 3. 새로운 토큰 발급
-        TokenDto tokenDto = jwtProvider.generateTokenDto(user);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                user.getEmail(),
+                null,
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+        );
+
+        TokenDto tokenDto = jwtProvider.generateTokenDto(authentication);
         userService.updateRefreshToken(user.getEmail(), tokenDto.getRefreshToken());
 
         return tokenDto;
