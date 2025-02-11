@@ -54,7 +54,7 @@ const Statistics: React.FC = () => {
       <ReportTabBar />
       <div className="px-6 py-5 mt-2">
         {/* 상단: 최근 평균 섭취량 대비 증가율 */}
-        <div className="mb-6 mt-3 ">
+        <div className="mb-6 mt-3">
           <div className="mb-6">
             <h2 className="text-gray-800 font-bold text-xl mb-4 leading-snug">
               최근 평균 섭취량과 비교한 <br />
@@ -122,7 +122,7 @@ const Statistics: React.FC = () => {
           </div>
         </div>
 
-        <hr className="mx-auto my-6 border-t border-gray-300 w-full" />
+        <hr className="mx-auto my-6 border-t border-gray-300 w-full"/>
 
         {/* 경고 알림 박스 */}
         <div

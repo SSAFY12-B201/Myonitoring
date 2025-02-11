@@ -3,7 +3,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 // 공통 클래스 정의
 const containerClass =
-  "flex items-center justify-between bg-gray-50 rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow";
+  "flex items-center justify-between rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow border border-gray-200";
 const titleClass = "text-lg font-bold flex items-center space-x-2 mb-2"; // 아이콘과 제목 한 줄
 const descriptionClass = "text-sm text-gray-500";
 const badgeClass = "px-2 py-1 rounded-full font-bold";
@@ -22,7 +22,7 @@ const HomeComponentBar: React.FC<HomeComponentBarProps> = ({
   title,
   description,
   badge,
-  badgeColor = "bg-gray-200", // 기본 배지 색상
+  badgeColor = "", // 기본 배지 색상
   onClick,
 }) => {
   return (
