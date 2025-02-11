@@ -17,14 +17,9 @@ pipeline {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: '${gitlabSourceBranch}']],
-                    extensions: [
-                        [$class: 'PreBuildMerge', options: [fastForwardMode: 'FF']]
-                    ],
-                    userRemoteConfigs: [[
-                        url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git',
-                        credentialsId: 'gitlab-user-pwd'
-                    ]]
+                    branches: [[name: "${env.GIT_BRANCH}"]],
+                    extensions: [[$class: 'PreBuildMerge', options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeTarget: "${env.GIT_BRANCH}"]]],
+                    userRemoteConfigs: [[url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git', credentialsId: 'gitlab-user-pwd']]
                 ])
             }
         }
