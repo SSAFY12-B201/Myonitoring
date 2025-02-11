@@ -19,8 +19,7 @@ pipeline {
                     $class: 'GitSCM',
                     branches: [[name: '${gitlabSourceBranch}']],
                     extensions: [
-                        [$class: 'PreBuildMerge', options: [mergeTarget: 'origin/dev']],
-                        [$class: 'CleanBeforeCheckout']
+                        [$class: 'PreBuildMerge', options: [fastForwardMode: 'FF']]
                     ],
                     userRemoteConfigs: [[
                         url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git',
