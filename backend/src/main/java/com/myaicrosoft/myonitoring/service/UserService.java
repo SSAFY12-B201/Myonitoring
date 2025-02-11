@@ -139,12 +139,31 @@ public class UserService implements UserDetailsService {
         log.info("User deleted successfully: {}", email);
     }
 
-    public void logout(String email, String accessToken) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
-        // 로그아웃 시 refresh token 삭제
+    @Transactional
+    public void logout(String email, String refreshToken) {
+        User user = null;
+        
+        // 이메일로 사용자 찾기
+        if (StringUtils.hasText(email)) {
+            user = userRepository.findByEmail(email)
+                    .orElse(null);
+            log.debug("Finding user by email: {}", email);
+        }
+        
+        // 리프레시 토큰이 있는 경우 해당 토큰으로 사용자 찾기
+        if (user == null && StringUtils.hasText(refreshToken)) {
+            user = userRepository.findByRefreshToken(refreshToken)
+                    .orElse(null);
+            log.debug("Finding user by refresh token");
+        }
+        
+        if (user == null) {
+            throw new IllegalStateException("User not found for logout");
+        }
+        
         user.setRefreshToken(null);
         userRepository.save(user);
+        log.info("User logged out successfully: {}", user.getEmail());
     }
 
     /**
@@ -159,5 +178,17 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 사용자를 찾을 수 없습니다. ID: " + id));
         return UserResponseDto.from(user);
+    }
+
+    @Transactional
+    public void removeRefreshToken(String refreshToken) {
+        // 리프레시 토큰으로 사용자를 찾아서 토큰 제거
+        User user = userRepository.findByRefreshToken(refreshToken)
+                .orElse(null);
+        
+        if (user != null) {
+            user.setRefreshToken(null);
+            userRepository.save(user);
+        }
     }
 } 
