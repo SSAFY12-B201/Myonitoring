@@ -1,36 +1,84 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
+        DOCKER_REGISTRY = "kst1040"
+        BACKEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-backend"
+        FRONTEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-frontend"
+        GIT_COMMIT_SHORT = sh(
+            script: "printf \$(git rev-parse --short HEAD)",
+            returnStdout: true
+        )
+    }
+
     stages {
-        stage('Webhook Test') {
+        stage('Checkout') {
             steps {
-                echo "Webhook test pipeline triggered!"
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: "${env.gitlabSourceBranch}"]],
+                    extensions: [[$class: 'PreBuildMerge', options: [fastForwardMode: 'FF', mergeRemote: 'origin', mergeTarget: "${env.gitlabTargetBranch}"]]],
+                    userRemoteConfigs: [[url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git', credentialsId: 'gitlab-user-pwd']]
+                ])
             }
         }
 
-        stage('Print Environment') {
+        stage('Check Target Branch') {
             steps {
-                sh 'printenv | sort'
+                script {
+                    if (env.gitlabTargetBranch != 'dev' && !env.GIT_BRANCH.endWith('/dev')) {
+                        error("This pipeline only runs for MRs targeting the dev branch")
+                    }
+                }
             }
         }
 
-        stage('Git Info') {
-            steps {
-                sh 'git branch -a'
-                sh 'git status'
+        stage('Build & Push Images') {
+            parallel {
+                stage('Backend') {
+                    when { changeset "backend/**" }
+                    steps {
+                        script {
+                            buildAndPushImage("${BACKEND_IMAGE}", "./backend")
+                        }
+                    }
+                }
+
+                stage('Frontend') {
+                    when { changeset "frontend/**" }
+                    steps {
+                        script {
+                            buildAndPushImage("${FRONTEND_IMAGE}", "./frontend")
+                        }
+                    }
+                }
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline finished'
-        }
         success {
-            echo 'Pipeline succeeded'
+            echo 'CI Pipeline succeeded! Images have been built and pushed to Docker Hub.'
         }
         failure {
-            echo 'Pipeline failed'
+            echo 'CI Pipeline failed! Check the logs for details.'
         }
+        always {
+            sh 'docker image prune -f'
+            cleanWs()
+        }
+    }
+}
+
+def buildAndPushImage(String imageName, String context) {
+    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
+        def image = docker.build(
+            "${imageName}:${GIT_COMMIT_SHORT}",
+            "--cache-from ${imageName}:latest ${context}"
+        )
+
+        image.push()
+        image.push('latest')
     }
 }
