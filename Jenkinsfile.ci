@@ -15,9 +15,28 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'dev', 
-                    credentialsId: 'gitlab-user-pwd', 
-                    url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '${gitlabSourceBranch}']],
+                    extensions: [
+                        [$class: 'PreBuildMerge', options: [mergeTarget: 'dev']],
+                        [$class: 'CleanBeforeCheckout']
+                    ],
+                    userRemoteConfigs: [[
+                        url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git',
+                        credentialsId: 'gitlab-user-pwd'
+                    ]]
+                ])
+            }
+        }
+        
+        stage('Check Target Branch') {
+            steps {
+                script {
+                    if (env.gitlabTargetBranch != 'dev') {
+                        error("This pipeline only runs for MRs targeting the dev branch")
+                    }
+                }
             }
         }
         
