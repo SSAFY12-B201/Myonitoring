@@ -27,7 +27,7 @@ pipeline {
         stage('Check Target Branch') {
             steps {
                 script {
-                    if (env.gitlabTargetBranch != 'feature/ci-test') {
+                    if (env.gitlabTargetBranch != 'dev' && !env.GIT_BRANCH.endWith('/dev')) {
                         error("This pipeline only runs for MRs targeting the dev branch")
                     }
                 }
