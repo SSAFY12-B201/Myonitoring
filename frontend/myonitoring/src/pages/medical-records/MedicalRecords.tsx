@@ -1,43 +1,45 @@
-import React, { useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { useNavigate } from "react-router-dom"; // React Router 사용
-import {
-  setFilterType,
-  filterRecords,
-} from "../../redux/slices/medicalRecordsSlice";
-import { AiOutlinePlus, AiOutlineCalendar } from "react-icons/ai"; // 아이콘 사용
+import React, { useState } from "react";
+import { useAppSelector } from "../../redux/hooks";
+import { useNavigate } from "react-router-dom";
+import { AiOutlinePlus, AiOutlineCalendar } from "react-icons/ai";
 import { BsClock } from "react-icons/bs";
 import TopBar from "../../components/TopBar";
 import ContentSection from "../../components/ContentSection";
 import BottomBar from "../../components/BottomBar";
 
 const MedicalRecords = ({ catId }: { catId?: string }) => {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // Redux 상태에서 필터링된 의료기록 가져오기
-  const medicalRecords = useAppSelector(
-    (state) => state.medicalRecords.filteredRecords
+  // Redux에서 의료 기록 데이터 가져오기
+  const medicalRecords = useAppSelector((state) =>
+    state.medicalRecords.records.filter((record) => record.catId === "cat1")
   );
-  const filterType = useAppSelector((state) => state.medicalRecords.filterType);
 
-  // 필터링 초기화
-  useEffect(() => {
-    dispatch(filterRecords()); // 초기 필터링 (전체)
-  }, [dispatch]);
+  // 로컬 상태로 필터링 조건 관리
+  const [filterType, setFilterType] = useState<"전체" | "정기검진" | "치료" | "기타">("전체");
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
 
-  // 필터 타입 변경 시 필터링 실행
-  useEffect(() => {
-    dispatch(filterRecords()); // filterType이 변경될 때마다 필터링 실행
-  }, [filterType, dispatch]);
+  // 필터링된 데이터 계산
+  const filteredRecords = medicalRecords.filter((record) => {
+    const recordDate = new Date(record.date).getTime();
+    const start = startDate ? new Date(startDate).getTime() : null;
+    const end = endDate ? new Date(endDate).getTime() : null;
 
-  // 필터 변경 핸들러
-  const handleFilterChange = (type: "전체" | "정기검진" | "치료" | "기타") => {
-    dispatch(setFilterType(type)); // 필터 타입 설정
-  };
+    const isWithinDateRange =
+      (!start || recordDate >= start) && (!end || recordDate <= end);
+
+    const isTypeMatch =
+      filterType === "전체" || record.type === filterType;
+
+    return isWithinDateRange && isTypeMatch;
+  });
 
   return (
-    <div className="min-h-screen flex flex-col pb-[60px] bg-cover bg-center" style={{ backgroundImage: "url('/gradient_background.png')" }}>
+    <div
+      className="min-h-screen flex flex-col pb-[60px] bg-cover bg-center"
+      style={{ backgroundImage: "url('/gradient_background.png')" }}
+    >
       {/* 상단 바 */}
       <TopBar />
 
@@ -55,13 +57,15 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
         <div className="flex items-center justify-between mb-4">
           <input
             type="date"
-            defaultValue="2024-01-31"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
             className="border border-gray-300 rounded px-2 py-1 text-sm"
           />
           <span>~</span>
           <input
             type="date"
-            defaultValue="2025-01-31"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
             className="border border-gray-300 rounded px-2 py-1 text-sm"
           />
         </div>
@@ -71,11 +75,7 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
           {["전체", "정기검진", "치료", "기타"].map((type) => (
             <button
               key={type}
-              onClick={() =>
-                handleFilterChange(
-                  type as "전체" | "정기검진" | "치료" | "기타"
-                )
-              }
+              onClick={() => setFilterType(type as typeof filterType)}
               className={`flex-grow text-center py-2 ${
                 filterType === type
                   ? "text-yellow-500 font-bold border-b-2 border-yellow-500"
@@ -89,8 +89,8 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
 
         {/* 의료 기록 리스트 */}
         <div className="space-y-4">
-          {medicalRecords.length > 0 ? (
-            medicalRecords.map((record) => (
+          {filteredRecords.length > 0 ? (
+            filteredRecords.map((record) => (
               <div
                 key={record.id}
                 onClick={() => navigate(`/medical-records/${record.id}`)}
@@ -98,24 +98,23 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
               >
                 {/* 왼쪽 정보 */}
                 <div>
-                  {/* 분류 태그 */}
-                  <span
-                    className={`inline-block px-3 py-[2px] text-xs font-bold rounded ${
-                      record.type === "정기검진"
-                        ? "bg-yellow text-white" // 정기검진: 노란색
-                        : record.type === "치료"
-                        ? "bg-orange text-white" // 치료: 주황색
-                        : "bg-blue text-white" // 기타: 파란색
-                    }`}
-                  >
-                    {record.type}
-                  </span>
-                  {/* 제목 */}
-                  <h3 className="mt-2 font-semibold text-base">
-                    {record.title}
-                  </h3>
+                  {/* 분류 태그와 제목을 가로로 나란히 배치 */}
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`inline-block px-3 py-[2px] text-xs font-bold rounded ${
+                        record.type === "정기검진"
+                          ? "bg-yellow text-white"
+                          : record.type === "치료"
+                          ? "bg-orange text-white"
+                          : "bg-blue text-white"
+                      }`}
+                    >
+                      {record.type}
+                    </span>
+                    <h3 className="font-semibold text-base">{record.title}</h3>
+                  </div>
                   {/* 날짜 및 시간 */}
-                  <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
+                  <p className="text-sm text-gray-500 mt-2 flex items-center gap-2">
                     <AiOutlineCalendar size={14} /> {record.date}{" "}
                     <BsClock size={14} /> {record.time}
                   </p>
