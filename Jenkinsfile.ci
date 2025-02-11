@@ -3,7 +3,6 @@ pipeline {
    
    environment {
        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')
-       FIREBASE_KEY = credentials('myonitoring-firebase-adminsdk-fbsvc-78c9791370.json')
        DOCKER_REGISTRY = "kst1040"
        BACKEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-backend"
        FRONTEND_IMAGE = "${DOCKER_REGISTRY}/myonitoring-frontend"
@@ -21,6 +20,7 @@ pipeline {
                    url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git'
            }
        }
+       
        stage('Build & Push Images') {
            parallel {
                stage('Backend') {
@@ -52,8 +52,10 @@ pipeline {
            echo 'CI Pipeline failed! Check the logs for details.'
        }
        always {
-           sh 'docker image prune -f'
-           cleanWs()
+           node {
+               sh 'docker image prune -f'
+               cleanWs()
+           }
        }
    }
 }
