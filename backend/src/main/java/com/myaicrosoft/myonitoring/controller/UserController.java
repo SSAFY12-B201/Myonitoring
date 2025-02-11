@@ -5,42 +5,34 @@ import com.myaicrosoft.myonitoring.model.dto.UserUpdateDto;
 import com.myaicrosoft.myonitoring.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponseDto> getMyInfo(Authentication authentication) {
-        if (authentication == null) {
-            throw new IllegalStateException("Authentication is required");
-        }
-        UserResponseDto userInfo = userService.getUserInfo(authentication.getName());
+    public ResponseEntity<UserResponseDto> getMyInfo(@AuthenticationPrincipal UserDetails userDetails) {
+        UserResponseDto userInfo = userService.getUserInfo(userDetails.getUsername());
         return ResponseEntity.ok(userInfo);
     }
 
     @PutMapping("/me")
     public ResponseEntity<UserResponseDto> updateMyInfo(
-            Authentication authentication,
+            @AuthenticationPrincipal UserDetails userDetails,
             @RequestBody UserUpdateDto updateDto) {
-        if (authentication == null) {
-            throw new IllegalStateException("Authentication is required");
-        }
-        UserResponseDto updatedUser = userService.updateUser(authentication.getName(), updateDto);
+        UserResponseDto updatedUser = userService.updateUser(userDetails.getUsername(), updateDto);
         return ResponseEntity.ok(updatedUser);
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<Void> deleteMyAccount(Authentication authentication) {
-        if (authentication == null) {
-            throw new IllegalStateException("Authentication is required");
-        }
-        userService.deleteUser(authentication.getName());
+    public ResponseEntity<Void> deleteMyAccount(@AuthenticationPrincipal UserDetails userDetails) {
+        userService.deleteUser(userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 } 

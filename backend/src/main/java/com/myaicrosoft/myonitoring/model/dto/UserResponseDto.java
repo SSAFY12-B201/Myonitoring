@@ -16,7 +16,6 @@ public class UserResponseDto {
     private String provider;
     private String nickname;
     private String address;
-    private String phoneNumber;
     
     public static UserResponseDto from(User user) {
         return UserResponseDto.builder()
@@ -25,7 +24,6 @@ public class UserResponseDto {
                 .provider(user.getProvider().name())
                 .nickname(user.getNickname())
                 .address(user.getAddress())
-                .phoneNumber(user.getPhoneNumber())
                 .build();
     }
 } 
