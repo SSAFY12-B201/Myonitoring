@@ -24,7 +24,7 @@ public class Statistics {
     private Cat cat;
 
     @Column(nullable = false)
-    private LocalDate StatDate;
+    private LocalDate statDate;
 
     // 일간 총 섭취량
     @Column(nullable = false)
