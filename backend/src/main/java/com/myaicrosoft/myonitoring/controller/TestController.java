@@ -13,7 +13,7 @@ public class TestController {
    @GetMapping("/hello")
    public Map<String, String> hello() {
        Map<String, String> response = new HashMap<>();
-       response.put("message", "스프링부트에 오신걸 환영합니다!");
+       response.put("message", "스프링부트에 오신걸 환영합니다! (test)");
        return response;
    }
 }
