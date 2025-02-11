@@ -1,6 +1,5 @@
 package com.myaicrosoft.myonitoring.model.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,8 +12,6 @@ import lombok.NoArgsConstructor;
 public class TokenDto {
     private String grantType;
     private String accessToken;
-    private Long accessTokenExpiresIn;
-
-    @JsonIgnore
     private String refreshToken;
+    private Long accessTokenExpiresIn;
 } 
