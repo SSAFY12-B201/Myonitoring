@@ -19,7 +19,7 @@ pipeline {
                     $class: 'GitSCM',
                     branches: [[name: '${gitlabSourceBranch}']],
                     extensions: [
-                        [$class: 'PreBuildMerge', options: [mergeTarget: 'dev']],
+                        [$class: 'PreBuildMerge', options: [mergeTarget: 'origin/dev']],
                         [$class: 'CleanBeforeCheckout']
                     ],
                     userRemoteConfigs: [[
