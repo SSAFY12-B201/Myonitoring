@@ -77,7 +77,6 @@ const UserInfo = () => {
                 errorMessage="닉네임을 입력해주세요."
               />
 
-<<<<<<< HEAD
             {/* 핸드폰 번호 입력 */}
             <Input
               label="핸드폰 번호"
@@ -91,21 +90,6 @@ const UserInfo = () => {
               error={errors.phoneNumber}
               errorMessage="올바른 핸드폰 번호를 입력해주세요."
             />
-=======
-              {/* 핸드폰 번호 입력 */}
-              <Input
-                label="핸드폰 번호"
-                type="tel"
-                value={userInfo.phoneNumber || ""}
-                onChange={(value) => {
-                  dispatch(updateUserInfo({ phoneNumber: value }));
-                  setErrors({ ...errors, phoneNumber: false }); // 수정 시 오류 해제
-                }}
-                placeholder="010-0000-0000"
-                error={errors.phoneNumber}
-                errorMessage="핸드폰 번호를 입력해주세요."
-              />
->>>>>>> dev-frontend
 
               {/* 주소 입력 */}
               <Input
