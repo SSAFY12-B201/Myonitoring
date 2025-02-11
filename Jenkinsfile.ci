@@ -21,13 +21,6 @@ pipeline {
                    url: 'https://lab.ssafy.com/s12-webmobile3-sub1/S12P11B201.git'
            }
        }
-       
-       stage('Prepare Firebase Credentials') {
-           steps {
-               sh 'cp $FIREBASE_KEY backend/src/main/resources/myonitoring-firebase-adminsdk-fbsvc-78c9791370.json'
-           }
-       }
-       
        stage('Build & Push Images') {
            parallel {
                stage('Backend') {
