@@ -1,86 +1,115 @@
-import React, { useState } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
-import Splash from "./pages/onboarding/Splash"; // 스플래쉬 화면
-import LoginSignUp from "./pages/auth/LoginSignUp"; // 로그인 화면
-import Agreement from "./pages/onboarding/Agreements"; // 약관 동의 화면
-import AgreementDetail from "./pages/onboarding/AgreementDetail"; // 약관 상세 화면
-import UserInfo from "./pages/onboarding/UserInfo"; // 개인정보 등록 화면
-import CatInfo from "./pages/onboarding/CatInfo"; // 고양이 정보 등록 화면
-import Greeting from "./pages/onboarding/Greeting"; // 그리팅 화면
-import Home from "./pages/Home"; // 홈 화면
+import React, { useEffect, useState } from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
+
+// 온보딩 관련 페이지
+import Splash from "./pages/onboarding/Splash";
+import Agreement from "./pages/onboarding/Agreements";
+import AgreementDetail from "./pages/onboarding/AgreementDetail";
+import UserInfo from "./pages/onboarding/UserInfo";
+import DeviceGuide from "./pages/onboarding/DeviceGuide";
+import SerialNumberInput from "./pages/onboarding/SerialNumInput";
+import ConnectionSuccess from "./pages/onboarding/ConnectionSuccess";
+import CatInfo from "./pages/onboarding/CatInfo";
+import Greeting from "./pages/onboarding/Greeting";
+
+// 인증 관련 페이지
+import LoginSignUp from "./pages/auth/LoginSignUp";
 import Redirect from "./pages/auth/Redirect";
+
+// 메인 기능 관련 페이지
+import Home from "./pages/Home";
 import Reservation from "./pages/reservation/Reservation";
 import MedicalRecords from "./pages/medical-records/MedicalRecords";
 import MedicalRecordDetail from "./pages/medical-records/MedicalRecordsDetail";
 import Graph from "./pages/report/Graph";
 import StatisticsPage from "./pages/report/Statistics";
+
+// 마이페이지 관련 페이지
 import MyPage from "./pages/mypage/Mypage";
 import EditPersonal from "./pages/mypage/EditPersonal";
 import DeviceSettings from "./pages/mypage/DeviceSettings";
+
+// 기타 페이지
 import Notification from "./pages/Notification";
 
 const App: React.FC = () => {
-  // const [showSplash, setShowSplash] = useState(true); // 스플래시 화면 표시 여부
-  // const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true); // 스플래쉬 화면 표시 여부
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 여부
+  const [isRegistered, setIsRegistered] = useState(false); // 회원가입 여부
 
-  // const handleSplashFinish = () => {
-  //   setShowSplash(false); // 스플래시 종료
-  //   navigate("/login"); // 로그인 화면 이동
-  // };
+  const location = useLocation(); // 현재 경로 가져오기
 
-  // if (showSplash) {
-  //   return <Splash onFinish={handleSplashFinish} />;
-  // }
+  useEffect(() => {
+    const initializeApp = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      const userStatus = await checkUserStatus();
+      setIsLoggedIn(userStatus.isLoggedIn);
+      setIsRegistered(userStatus.isRegistered);
+      setIsLoading(false);
+    };
+
+    initializeApp();
+  }, []);
+
+  const checkUserStatus = async () => {
+    return {
+      isLoggedIn: false,
+      isRegistered: false,
+    };
+  };
+
+  if (isLoading) {
+    return <Splash />;
+  }
 
   return (
-    <Routes>
-      {/* 로그인 및 회원가입 */}
-      {/* <Route path="/login" element={<LoginSignUp />} /> */}
+    <Routes location={location} key={location.pathname}>
+      {/* 온보딩 관련 라우트 */}
+      {!isRegistered && (
+        <>
+          <Route path="/" element={<Agreement />} />
+          <Route path="/agreement-detail" element={<AgreementDetail />} />
+          <Route path="/user-info" element={<UserInfo />} />
+          <Route path="/device-guide" element={<DeviceGuide />} />
+          <Route path="/serial-number-input" element={<SerialNumberInput />} />
+          <Route path="/connection-success" element={<ConnectionSuccess />} />
+          <Route path="/cat-info" element={<CatInfo />} />
+          <Route path="/greeting" element={<Greeting />} />
+        </>
+      )}
 
-      {/* 로그인 리다이렉트 화면 */}
-      {/* <Route path="/kakao-redirect" element={<Redirect/>} /> */}
+      {/* 인증 관련 라우트 */}
+      {isRegistered && !isLoggedIn && (
+        <>
+          <Route path="/" element={<LoginSignUp />} />
+          <Route path="/kakao-redirect" element={<Redirect />} />
+        </>
+      )}
 
-      {/* 약관 동의 및 상세 */}
-      {/* <Route path="/agreements" element={<Agreement />} /> */}
-      {/* <Route path="/agreement-detail" element={<AgreementDetail />} /> */}
+      {/* 메인 기능 관련 라우트 */}
+      {isLoggedIn && (
+        <>
+          <Route path="/" element={<Home />} />
+          <Route path="/home" element={<Home />} />
+          <Route path="/reservation" element={<Reservation />} />
+          <Route path="/medical-records" element={<MedicalRecords />} />
+          <Route
+            path="/medical-records/:id"
+            element={<MedicalRecordDetail />}
+          />
+          <Route path="/graph" element={<Graph />} />
+          <Route path="/statistics" element={<StatisticsPage />} />
 
-      {/* 개인정보 등록 */}
-      {/* <Route path="/user-info" element={<UserInfo />} /> */}
+          {/* 마이페이지 관련 라우트 */}
+          <Route path="/my-page" element={<MyPage />} />
+          <Route path="/edit-personal" element={<EditPersonal />} />
+          <Route path="/device-settings" element={<DeviceSettings />} />
 
-      {/* 고양이 정보 등록 */}
-      {/* <Route path="/cat-info" element={<CatInfo />} /> */}
-
-      {/* 그리팅 화면 */}
-      {/* <Route path="/greeting" element={<Greeting />} /> */}
-
-      {/* 홈 화면 */}
-      <Route path="/" element={<Home />} />
-      <Route path="/home" element={<Home />} />
-
-      {/* 배급 예약 화면 */}
-      <Route path="/reservation" element={<Reservation />} />
-
-      {/* 그래프 화면 */}
-      <Route path="/graph" element={<Graph />} />
-
-      {/* 통계 화면 */}
-      <Route path="/statistics" element={<StatisticsPage />} />
-
-      {/* 의료기록 조회 화면 */}
-      <Route path="/medical-records" element={<MedicalRecords />} />
-
-      {/* 의료기록 상세 화면 */}
-      <Route path="/medical-records/:id" element={<MedicalRecordDetail />} />
-
-      {/* 마이페이지 화면 */}
-      <Route path="/my-page" element={<MyPage />} />
-      {/* 개인정보 수정 화면 */}
-      <Route path="/edit-personal" element={<EditPersonal />} />
-      {/* 연동 기기 설정 화면 */}
-      <Route path="/device" element={<DeviceSettings />} />
-
-      {/* 알림 페이지 */}
-      <Route path="/notification" element={<Notification />} />
+          {/* 기타 라우트 */}
+          <Route path="/notification" element={<Notification />} />
+        </>
+      )}
     </Routes>
   );
 };

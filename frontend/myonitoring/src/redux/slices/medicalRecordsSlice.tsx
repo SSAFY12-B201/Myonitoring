@@ -14,8 +14,6 @@ interface MedicalRecord {
 
 interface MedicalRecordsState {
   records: MedicalRecord[]; // 의료 기록 배열
-  filteredRecords: MedicalRecord[]; // 필터링된 의료 기록 배열
-  filterType: "전체" | "정기검진" | "치료" | "기타"; // 현재 필터 타입
 }
 
 const initialState: MedicalRecordsState = {
@@ -61,8 +59,6 @@ const initialState: MedicalRecordsState = {
       time: "16:00",
     },
   ],
-  filteredRecords: [], // 초기에는 전체 데이터를 표시
-  filterType: "전체", // 기본 필터는 전체로 설정
 };
 
 const medicalRecordsSlice = createSlice({
@@ -85,22 +81,10 @@ const medicalRecordsSlice = createSlice({
         (record) => record.id !== action.payload
       );
     },
-    setFilterType(state, action: PayloadAction<"전체" | "정기검진" | "치료" | "기타">) {
-      state.filterType = action.payload;
-    },
-    filterRecords(state) {
-      if (state.filterType === "전체") {
-        state.filteredRecords = state.records;
-      } else {
-        state.filteredRecords = state.records.filter(
-          (record) => record.type === state.filterType
-        );
-      }
-    },
   },
 });
 
-export const { addRecord, updateRecord, deleteRecord, setFilterType, filterRecords } =
+export const { addRecord, updateRecord, deleteRecord } =
   medicalRecordsSlice.actions;
 
 export default medicalRecordsSlice.reducer;
