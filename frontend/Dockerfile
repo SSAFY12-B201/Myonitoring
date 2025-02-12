@@ -1,5 +1,5 @@
 # Node.js 이미지 선택
-FROM node:alpine AS build
+FROM node:18 AS build
 
 # 작업 디렉토리 설정
 WORKDIR /app
