@@ -1,3 +1,6 @@
+/* Google Fonts에서 Noto Sans KR 가져오기 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,7 +12,7 @@
 }
 
 :root {
-  --font-primary: 'Gidugu', sans-serif;
+  --font-primary: 'Noto Sans KR', sans-serif; /* Noto Sans KR을 기본 폰트로 설정 */
   --font-secondary: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
 
   --color-bg-light: #ffffff;
@@ -22,8 +25,28 @@
 /* 글로벌 스타일 */
 body {
   margin: 0;
-  font-family: var(--font-secondary); /* Tailwind 기본값과 일치 */
+  font-family: var(--font-primary); /* 기본 폰트를 Noto Sans KR로 변경 */
 }
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.custom-fade-in-scale {
+  animation: fadeInScale 1s ease-in-out;
+}
+
 
 /* 반응형 레이아웃 */
 .container {
@@ -36,3 +59,4 @@ body {
     color: red; /* 필요하다면 유지 */
   }
 }
+

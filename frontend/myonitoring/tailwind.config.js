@@ -5,7 +5,9 @@ export default {
     extend: {
       colors: {
         // 커스텀 색상 정의
-        yellow: "#FFE76B", // 노란색
+        yellow: "#FFE76B", // 노란색,
+        lightRed: '#FF4E4E',
+        lightYellow: '#FFEE98',
         lightOrange: "#FFD573", // 밝은 주황색
         orange: "#EC8E04", // 주황색
         blue: "#6B83FF", // 파란색 
@@ -15,6 +17,7 @@ export default {
     },
     fontFamily: {
       Gidugu: ["Gidugu"],
+      primary: ["'Noto Sans KR'", "sans-serif"], // Noto Sans KR 추가
     },
   },
   plugins: [],
