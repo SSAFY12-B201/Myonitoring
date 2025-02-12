@@ -68,6 +68,8 @@ const App: React.FC = () => {
       {/* 온보딩 관련 라우트 */}
       {!isRegistered && (
         <>
+          <Route path="/" element={<LoginSignUp />} />
+          <Route path="/kakao-redirect" element={<Redirect />} />
           <Route path="/" element={<Agreement />} />
           <Route path="/agreement-detail" element={<AgreementDetail />} />
           <Route path="/user-info" element={<UserInfo />} />
@@ -82,8 +84,6 @@ const App: React.FC = () => {
       {/* 인증 관련 라우트 */}
       {isRegistered && !isLoggedIn && (
         <>
-          <Route path="/" element={<LoginSignUp />} />
-          <Route path="/kakao-redirect" element={<Redirect />} />
         </>
       )}
 
