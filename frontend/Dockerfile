@@ -12,6 +12,8 @@ RUN npm install @heroicons/react
 # 이미지 디렉토리 복사 위치 변경
 COPY myonitoring/src/assets/images /app/src/assets/images
 
+RUN ls -l /app/src/assets/images
+
 # 캐시 제거
 RUN rm -rf node_modules/.cache
 
