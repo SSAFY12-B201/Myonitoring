@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import path from 'path';
 
 export default defineConfig({
   plugins: [
@@ -43,7 +44,7 @@ export default defineConfig({
     preserveSymlinks: true,
     alias: {
       '@heroicons/react': '@heroicons/react',
-      '@': '/src'
+      '@': path.resolve(__dirname, './src')  // 절대 경로로 변경
     }
   }
 });

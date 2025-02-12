@@ -16,7 +16,7 @@ COPY myonitoring/src/assets/images /app/src/assets/images
 RUN rm -rf node_modules/.cache
 
 # 빌드
-RUN npm run build
+RUN npm run build --verbose
 
 FROM nginx:alpine
 # 빌드된 파일과 이미지 함께 복사
