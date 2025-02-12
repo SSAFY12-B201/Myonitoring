@@ -25,6 +25,26 @@ body {
   font-family: var(--font-secondary); /* Tailwind 기본값과 일치 */
 }
 
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.custom-fade-in-scale {
+  animation: fadeInScale 1s ease-in-out;
+}
+
+
 /* 반응형 레이아웃 */
 .container {
   @apply mx-auto px-4 max-w-screen-md; /* 최대 너비 고정 */
@@ -36,3 +56,4 @@ body {
     color: red; /* 필요하다면 유지 */
   }
 }
+

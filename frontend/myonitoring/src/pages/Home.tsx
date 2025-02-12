@@ -21,7 +21,13 @@ const Home: React.FC = () => {
   });
 
   return (
-    <>
+    <div style={{
+      backgroundImage: "url('/home_background.png')", // public 폴더의 이미지 경로
+      backgroundSize: "cover", // 요소 크기에 맞게 조정
+      backgroundPosition: "center", // 중앙 정렬
+      height: "100vh", // 화면 전체 높이
+      width: "100%", // 전체 너비
+    }}>
     <TopBar />
       <div className="relative min-h-screen">
         {/* 날짜 바 */}
@@ -116,7 +122,7 @@ const Home: React.FC = () => {
         </div>
       </div>
     <BottomBar />
-    </>
+    </div>
   );
 };
 
