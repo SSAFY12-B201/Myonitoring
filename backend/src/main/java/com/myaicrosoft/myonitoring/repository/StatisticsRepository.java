@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.List;
 
 /**
@@ -13,15 +14,6 @@ import java.util.List;
  * - 통계 데이터를 저장하고 조회하는 Repository 인터페이스입니다.
  */
 public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
-
-    /**
-     * 특정 고양이의 특정 날짜 통계 데이터를 조회합니다.
-     *
-     * @param catId    고양이 ID
-     * @param statDate 통계 날짜
-     * @return 통계 데이터 객체 (Optional)
-     */
-    Statistics findByCatIdAndStatDate(Long catId, LocalDate statDate);
 
     /**
      * 특정 고양이의 특정 날짜 이전 최대 2일간의 통계 데이터를 조회합니다.
@@ -35,4 +27,13 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
     List<Statistics> findByCatIdAndStatDateRange(@Param("catId") Long catId,
                                                  @Param("startDate") LocalDate startDate,
                                                  @Param("endDate") LocalDate endDate);
+
+    /**
+     * 특정 고양이의 특정 날짜 통계 데이터를 조회합니다.
+     *
+     * @param catId   고양이 ID
+     * @param statDate 통계 날짜
+     * @return 통계 데이터 객체 (Optional)
+     */
+    Optional<Statistics> findByCatIdAndStatDate(@Param("catId") Long catId, @Param("statDate") LocalDate statDate);
 }

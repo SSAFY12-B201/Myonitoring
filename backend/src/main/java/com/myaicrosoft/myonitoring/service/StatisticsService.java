@@ -29,9 +29,8 @@ public class StatisticsService {
 
     /**
      * 매일 자정에 실행되는 스케줄링 작업
-     * - @Scheduled(cron = "0 0 0 * * *"): 매일 자정에 실행됩니다.
      */
-    @Scheduled(cron = "0 0 0 * * *") // 매일 00시 실행
+    @Scheduled(cron = "0 25 17 * * *") // 매일 오후 3시 40분 실행
     public void calculateDailyStatistics() {
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1); // 전날 날짜 계산
@@ -69,6 +68,9 @@ public class StatisticsService {
         // 증감 상태 계산 (20% 이상 증가: 1 / -20% 이하 감소: -1 / 그 외: 0)
         int changeStatus = calculateChangeStatus(change30d);
 
+        // changeDays 계산 로직 추가
+        int changeDays = calculateChangeDays(cat.getId(), statDate, changeStatus);
+
         // Statistics 엔티티 생성 및 저장
         Statistics statistics = Statistics.builder()
                 .cat(cat)
@@ -76,7 +78,10 @@ public class StatisticsService {
                 .totalIntake(totalIntake)
                 .change7d(change7d)
                 .change30d(change30d)
+                .average7d(avg7d) // 평균 섭취량 (최근 7일) 저장
+                .average30d(avg30d) // 평균 섭취량 (최근 30일) 저장
                 .changeStatus(changeStatus)
+                .changeDays(changeDays) // changedays 추가
                 .build();
 
         statisticsRepository.save(statistics); // 통계 데이터 저장
@@ -101,6 +106,9 @@ public class StatisticsService {
                 .mapToInt(Intake::getIntakeAmount)
                 .sum();
 
+        // 디버깅용 콘솔 출력
+        System.out.println("디버깅 " + intakes);
+
         return BigDecimal.valueOf(totalAmount).divide(BigDecimal.valueOf(intakes.size()), 2, RoundingMode.HALF_UP);
     }
 
@@ -115,6 +123,7 @@ public class StatisticsService {
         if (averageIntake.compareTo(BigDecimal.ZERO) == 0) {
             return BigDecimal.ZERO; // 평균이 0인 경우 증감률도 0 반환
         }
+
         return BigDecimal.valueOf(totalIntake).subtract(averageIntake)
                 .divide(averageIntake, 4, RoundingMode.HALF_UP);
     }
@@ -131,6 +140,31 @@ public class StatisticsService {
         } else if (change30d.compareTo(BigDecimal.valueOf(-0.2)) <= 0) { // -20% 이하 감소
             return -1;
         }
+
         return 0; // 그 외의 경우
+    }
+
+    /**
+     * changeDays를 계산하는 메서드.
+     *
+     * @param catId         고양이 ID.
+     * @param statDate      현재 날짜.
+     * @param changeStatus  현재 changeStatus 값.
+     * @return changeDays 값.
+     */
+    private int calculateChangeDays(Long catId, LocalDate statDate, int changeStatus) {
+        if (changeStatus == 0) {
+            return 0; // 현재 changeStatus가 0이면 changedays는 무조건 0.
+        }
+
+        // 전날 데이터 조회
+        LocalDate yesterday = statDate.minusDays(1);
+        Statistics yesterdayStat = statisticsRepository.findByCatIdAndStatDate(catId, yesterday).orElse(null);
+
+        if (yesterdayStat == null || yesterdayStat.getChangeStatus() != changeStatus) {
+            return 1; // 전날 데이터가 없거나 다른 상태인 경우 changedays는 1로 초기화.
+        }
+
+        return yesterdayStat.getChangeDays() + 1; // 전날의 changedays + 1 반환.
     }
 }
