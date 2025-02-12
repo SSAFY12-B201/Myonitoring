@@ -10,7 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
+//import org.springframework.context.annotation.Profile;
 
 /**
  * Spring Boot 애플리케이션의 진입점 클래스
@@ -25,7 +25,7 @@ public class MyonitoringApplication {
 	}
 
 	@Bean
-	@Profile("dev") // 개발 환경에서만 실행
+//	@Profile("dev") // 개발 환경에서만 실행
 	public CommandLineRunner initAdminUser(
 			UserRepository userRepository,
 			JwtProvider jwtProvider,
