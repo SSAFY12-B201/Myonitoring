@@ -55,8 +55,8 @@ const App: React.FC = () => {
 
   const checkUserStatus = async () => {
     return {
-      isLoggedIn: false,
-      isRegistered: false,
+      isLoggedIn: true,
+      isRegistered: true,
     };
   };
 
@@ -101,6 +101,7 @@ const App: React.FC = () => {
           />
           <Route path="/graph" element={<Graph />} />
           <Route path="/statistics" element={<StatisticsPage />} />
+          <Route path="/cateyeinfo" element={<CatEyeInfo />} />
 
           {/* 마이페이지 관련 라우트 */}
           <Route path="/my-page" element={<MyPage />} />

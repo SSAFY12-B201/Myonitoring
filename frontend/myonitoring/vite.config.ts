@@ -35,4 +35,15 @@ export default defineConfig({
       },
     }),
   ],
+  //API 수정한 곳임임
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://myonitoring.site',
+        changeOrigin: true,
+        rewrite: (path) => path, // 경로 재작성 제거
+        secure: false, // HTTPS 인증서 검증 비활성화 (개발 환경용)
+      },
+    },
+  },
 });

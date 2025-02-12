@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios"; // axios 임포트
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
-import ContentSection from "../../components/ContentSection";
+import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 
 const SerialNumberInput = () => {
   const navigate = useNavigate();
@@ -43,7 +43,7 @@ const SerialNumberInput = () => {
       <Header title="기기 정보 등록" onBack={() => navigate(-1)} />
 
       {/* 본문 영역 */}
-      <ContentSection>
+      <ExceptTopContentSection>
         <div>
           {/* 제목과 설명 */}
           <h2 className="text-lg font-semibold mb-2">시리얼 넘버 입력</h2>
@@ -81,7 +81,7 @@ const SerialNumberInput = () => {
           </div>
 
         </div>
-      </ContentSection>
+      </ExceptTopContentSection>
 
       {/* 하단 버튼 */}
       <footer className="fixed bottom-0 left-0 w-full p-4 bg-white">

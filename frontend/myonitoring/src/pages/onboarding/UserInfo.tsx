@@ -3,7 +3,7 @@ import { updateUserInfo } from "../../redux/slices/userSlice";
 import Input from "../../components/Input";
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
-import ContentSection from "../../components/ContentSection";
+import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -53,7 +53,7 @@ const UserInfo = () => {
         {/* 상단 헤더 */}
         <Header title="개인 정보 입력" onBack={() => navigate(-1)} />
 
-        <ContentSection>
+        <ExceptTopContentSection>
           <div>
             {/* 설명 */}
             <h2 className="text-lg font-semibold mb-2">처음 가입하시네요!</h2>
@@ -77,7 +77,6 @@ const UserInfo = () => {
                 errorMessage="닉네임을 입력해주세요."
               />
 
-<<<<<<< HEAD
             {/* 핸드폰 번호 입력 */}
             <Input
               label="핸드폰 번호"
@@ -91,21 +90,6 @@ const UserInfo = () => {
               error={errors.phoneNumber}
               errorMessage="올바른 핸드폰 번호를 입력해주세요."
             />
-=======
-              {/* 핸드폰 번호 입력 */}
-              <Input
-                label="핸드폰 번호"
-                type="tel"
-                value={userInfo.phoneNumber || ""}
-                onChange={(value) => {
-                  dispatch(updateUserInfo({ phoneNumber: value }));
-                  setErrors({ ...errors, phoneNumber: false }); // 수정 시 오류 해제
-                }}
-                placeholder="010-0000-0000"
-                error={errors.phoneNumber}
-                errorMessage="핸드폰 번호를 입력해주세요."
-              />
->>>>>>> dev-frontend
 
               {/* 주소 입력 */}
               <Input
@@ -122,7 +106,7 @@ const UserInfo = () => {
               />
             </form>
           </div>
-        </ContentSection>
+        </ExceptTopContentSection>
 
         {/* 하단 버튼 */}
         <footer className="fixed bottom-0 left-0 w-full p-4 bg-white">
