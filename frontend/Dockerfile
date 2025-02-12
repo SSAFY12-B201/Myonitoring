@@ -7,11 +7,15 @@ WORKDIR /app
 # 패키지 파일 복사
 COPY myonitoring/package*.json ./
 
-# 의존성 설치
+# 의존성 설치 및 rollup 모듈 명시적 설치
 RUN npm install
+RUN npm install @rollup/rollup-linux-x64-gnu
 
 # 전체 프로젝트 파일 복사
 COPY myonitoring/ .
+
+# 빌드 전 캐시 삭제 (선택적)
+RUN rm -rf node_modules/.cache
 
 # 프로젝트 빌드
 RUN npm run build
