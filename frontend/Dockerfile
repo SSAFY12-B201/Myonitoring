@@ -13,6 +13,10 @@ RUN npm install
 # rollup 모듈 설치
 RUN npm install @rollup/rollup-linux-x64-gnu
 RUN npm install @heroicons/react
+
+# 이미지 디렉토리 생성 및 복사 (추가)
+COPY myonitoring/src/assets/images /app/src/assets/images
+
 # 전체 프로젝트 파일 복사
 COPY myonitoring/ .
 
@@ -27,6 +31,9 @@ FROM nginx:alpine
 
 # 빌드된 파일 nginx로 복사
 COPY --from=build /app/dist /usr/share/nginx/html
+
+# 이미지 파일 복사 (추가)
+COPY --from=build /app/src/assets/images /usr/share/nginx/html/assets/images
 
 # 포트 노출
 EXPOSE 80
