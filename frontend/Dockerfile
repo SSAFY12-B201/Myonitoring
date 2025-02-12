@@ -1,5 +1,5 @@
 # Node.js 이미지 선택
-FROM node:alpine AS build
+FROM node:18 AS build
 
 # 작업 디렉토리 설정
 WORKDIR /app
@@ -7,11 +7,15 @@ WORKDIR /app
 # 패키지 파일 복사
 COPY myonitoring/package*.json ./
 
-# 의존성 설치
+# 의존성 설치 및 rollup 모듈 명시적 설치
 RUN npm install
+RUN npm install @rollup/rollup-linux-x64-gnu
 
 # 전체 프로젝트 파일 복사
 COPY myonitoring/ .
+
+# 빌드 전 캐시 삭제 (선택적)
+RUN rm -rf node_modules/.cache
 
 # 프로젝트 빌드
 RUN npm run build
