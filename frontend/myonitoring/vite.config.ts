@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import path from 'path';
 
 export default defineConfig({
   plugins: [
@@ -11,10 +12,9 @@ export default defineConfig({
         enabled: true,
       },
       workbox: {
-        navigateFallback: '/index.html', // 모든 탐색 요청을 index.html로 리디렉션
-        navigateFallbackAllowlist: [/^\/kakao-redirect(\?.*)?$/], // /kakao-redirect 경로 및 쿼리 파라미터 허용
+        navigateFallback: '/index.html',
+        navigateFallbackAllowlist: [/^\/kakao-redirect(\?.*)?$/],
       },
-      // PWA의 설치와 앱의 구성 정보를 담고 있는 설정
       manifest: {
         name: 'Myonitoring',
         short_name: 'Myonitoring',
@@ -35,4 +35,16 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    rollupOptions: {
+      external: ['@heroicons/react', '@heroicons/react/24/outline']
+    }
+  },
+  resolve: {
+    preserveSymlinks: true,
+    alias: {
+      '@heroicons/react': '@heroicons/react',
+      '@': path.resolve(__dirname, './src')  // 절대 경로로 변경
+    }
+  }
 });
