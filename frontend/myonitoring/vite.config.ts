@@ -42,7 +42,8 @@ export default defineConfig({
   resolve: {
     preserveSymlinks: true,
     alias: {
-      '@heroicons/react': '@heroicons/react'
+      '@heroicons/react': '@heroicons/react',
+      '@': '/src'
     }
   }
 });
