@@ -12,7 +12,7 @@ RUN npm install
 
 # rollup 모듈 설치
 RUN npm install @rollup/rollup-linux-x64-gnu
-
+RUN npm install @heroicons/react
 # 전체 프로젝트 파일 복사
 COPY myonitoring/ .
 
