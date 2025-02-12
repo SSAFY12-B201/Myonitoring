@@ -1,5 +1,5 @@
 import React from "react";
-import { ChartBarIcon, EyeIcon, ClipboardListIcon, ExclamationCircleIcon } from "@heroicons/react/outline"; // Heroicons 사용
+import { ChartBarIcon, EyeIcon, ClipboardIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
 import TopBar from "../components/TopBar";
 import BottomBar from "../components/BottomBar";
 import HomeComponentBar from "../components/HomeComponents/HomeComponentBar";
@@ -51,7 +51,7 @@ const Home: React.FC = () => {
       onClick: () => navigate("/cateyeinfo"),
     },
     {
-      icon: <ClipboardListIcon className="h-6 w-6 text-black mr-2" />, // Heroicons로 변경
+      icon: <ClipboardIcon className="h-6 w-6 text-black mr-2" />, // Heroicons로 변경
       title: "의료 기록",
       badge: "14:00",
       description: "웰케어 동물병원 정기 검진",
@@ -59,7 +59,7 @@ const Home: React.FC = () => {
       onClick: () => navigate("/medical-records"),
     },
     {
-      icon: <ClipboardListIcon className="h-6 w-6 text-black mr-2" />, // Heroicons로 변경
+      icon: <ClipboardIcon className="h-6 w-6 text-black mr-2" />, // Heroicons로 변경
       title: "의료 기록",
       description: "작성된 의료 기록이 없습니다.",
       onClick: () => navigate("/medical-records"),
