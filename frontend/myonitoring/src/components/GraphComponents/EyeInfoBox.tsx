@@ -159,11 +159,11 @@ const EyeInfoBox: React.FC<EyeInfoBoxProps> = ({
 
             {/* 중앙 텍스트 */}
             <text x="50%" y="45%" textAnchor="middle" 
-            dominantBaseline="middle" className="text-xl font-bold text-orange">
+            dominantBaseline="middle" className="text-xl font-bold ">
               {leftEyeProbability.toFixed(0)}%
             </text>
             <text
-            className="text-xs font-bold text-lightGray"
+            className="text-xs font-bold"
             x="50%"
             y="59%"
             textAnchor="middle"

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom"; // 페이지 이동을 위한 navigate 사용
 import Header from "../../components/Header";
-import ContentSection from "../../components/ContentSection";
+import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
 import { FaTrashAlt } from "react-icons/fa"; // 쓰레기통 아이콘
 import Input from "../../components/Input";
@@ -44,7 +44,7 @@ const EditPersonal = () => {
   return (
     <>
       <Header title="마이 페이지" onBack={() => navigate(-1)} />
-      <ContentSection>
+      <ExceptTopContentSection>
         <div className="max-w-md mx-auto bg-white pb-6">
           {/* 이름 */}
           <div className="mb-4">
@@ -111,7 +111,7 @@ const EditPersonal = () => {
             </span>
           </div>
         </div>
-      </ContentSection>
+      </ExceptTopContentSection>
 
       {/* 저장 버튼 */}
       <footer className="fixed bottom-2 left-0 w-full p-4">

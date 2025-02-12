@@ -85,7 +85,7 @@ const Graph: React.FC = () => {
 
   return (
     <>
-    <div className="min-h-screen">
+    <div className="min-h-screen mb-16">
       <TopBar />
       
       {/* 리포트 탭 바 */}
@@ -113,13 +113,18 @@ const Graph: React.FC = () => {
             <Tooltip formatter={(value) => `${value}g`} />
 
             {/* 섭취량 막대 (배급량 위에 겹쳐서 표시) */}
-            <Bar dataKey="섭취량" fill="#FFC53E" barSize={30} />
+            <Bar
+              dataKey="섭취량"
+              fill="#FFC53E"
+              barSize={30}
+              radius={[5, 5, 5, 5]} // 위쪽 모서리를 둥글게 설정
+            />
           </BarChart>
         </ResponsiveContainer>
       </div>
 
       {/* 구분선인데 있어도 ㄱㅊ 없어도 ㄱㅊㅊ */}
-      <hr className="mx-5 m-3 border-gray-300"/>
+      <hr className="mx-6 m-3 border-gray-300"/>
       
       {/* 누적 통계 및 배급량 표시 */}
       <div className="w-full max-w-4xl px-4 mt-2 mx-auto">

@@ -14,7 +14,7 @@ const DateNavigationBar: React.FC<DateNavigationBarProps> = ({ currentMonday, ha
   };
 
   return (
-    <div className="flex justify-center items-center max-w-4xl mx-auto mt-6 px-1 space-x-4">
+    <div className="flex justify-center items-center max-w-4xl mx-auto mt-10 px-1 space-x-4">
       <button onClick={() => handleWeekChange(-1)} className="text-[#FFA41D] text-lg font-bold">
         {"<"}
       </button>

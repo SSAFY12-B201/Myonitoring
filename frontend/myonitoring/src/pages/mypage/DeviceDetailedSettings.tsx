@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
-import ContentSection from "../../components/ContentSection";
+import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
 
 const DeviceDetailedSettings: React.FC = () => {
@@ -20,7 +20,7 @@ const DeviceDetailedSettings: React.FC = () => {
       <Header title="연동 기기 설정" onBack={() => navigate(-1)} />
 
       {/* 콘텐츠 섹션 */}
-      <ContentSection>
+      <ExceptTopContentSection>
         {/* 기기 이미지 */}
         <div className="flex justify-center mb-6">
           <img
@@ -67,7 +67,7 @@ const DeviceDetailedSettings: React.FC = () => {
             <span className="text-black">{registrationDate}</span>
           </div>
         </div>
-      </ContentSection>
+      </ExceptTopContentSection>
       {/* 기기 추가 버튼 */}
       <footer className="fixed bottom-2 left-0 w-full p-4">
         <WideButton

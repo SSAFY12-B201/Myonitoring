@@ -10,12 +10,12 @@ const ReportTabBar = () => {
 
   // 공통 스타일 변수
   const baseStyle =
-    "w-40 h-10 rounded-full font-bold text-sm flex items-center justify-center";
-  const activeStyle = "bg-yellow text-black shadow-sm";
-  const inactiveStyle = "bg-white text-gray-400 shadow-md";
+    "w-full h-10 rounded-full font-bold text-sm flex items-center justify-center";
+  const activeStyle = "bg-[#FFEF9B] text-black shadow-sm";
+  const inactiveStyle = "bg-gray-100 text-gray-400";
 
   return (
-    <div className="flex justify-center items-center space-x-6 mt-4 max-w-4xl mx-5">
+    <div className="flex justify-center items-center space-x-6 mt-20 max-w-4xl mx-5">
       {/* 그래프 탭 */}
       <button
         onClick={() => navigate("/graph")} // 그래프 페이지로 이동

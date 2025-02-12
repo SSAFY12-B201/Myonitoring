@@ -9,6 +9,7 @@ import {
   deleteReservation,
 } from "../../redux/slices/reservationsSlice";
 import BottomBar from "../../components/BottomBar";
+import { PlusIcon } from "@heroicons/react/outline";
 
 // 24시간 형식을 12시간 형식으로 변환하는 함수
 const formatTimeTo12Hour = (
@@ -60,26 +61,22 @@ const Reservation: React.FC = () => {
 
   return (
     <div
-      style={{
-        backgroundImage: "url('/gradient_background.png')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100vh",
-        width: "100%",
-      }}
+      className="min-h-screen flex flex-col pb-[60px] bg-cover bg-center"
+      style={{ backgroundImage: "url('/gradient_background.png')" }}
     >
       {/* 상단 바 */}
       <TopBar />
 
       <ContentSection>
         {/* 예약 정보 섹션 */}
-        <div className="bg-white rounded-lg border border-gray-200 p-6 mb-4 text-center">
+        <div className="bg-white w-60 mx-auto rounded-lg border border-gray-200 p-6 mb-12 text-center">
           <h1 className="text-xl font-bold mb-4">총 {totalAmount}g 예약</h1>
           <button
             onClick={() => setIsModalOpen(true)} // 모달 열기
-            className="inline-block px-3 py-2  bg-yellow text-black rounded-full hover:bg-yellow-500"
+            className="inline-flex items-center px-5 py-2 bg-yellow text-black rounded-full"
           >
-            일정 추가하기
+            <PlusIcon className="h-5 w-5 text-black mr-2" />
+            일정
           </button>
         </div>
 
@@ -229,7 +226,7 @@ const ReservationItem: React.FC<ReservationItemProps> = ({
 
       {/* 예약 정보 */}
       <div
-        className={`flex items-center justify-between p-4 mb-4 bg-white rounded-lg border border-gray-300 shadow-sm transform transition-transform`}
+        className={`flex items-center justify-between p-4 mb-4 bg-white rounded-lg border border-gray-200 shadow-sm transform transition-transform`}
         style={{ transform: `translateX(${translateX}px)` }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}

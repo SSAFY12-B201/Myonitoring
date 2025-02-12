@@ -32,6 +32,7 @@ import DeviceSettings from "./pages/mypage/DeviceSettings";
 
 // 기타 페이지
 import Notification from "./pages/Notification";
+import CatEyeInfo from "./pages/report/CatEyeInfo";
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true); // 스플래쉬 화면 표시 여부
