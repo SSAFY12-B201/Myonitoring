@@ -1,5 +1,5 @@
 import React from "react";
-import { ChartBarIcon, EyeIcon, ClipboardIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { ChartBarIcon, EyeIcon, ClipboardIcon, ExclamationCircleIcon } from "@heroicons/react/24/outline/index.js";
 import TopBar from "../components/TopBar";
 import BottomBar from "../components/BottomBar";
 import HomeComponentBar from "../components/HomeComponents/HomeComponentBar";
