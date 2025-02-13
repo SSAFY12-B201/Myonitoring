@@ -35,4 +35,14 @@ export default defineConfig({
       },
     }),
   ],
+  //API 수정한 곳임임
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://myonitoring.site',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''), // 필요 시 경로 수정
+      },
+    },
+  },
 });

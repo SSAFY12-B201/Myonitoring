@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const AuthCallback: React.FC = () => {
+const Redirect: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -12,7 +12,7 @@ const AuthCallback: React.FC = () => {
       // 카카오 인증 코드를 백엔드로 전달
       console.log(code)
       axios
-        .post(`/auth/kakao/signin`, null, {
+        .post(`/api/auth/kakao/authenticate`, null, {
           params: { code }, // URL 파라미터로 인증 코드 전달
         })
         .then((response) => {
@@ -34,4 +34,4 @@ const AuthCallback: React.FC = () => {
   return <div>로그인 처리 중...</div>;
 };
 
-export default AuthCallback;
+export default Redirect;
