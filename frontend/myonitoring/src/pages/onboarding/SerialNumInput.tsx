@@ -26,7 +26,7 @@ const SerialNumberInput = () => {
     try {
       // axios로 백엔드에 시리얼 넘버 전송
       const response = await axios.post(
-        "/api/devices",
+        "http://localhost:8080/api/devices",
         { serialNumber }, // 본문에 시리얼 넘버 포함
         {
           headers: {
