@@ -9,7 +9,7 @@ import {
   deleteReservation,
 } from "../../redux/slices/reservationsSlice";
 import BottomBar from "../../components/BottomBar";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from "@heroicons/react/outline";
 
 // 24시간 형식을 12시간 형식으로 변환하는 함수
 const formatTimeTo12Hour = (
