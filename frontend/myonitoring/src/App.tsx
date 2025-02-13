@@ -56,8 +56,8 @@ const App: React.FC = () => {
 
   const checkUserStatus = async () => {
     return {
-      isLoggedIn: true,
-      isRegistered: true,
+      isLoggedIn: false,
+      isRegistered: false,
     };
   };
 
@@ -70,7 +70,9 @@ const App: React.FC = () => {
       {/* 온보딩 관련 라우트 */}
       {!isRegistered && (
         <>
-          <Route path="/" element={<Agreement />} />
+          <Route path="/" element={<LoginSignUp />} />
+          <Route path="/kakao-redirect/*" element={<Redirect />} />
+          <Route path="/agreements" element={<Agreement />} />
           <Route path="/agreement-detail" element={<AgreementDetail />} />
           <Route path="/user-info" element={<UserInfo />} />
           <Route path="/device-guide" element={<DeviceGuide />} />
@@ -85,7 +87,7 @@ const App: React.FC = () => {
       {isRegistered && !isLoggedIn && (
         <>
           <Route path="/" element={<LoginSignUp />} />
-          <Route path="/kakao-redirect" element={<Redirect />} />
+          <Route path="/kakao-redirect/*" element={<Redirect />} />
         </>
       )}
 

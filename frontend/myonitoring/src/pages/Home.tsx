@@ -5,15 +5,18 @@ import {
   ClipboardListIcon,
   DocumentTextIcon,
 } from "@heroicons/react/outline"; // Heroicons 사용
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch  } from "react-redux";
 import { RootState } from "../redux/store";
 import TopBar from "../components/TopBar";
 import BottomBar from "../components/BottomBar";
 import HomeComponentBar from "../components/HomeComponents/HomeComponentBar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { setSelectedCatId } from "../redux/slices/catSlice";
 
 const Home: React.FC = () => {
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const currentDate = new Date().toLocaleDateString("ko-KR", {
     year: "numeric",
@@ -35,11 +38,17 @@ const Home: React.FC = () => {
   // API 데이터 가져오기
   useEffect(() => {
     const fetchData = async () => {
+      if (!selectedCatId) {
+        console.warn("selectedCatId가 null입니다. 기본값으로 설정합니다.");
+        dispatch(setSelectedCatId(1)); // 기본값으로 ID 1 설정
+        return;
+      }
+  
       try {
         setLoading(true); // 로딩 시작
         const response = await axios.get(`/api/main/${selectedCatId}?day=${today}`, {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNjM0MDYsImV4cCI6MTc3MDc5OTQwNn0.uVXCsK07btSGZWOw2V0lEzcTF3lvXAa1CYClcUCm9CTQz9jJiBAjOIfxV2WJ4eUikVHQDGd98xegCer8muBDpw`, // 실제 토큰 값 입력
+            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
             Accept: "application/json",
           },
         });
@@ -54,7 +63,7 @@ const Home: React.FC = () => {
     };
 
     fetchData();
-  }, [today]); // 오늘 날짜가 변경되면 다시 fetch
+  }, [selectedCatId, today, dispatch]); // 오늘 날짜가 변경되면 다시 fetch
 
   // barsData 동적 생성
   const barsData = data
