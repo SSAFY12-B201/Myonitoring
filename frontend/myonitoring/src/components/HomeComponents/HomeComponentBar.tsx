@@ -1,7 +1,7 @@
 import React from "react";
 
 const containerClass =
-  "flex flex-col  items-center justify-between rounded-lg p-4 h-40 cursor-pointer transition-transform transform border border-gray-200 w-full max-w-[150px] hover:scale-105";
+  "flex flex-col items-center shadow-sm justify-between rounded-lg p-4 cursor-pointer transition-transform transform border border-gray-200 w-full max-w-[500px] hover:scale-105";
 const titleClass = "text-md font-bold text-orange mb-4";
 const descriptionClass = "text-sm font-medium text-gray-600";
 

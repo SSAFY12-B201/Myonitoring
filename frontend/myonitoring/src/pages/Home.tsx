@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { ChartBarIcon, EyeIcon, ClipboardListIcon, DocumentTextIcon } from "@heroicons/react/outline"; // Heroicons 사용
+import {
+  ChartBarIcon,
+  EyeIcon,
+  ClipboardListIcon,
+  DocumentTextIcon,
+} from "@heroicons/react/outline"; // Heroicons 사용
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 import TopBar from "../components/TopBar";
 import BottomBar from "../components/BottomBar";
 import HomeComponentBar from "../components/HomeComponents/HomeComponentBar";
@@ -21,12 +28,16 @@ const Home: React.FC = () => {
   // 현재 날짜를 ISO 형식으로 변환 (YYYY-MM-DD)
   const today = new Date().toISOString().split("T")[0];
 
+  const selectedCatId = useSelector(
+      (state: RootState) => state.cat.selectedCatId
+    );
+
   // API 데이터 가져오기
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true); // 로딩 시작
-        const response = await axios.get(`/api/main/2?day=${today}`, {
+        const response = await axios.get(`/api/main/${selectedCatId}?day=${today}`, {
           headers: {
             Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNjM0MDYsImV4cCI6MTc3MDc5OTQwNn0.uVXCsK07btSGZWOw2V0lEzcTF3lvXAa1CYClcUCm9CTQz9jJiBAjOIfxV2WJ4eUikVHQDGd98xegCer8muBDpw`, // 실제 토큰 값 입력
             Accept: "application/json",
@@ -78,12 +89,8 @@ const Home: React.FC = () => {
           icon: <EyeIcon className="h-12 w-12" />,
           title: "안구 건강",
           description: "",
-          badge:
-            data.eye_alert.flag === 1 ? "문제 있음" : "건강",
-          badgeColor:
-            data.eye_alert.flag === 1
-              ? "bg-red-500 text-white"
-              : "",
+          badge: data.eye_alert.flag === 1 ? "문제 있음" : "건강",
+          badgeColor: data.eye_alert.flag === 1 ? "bg-red-500 text-white" : "",
           onClick: () => navigate("/cateyeinfo"),
         },
         ...(data.medical.flag === 1
@@ -119,7 +126,6 @@ const Home: React.FC = () => {
         <TopBar />
 
         <div className="relative mt-20">
-
           {/* 고양이 프로필과 버튼 */}
           <div className="flex flex-col sm:flex-row items-center justify-center mt-4 space-y-4 sm:space-y-0 sm:space-x-4">
             {/* 고양이 프로필 */}
@@ -127,23 +133,26 @@ const Home: React.FC = () => {
               <img
                 src="/logo_cat.png"
                 alt="고양이"
-                className="w-20 h-20 md:w-24 md:h-24 rounded-full border-2 border-gray-200" // 보더 색상 설정 및 반응형 크기 조정
+                className="w-24 h-24 md:w-24 md:h-24 rounded-full border-2 border-gray-200" // 보더 색상 설정 및 반응형 크기 조정
               />
             </div>
 
             {/* 버튼 */}
             <button
-              className="py-2 px-8 md:px-12 border border-gray-200 rounded-lg font-bold text-gray-700 hover:bg-gray-100 hover:text-black transition-all duration-200" // 보더 색상 동일하게 설정 및 반응형 크기 조정
+              className="py-3 px-8 md:px-12 border border-gray-200 rounded-lg font-bold text-gray-700 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-500 hover:bg-gradient-to-l hover:ring hover:ring-orange transition-all duration-300 shadow-sm hover:text-black" // 보더 색상 동일하게 설정 및 반응형 크기 조정
               onClick={() => console.log("버튼 클릭!")}
             >
               <p className="text-md text-gray-700">{currentDate}</p>
             </button>
           </div>
 
+          {/* 이거 나타낼 때 애니메이션 적용해서 띠용띠용으로 */}
           {/* 바 컴포넌트들 */}
           <div className="grid grid-cols-2 gap-x-4 gap-y-6 p-4 px-6 mt-6 md:grid-cols-3 lg:grid-cols-4">
             {loading ? (
-              <p className="text-center text-gray-600">데이터를 불러오는 중...</p>
+              <p className="text-center text-gray-600">
+               
+              </p>
             ) : error ? (
               <p className="text-center text-red-500">{error}</p>
             ) : (

@@ -28,7 +28,7 @@ const MyPage = () => {
                   </li>
                   <li 
                     className="flex justify-between items-center border-b pb-3 cursor-pointer"
-                    onClick={() => navigate("/device")}
+                    onClick={() => navigate("/device-settings")}
                   >
                     <span>연동 기기 설정</span>
                     <FaChevronRight className="text-yellow" />

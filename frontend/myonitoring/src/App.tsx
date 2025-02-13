@@ -29,6 +29,7 @@ import StatisticsPage from "./pages/report/Statistics";
 import MyPage from "./pages/mypage/Mypage";
 import EditPersonal from "./pages/mypage/EditPersonal";
 import DeviceSettings from "./pages/mypage/DeviceSettings";
+import DeviceDetailedSettings from "./pages/mypage/DeviceDetailedSettings";
 
 // 기타 페이지
 import Notification from "./pages/Notification";
@@ -107,6 +108,7 @@ const App: React.FC = () => {
           <Route path="/my-page" element={<MyPage />} />
           <Route path="/edit-personal" element={<EditPersonal />} />
           <Route path="/device-settings" element={<DeviceSettings />} />
+          <Route path="/device-detail" element={<DeviceDetailedSettings />} />
 
           {/* 기타 라우트 */}
           <Route path="/notification" element={<Notification />} />
