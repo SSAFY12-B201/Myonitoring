@@ -5,15 +5,18 @@ import {
   ClipboardListIcon,
   DocumentTextIcon,
 } from "@heroicons/react/outline"; // Heroicons 사용
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch  } from "react-redux";
 import { RootState } from "../redux/store";
 import TopBar from "../components/TopBar";
 import BottomBar from "../components/BottomBar";
 import HomeComponentBar from "../components/HomeComponents/HomeComponentBar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { setSelectedCatId } from "../redux/slices/catSlice";
 
 const Home: React.FC = () => {
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const currentDate = new Date().toLocaleDateString("ko-KR", {
     year: "numeric",
@@ -35,6 +38,12 @@ const Home: React.FC = () => {
   // API 데이터 가져오기
   useEffect(() => {
     const fetchData = async () => {
+      if (!selectedCatId) {
+        console.warn("selectedCatId가 null입니다. 기본값으로 설정합니다.");
+        dispatch(setSelectedCatId(1)); // 기본값으로 ID 1 설정
+        return;
+      }
+  
       try {
         setLoading(true); // 로딩 시작
         const response = await axios.get(`/api/main/${selectedCatId}?day=${today}`, {
@@ -54,7 +63,7 @@ const Home: React.FC = () => {
     };
 
     fetchData();
-  }, [today]); // 오늘 날짜가 변경되면 다시 fetch
+  }, [selectedCatId, today, dispatch]); // 오늘 날짜가 변경되면 다시 fetch
 
   // barsData 동적 생성
   const barsData = data

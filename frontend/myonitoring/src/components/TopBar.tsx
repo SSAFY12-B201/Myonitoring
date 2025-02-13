@@ -119,6 +119,7 @@ const TopBar: React.FC = () => {
                 className="text-gray-500 text-lg mr-1 cursor-pointer hover:text-gray-700"
                 onClick={(e) => {
                   e.stopPropagation(); // 부모 클릭 이벤트 전파 방지
+                  dispatch(setSelectedCatId(cat.id)); // Redux 상태에 클릭한 고양이 ID 저장
                   handleCatDetail(cat.id); // 상세 페이지로 이동
                 }}
               >
