@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import naverIcon from "../../assets/images/naver_icon.png";
-import kakaoIcon from "../../assets/images/kakao_icon.png";
-import googleIcon from "../../assets/images/Google_icon.png";
+import naverIcon from "@/assets/images/naver_icon.png";
+import kakaoIcon from "@/assets/images/kakao_icon.png";
+import googleIcon from "@/assets/images/google_icon.png";
 
 const LoginSignUp: React.FC = () => {
   // 현재 활성화된 탭 상태 (login 또는 signup)
