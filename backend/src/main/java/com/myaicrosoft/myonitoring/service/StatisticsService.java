@@ -30,7 +30,7 @@ public class StatisticsService {
     /**
      * 매일 자정에 실행되는 스케줄링 작업
      */
-    @Scheduled(cron = "0 25 17 * * *") // 매일 오후 3시 40분 실행
+    @Scheduled(cron = "0 21 11 * * *")
     public void calculateDailyStatistics() {
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1); // 전날 날짜 계산
@@ -51,6 +51,12 @@ public class StatisticsService {
     private void createStatisticsForCat(Cat cat, LocalDate statDate) {
         // 전날 섭취 데이터 조회
         List<Intake> intakes = intakeRepository.findByCatIdAndDate(cat.getId(), statDate);
+
+        // 섭취 데이터가 없는 경우 저장하지 않음
+        if (intakes.isEmpty()) {
+            System.out.println("섭취 데이터가 없어 통계 데이터를 생성하지 않습니다. 고양이 ID: " + cat.getId() + ", 날짜: " + statDate);
+            return; // 메서드 종료
+        }
 
         // 총 섭취량 계산
         int totalIntake = intakes.stream()
@@ -96,21 +102,28 @@ public class StatisticsService {
      * @return 평균 섭취량 (BigDecimal)
      */
     private BigDecimal calculateAverageIntake(Cat cat, LocalDate startDate, LocalDate endDate) {
-        List<Intake> intakes = intakeRepository.findByCatIdAndDateRange(cat.getId(), startDate, endDate);
+        // StatisticsRepository 인스턴스를 통해 메서드 호출
+        List<Statistics> totalIntakes = statisticsRepository.findByCatIdAndStatDateRangeForAverage(cat.getId(), startDate, endDate);
 
-        if (intakes.isEmpty()) {
+        if (totalIntakes.isEmpty()) {
             return BigDecimal.ZERO; // 데이터가 없는 경우 0 반환
         }
 
-        int totalAmount = intakes.stream()
-                .mapToInt(Intake::getIntakeAmount)
+        // 총 섭취량 계산
+        int totalAmount = totalIntakes.stream()
+                .mapToInt(Statistics::getTotalIntake) // 하루 총 섭취량 가져오기
                 .sum();
 
-        // 디버깅용 콘솔 출력
-        System.out.println("디버깅 " + intakes);
+        System.out.println("디버깅 totalIntakes 리스트:");
+        totalIntakes.forEach(totalIntake ->
+                System.out.println(" - 날짜: " + totalIntake.getStatDate() + ", 섭취량: " + totalIntake.getTotalIntake())
+        );
+        System.out.println("디버깅 값 확인:" + BigDecimal.valueOf(totalAmount).divide(BigDecimal.valueOf(totalIntakes.size()), 2, RoundingMode.HALF_UP));
 
-        return BigDecimal.valueOf(totalAmount).divide(BigDecimal.valueOf(intakes.size()), 2, RoundingMode.HALF_UP);
+        // 평균 계산 및 반환 (소수점 둘째 자리까지 반올림)
+        return BigDecimal.valueOf(totalAmount).divide(BigDecimal.valueOf(totalIntakes.size()), 2, RoundingMode.HALF_UP);
     }
+
 
     /**
      * 증감률을 계산하는 메서드

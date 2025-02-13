@@ -31,11 +31,11 @@ public class Statistics {
     private Integer totalIntake;
 
     // 최근 7일의 평균 섭취량
-    @Column(precision = 3, scale = 2, nullable = false)
+    @Column(precision = 6, scale = 2, nullable = false)
     private BigDecimal average7d;
 
     // 최근 30일의 평균 섭취량
-    @Column(precision = 3, scale = 2, nullable = false)
+    @Column(precision = 6, scale = 2, nullable = false)
     private BigDecimal average30d;
 
     // 최근 7일 대비 증감률

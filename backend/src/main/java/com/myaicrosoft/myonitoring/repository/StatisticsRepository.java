@@ -36,4 +36,17 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
      * @return 통계 데이터 객체 (Optional)
      */
     Optional<Statistics> findByCatIdAndStatDate(@Param("catId") Long catId, @Param("statDate") LocalDate statDate);
+
+    /**
+     * 특정 고양이의 특정 기간 동안의 통계 데이터를 조회합니다.
+     *
+     * @param catId      고양이 ID
+     * @param startDate  시작 날짜 (포함)
+     * @param endDate    종료 날짜 (포함)
+     * @return 해당 기간 동안의 모든 통계 데이터 리스트
+     */
+    @Query("SELECT s FROM Statistics s WHERE s.cat.id = :catId AND s.statDate BETWEEN :startDate AND :endDate")
+    List<Statistics> findByCatIdAndStatDateRangeForAverage(@Param("catId") Long catId,
+                                                           @Param("startDate") LocalDate startDate,
+                                                           @Param("endDate") LocalDate endDate);
 }
