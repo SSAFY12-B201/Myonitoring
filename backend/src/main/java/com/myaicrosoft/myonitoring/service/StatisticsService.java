@@ -1,6 +1,7 @@
 package com.myaicrosoft.myonitoring.service;
 
 import lombok.RequiredArgsConstructor;
+import com.myaicrosoft.myonitoring.model.dto.StatisticsResponseDto;
 import com.myaicrosoft.myonitoring.model.entity.Cat;
 import com.myaicrosoft.myonitoring.model.entity.Intake;
 import com.myaicrosoft.myonitoring.model.entity.Statistics;
@@ -91,6 +92,39 @@ public class StatisticsService {
                 .build();
 
         statisticsRepository.save(statistics); // 통계 데이터 저장
+    }
+
+    /**
+     * 특정 고양이의 통계 데이터를 조회하는 로직 (API용)
+     *
+     * @param catId 고양이 ID (Primary Key)
+     * @param day   기준 날짜 (YYYY-MM-DD)
+     * @return 통계 데이터 응답 DTO 반환
+     */
+    public StatisticsResponseDto getStatistics(Long catId, LocalDate day) {
+        // 기준 날짜의 전날 데이터 조회 (yesterday)
+        LocalDate yesterday = day.minusDays(1);
+        Statistics yesterdayStat = statisticsRepository.findByCatIdAndStatDate(catId, yesterday)
+                .orElseThrow(() -> new IllegalArgumentException("해당 날짜의 통계 데이터를 찾을 수 없습니다. 날짜: " + yesterday));
+
+        // change_days와 change_status 처리 로직 추가
+        int changeDays = yesterdayStat.getChangeDays();
+        int changeStatus = yesterdayStat.getChangeStatus();
+        if (changeDays <= 1) {
+            changeDays = 0; // change_days가 1 이하인 경우 0으로 설정
+            changeStatus = 0; // change_status도 0으로 설정
+        }
+
+        // 응답 DTO 생성 및 반환
+        return new StatisticsResponseDto(
+                yesterdayStat.getAverage7d(),
+                yesterdayStat.getAverage30d(),
+                yesterdayStat.getChange7d(),
+                yesterdayStat.getChange30d(),
+                yesterdayStat.getTotalIntake(), // totalIntake는 그대로 사용하지만 이름을 변경하여 응답에 포함해야 함.
+                changeDays,
+                changeStatus
+        );
     }
 
     /**
