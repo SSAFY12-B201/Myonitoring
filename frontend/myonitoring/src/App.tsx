@@ -34,6 +34,7 @@ import DeviceDetailedSettings from "./pages/mypage/DeviceDetailedSettings";
 // 기타 페이지
 import Notification from "./pages/Notification";
 import CatEyeInfo from "./pages/report/CatEyeInfo";
+import CatInfoEdit from "./pages/CatInfoEdit";
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true); // 스플래쉬 화면 표시 여부
@@ -112,6 +113,7 @@ const App: React.FC = () => {
 
           {/* 기타 라우트 */}
           <Route path="/notification" element={<Notification />} />
+          <Route path="/catinfoedit/:id" element={<CatInfoEdit />} />
         </>
       )}
     </Routes>

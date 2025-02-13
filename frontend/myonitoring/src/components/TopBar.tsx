@@ -5,6 +5,7 @@ import axios from "axios";
 import { Notifications, ChatBubbleOutline } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
+import { FaChevronRight } from "react-icons/fa"; // react-icons에서 아이콘 가져오기
 
 interface Cat {
   id: number;
@@ -58,7 +59,7 @@ const TopBar: React.FC = () => {
 
   // 고양이 상세 페이지로 이동
   const handleCatDetail = (catId: number) => {
-    navigate(`/cat-detail/${catId}`);
+    navigate(`/catinfoedit/${catId}`);
   };
 
   return (
@@ -115,13 +116,13 @@ const TopBar: React.FC = () => {
                 <span className="text-gray-800 font-medium">{cat.name}</span>
               </div>
               <span
-                className="text-gray-500 text-lg cursor-pointer hover:text-gray-700"
+                className="text-gray-500 text-lg mr-1 cursor-pointer hover:text-gray-700"
                 onClick={(e) => {
                   e.stopPropagation(); // 부모 클릭 이벤트 전파 방지
                   handleCatDetail(cat.id); // 상세 페이지로 이동
                 }}
               >
-                &#9654; {/* ▶ 아이콘 */}
+               <FaChevronRight/>
               </span>
             </div>
           ))}

@@ -39,7 +39,7 @@ const Home: React.FC = () => {
         setLoading(true); // 로딩 시작
         const response = await axios.get(`/api/main/${selectedCatId}?day=${today}`, {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNjM0MDYsImV4cCI6MTc3MDc5OTQwNn0.uVXCsK07btSGZWOw2V0lEzcTF3lvXAa1CYClcUCm9CTQz9jJiBAjOIfxV2WJ4eUikVHQDGd98xegCer8muBDpw`, // 실제 토큰 값 입력
+            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
             Accept: "application/json",
           },
         });
