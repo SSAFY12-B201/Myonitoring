@@ -10,9 +10,6 @@ import com.myaicrosoft.myonitoring.util.JwtProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +18,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service("kakao")
@@ -45,7 +43,7 @@ public class KakaoAuthService implements OAuth2AuthService {
 
     @Override
     @Transactional
-    public TokenDto signIn(String code, UserRegistrationDto registrationDto) {
+    public Map<String, Object> authenticate(String code) {
         if (code == null || code.isEmpty()) {
             throw new IllegalArgumentException("Authorization code cannot be null or empty");
         }
@@ -58,39 +56,104 @@ public class KakaoAuthService implements OAuth2AuthService {
         // 카카오 사용자 정보 받기
         Map<String, Object> userInfo = getKakaoUserInfo(kakaoAccessToken);
         String email = extractEmail(userInfo);
-        
+
         // 이메일로 사용자 찾기
-        User user = userRepository.findByEmail(email).orElse(null);
-        
-        if (user == null) {
-            // 신규 회원인 경우 회원가입 처리
+        User existingUser = userRepository.findByEmail(email).orElse(null);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("auth_token", kakaoAccessToken);
+        response.put("email", email);
+
+        if (existingUser != null) {
+            // 기존 회원인 경우
+            if (existingUser.getProvider() != User.Provider.KAKAO) {
+                throw new RuntimeException("This email is already registered with different provider: " + existingUser.getProvider());
+            }
+
+            // 프로필이 완성되지 않은 경우
+            if (!existingUser.isProfileCompleted()) {
+                Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
+                Map<String, Object> properties = (Map<String, Object>) userInfo.get("properties");
+
+                response.put("is_registered", false);
+                response.put("registration_info", Map.of(
+                        "email", email,
+                        "suggested_nickname", properties != null ? properties.get("nickname") : email.split("@")[0],
+                        "required_fields", List.of("nickname", "address", "phoneNumber")
+                ));
+                return response;
+            }
+
+            // 프로필이 완성된 경우 로그인 처리
+            TokenDto tokenDto = jwtProvider.generateTokenDto(existingUser);
+            existingUser.setRefreshToken(tokenDto.getRefreshToken());
+            userRepository.save(existingUser);
+
+            response.put("is_registered", true);
+            response.put("token", tokenDto);
+        } else {
+            // 신규 회원인 경우 기본 정보만 저장
             Map<String, Object> kakaoAccount = (Map<String, Object>) userInfo.get("kakao_account");
             Map<String, Object> properties = (Map<String, Object>) userInfo.get("properties");
-            
-            // 카카오 정보로 기본값 설정
-            String nickname = properties != null ? (String) properties.get("nickname") : null;
-            
-            // DTO에 카카오 정보 설정
-            registrationDto = new UserRegistrationDto();
-            registrationDto.setEmail(email);
-            registrationDto.setNickname(nickname != null ? nickname : email.split("@")[0]);
-            
-            user = userService.registerUser(registrationDto, User.Provider.KAKAO);
-        } else {
-            // 기존 회원인 경우 provider 확인
-            if (user.getProvider() != User.Provider.KAKAO) {
-                throw new RuntimeException("This email is already registered with different provider: " + user.getProvider());
-            }
+
+            // 기본 사용자 생성
+            User newUser = User.builder()
+                    .email(email)
+                    .provider(User.Provider.KAKAO)
+                    .role(User.Role.USER)
+                    .isProfileCompleted(false)
+                    .build();
+
+            // JWT 토큰 생성 및 저장
+            TokenDto tokenDto = jwtProvider.generateTokenDto(newUser);
+            newUser.setRefreshToken(tokenDto.getRefreshToken());
+            userRepository.save(newUser);
+
+            response.put("is_registered", false);
+            response.put("registration_info", Map.of(
+                    "email", email,
+                    "suggested_nickname", properties != null ? properties.get("nickname") : email.split("@")[0],
+                    "required_fields", List.of("nickname", "address", "phoneNumber")
+            ));
         }
 
-        // JWT 토큰 생성
-        TokenDto tokenDto = jwtProvider.generateTokenDto(user);
-        
-        // Refresh Token 저장
-        user.setRefreshToken(tokenDto.getRefreshToken());
+        return response;
+    }
+
+    @Override
+    @Transactional
+    public TokenDto register(String authToken, UserRegistrationDto registrationDto) {
+        if (authToken == null || authToken.isEmpty()) {
+            throw new IllegalArgumentException("Auth token cannot be null or empty");
+        }
+
+        // 카카오 사용자 정보 다시 확인
+        Map<String, Object> userInfo = getKakaoUserInfo(authToken);
+        String email = extractEmail(userInfo);
+
+        // 이메일로 사용자 찾기
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found. Please authenticate first."));
+
+        if (user.isProfileCompleted()) {
+            throw new RuntimeException("User profile is already completed");
+        }
+
+        // 추가 정보 업데이트
+        user.setNickname(registrationDto.getNickname());
+        user.setAddress(registrationDto.getAddress());
+        user.setPhoneNumber(registrationDto.getPhoneNumber());
+        user.setProfileCompleted(true);
+
         userRepository.save(user);
-        
-        return tokenDto;
+
+        // 기존 토큰 재사용 (이미 저장되어 있음)
+        return TokenDto.builder()
+                .grantType("Bearer")
+                .accessToken(jwtProvider.generateAccessToken(user))
+                .accessTokenExpiresIn(jwtProvider.getAccessTokenExpirationTime())
+                .refreshToken(user.getRefreshToken())
+                .build();
     }
 
     private String getKakaoTokens(String code) {
