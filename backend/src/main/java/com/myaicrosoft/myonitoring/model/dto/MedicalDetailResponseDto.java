@@ -13,6 +13,7 @@ import java.time.LocalTime;
 @Data
 @AllArgsConstructor
 public class MedicalDetailResponseDto {
+    private Long id;
     private MedicalCategory category; // 카테고리(CHECKUP, TREATMENT 등)
     private String title;             // 제목(100자 이내)
     private String description;       // 설명(TEXT 타입 - 선택적 데이터 포함 가능)

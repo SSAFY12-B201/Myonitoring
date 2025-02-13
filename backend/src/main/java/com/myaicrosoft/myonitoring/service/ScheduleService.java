@@ -56,6 +56,7 @@ public class ScheduleService {
 
         return schedules.stream()
                 .map(schedule -> new ScheduleResponseDto(
+                        schedule.getId(),
                         schedule.getScheduledTime(),
                         schedule.getScheduledAmount(),
                         schedule.getIsActive()

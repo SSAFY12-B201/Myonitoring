@@ -57,6 +57,7 @@ public class MedicalService {
 
         return records.stream()
                 .map(record -> new MedicalResponseDto(
+                        record.getId(),
                         record.getCategory(),
                         record.getTitle(),
                         record.getVisitDate(),
@@ -76,6 +77,7 @@ public class MedicalService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 의료 기록을 찾을 수 없습니다. ID: " + medicalId));
 
         return new MedicalDetailResponseDto(
+                medical.getId(),
                 medical.getCategory(),
                 medical.getTitle(),
                 medical.getDescription(),
