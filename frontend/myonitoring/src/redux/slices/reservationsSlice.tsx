@@ -1,83 +1,91 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// 예약 정보 타입 정의
-export interface Reservation {
-  id: string; // 고유 ID
-  time: string; // 예약 시간 (24시간 형식, 예: "06:00")
-  amount: number; // 급식량 (그램 단위)
-  isActive: boolean; // 활성화 여부
+interface Reservation {
+  id: string;
+  time: string;
+  amount: number;
+  isActive: boolean;
 }
 
 interface ReservationState {
-  reservations: Reservation[]; // 예약 목록
+  reservations: Reservation[];
 }
 
-// 초기 상태
+// 초기 상태에 더미 데이터 추가
 const initialState: ReservationState = {
   reservations: [
-    { id: "1", time: "06:00", amount: 20, isActive: true },
-    { id: "2", time: "09:00", amount: 20, isActive: true },
-    { id: "3", time: "15:00", amount: 20, isActive: true },
+    {
+      id: "1",
+      time: "08:00",
+      amount: 50,
+      isActive: true,
+    },
+    {
+      id: "2",
+      time: "12:00",
+      amount: 70,
+      isActive: true,
+    },
+    {
+      id: "3",
+      time: "18:00",
+      amount: 60,
+      isActive: false,
+    },
   ],
 };
 
-const reservationSlice = createSlice({
+const reservationsSlice = createSlice({
   name: "reservation",
   initialState,
   reducers: {
-    // 예약 추가 (추가 후 정렬)
-    addReservation(state, action: PayloadAction<Omit<Reservation, "id">>) {
-      const newReservation = {
-        id: Date.now().toString(), // 고유 ID 생성
-        ...action.payload,
-      };
-      state.reservations.push(newReservation);
-
-      // 시간 기준 오름차순 정렬
-      state.reservations.sort((a, b) => a.time.localeCompare(b.time));
+    // 서버에서 반환된 예약 데이터를 Redux 상태에 추가
+    addReservation(state, action: PayloadAction<Reservation>) {
+      state.reservations.push(action.payload); // 서버에서 반환된 데이터 그대로 추가
     },
 
-    // 예약 수정
-    updateReservation(state, action: PayloadAction<Reservation>) {
-      const index = state.reservations.findIndex(
-        (r) => r.id === action.payload.id
+    // 활성화 여부 토글 (isActive 상태만 업데이트)
+    toggleReservation(state, action: PayloadAction<{ id: string; isActive: boolean }>) {
+      const reservation = state.reservations.find(
+        (res) => res.id === action.payload.id
       );
-      if (index !== -1) {
-        state.reservations[index] = action.payload;
+      if (reservation) {
+        reservation.isActive = action.payload.isActive; // 서버에서 반환된 활성화 상태로 업데이트
       }
-
-      // 시간 기준 오름차순 정렬
-      state.reservations.sort((a, b) => a.time.localeCompare(b.time));
     },
 
-    // 활성화/비활성화 토글
-    toggleReservation(state, action: PayloadAction<string>) {
-      const index = state.reservations.findIndex((r) => r.id === action.payload);
-      if (index !== -1) {
-        state.reservations[index].isActive = !state.reservations[index].isActive;
+    // 배급 시간 및 배급량 수정
+    updateReservationDetails(
+      state,
+      action: PayloadAction<{ id: string; time?: string; amount?: number }>
+    ) {
+      const reservation = state.reservations.find(
+        (res) => res.id === action.payload.id
+      );
+      if (reservation) {
+        if (action.payload.time !== undefined) {
+          reservation.time = action.payload.time; // 시간 업데이트
+        }
+        if (action.payload.amount !== undefined) {
+          reservation.amount = action.payload.amount; // 배급량 업데이트
+        }
       }
     },
 
     // 예약 삭제
     deleteReservation(state, action: PayloadAction<string>) {
       state.reservations = state.reservations.filter(
-        (r) => r.id !== action.payload
+        (res) => res.id !== action.payload
       );
-    },
-
-    // 모든 예약 초기화
-    resetReservations() {
-      return initialState;
     },
   },
 });
 
 export const {
   addReservation,
-  updateReservation,
   toggleReservation,
+  updateReservationDetails,
   deleteReservation,
-  resetReservations,
-} = reservationSlice.actions;
+} = reservationsSlice.actions;
 
-export default reservationSlice.reducer;
+export default reservationsSlice.reducer;
