@@ -23,7 +23,12 @@ import StatisticsPage from "./pages/report/Statistics";
 import MyPage from "./pages/mypage/Mypage";
 import EditPersonal from "./pages/mypage/EditPersonal";
 import DeviceSettings from "./pages/mypage/DeviceSettings";
+import DeviceDetailedSettings from "./pages/mypage/DeviceDetailedSettings";
+
+// 기타 페이지
 import Notification from "./pages/Notification";
+import CatEyeInfo from "./pages/report/CatEyeInfo";
+import CatInfoEdit from "./pages/CatInfoEdit";
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -35,8 +40,8 @@ const App: React.FC = () => {
   // 유저 상태 확인 함수
   const checkUserStatus = async () => {
     return {
-      isLoggedIn: false,
-      isRegistered: false,
+      isLoggedIn: true,
+      isRegistered: true,
     };
   };
 
@@ -94,7 +99,37 @@ const App: React.FC = () => {
             <Route path="/notification" element={<Notification />} />
           </>
         ) : (
-          <Route path="/" element={<LoginSignUp />} />
+          <>
+            <Route path="/" element={<LoginSignUp />} />
+            <Route path="/kakao-redirect" element={<Redirect />} />
+          </>
+        )}
+
+        {/* 메인 기능 관련 라우트 */}
+        {isLoggedIn && (
+          <>
+            <Route path="/" element={<Home />} />
+            <Route path="/home" element={<Home />} />
+            <Route path="/reservation" element={<Reservation />} />
+            <Route path="/medical-records" element={<MedicalRecords />} />
+            <Route
+              path="/medical-records/:id"
+              element={<MedicalRecordDetail />}
+            />
+            <Route path="/graph" element={<Graph />} />
+            <Route path="/statistics" element={<StatisticsPage />} />
+            <Route path="/cateyeinfo" element={<CatEyeInfo />} />
+
+            {/* 마이페이지 관련 라우트 */}
+            <Route path="/my-page" element={<MyPage />} />
+            <Route path="/edit-personal" element={<EditPersonal />} />
+            <Route path="/device-settings" element={<DeviceSettings />} />
+            <Route path="/device-detail" element={<DeviceDetailedSettings />} />
+
+            {/* 기타 라우트 */}
+            <Route path="/notification" element={<Notification />} />
+            <Route path="/catinfoedit/:id" element={<CatInfoEdit />} />
+          </>
         )}
       </Routes>
     </AnimatePresence>

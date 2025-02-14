@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Switch from "react-switch"; // react-switch 라이브러리 import
+import Switch from "react-switch";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import TopBar from "../../components/TopBar";
 import ContentSection from "../../components/ContentSection";
@@ -7,11 +7,12 @@ import {
   toggleReservation,
   addReservation,
   deleteReservation,
+  updateReservation,
 } from "../../redux/slices/reservationsSlice";
 import BottomBar from "../../components/BottomBar";
 import { PlusIcon } from "@heroicons/react/outline";
 
-// 24시간 형식을 12시간 형식으로 변환하는 함수
+// 시간 형식 변환 함수
 const formatTimeTo12Hour = (
   time: string
 ): { period: string; formattedTime: string } => {
@@ -24,15 +25,28 @@ const formatTimeTo12Hour = (
   };
 };
 
+interface Reservation {
+  id: string;
+  time: string;
+  amount: number;
+  isActive: boolean;
+}
+
 const Reservation: React.FC = () => {
   const dispatch = useAppDispatch();
   const reservations = useAppSelector(
     (state) => state.reservation.reservations
   );
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태
-  const [time, setTime] = useState("06:00"); // 예약 시간 상태
-  const [amount, setAmount] = useState(20); // 급식량 상태
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 수정 모달 상태
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false); // 추가 모달 상태
+  const [editingReservation, setEditingReservation] =
+    useState<Reservation | null>(null); // 수정 중인 예약 상태
+  const [newReservation, setNewReservation] = useState({
+    time: "",
+    amount: "",
+    isActive: true,
+  }); // 새 예약 데이터
 
   const totalAmount = reservations.reduce(
     (sum, r) => (r.isActive ? sum + r.amount : sum),
@@ -43,20 +57,35 @@ const Reservation: React.FC = () => {
     dispatch(toggleReservation(id));
   };
 
-  const handleSave = () => {
-    // Redux 상태에 새 예약 추가
-    dispatch(
-      addReservation({
-        time,
-        amount,
-        isActive: true, // 새 예약은 기본적으로 활성화 상태로 추가
-      })
-    );
-    setIsModalOpen(false); // 모달 닫기
+  const handleEdit = (reservation: Reservation) => {
+    setEditingReservation(reservation);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = () => {
+    if (editingReservation) {
+      dispatch(updateReservation(editingReservation));
+    }
+    setIsEditModalOpen(false);
+    setEditingReservation(null);
+  };
+
+  const handleAdd = () => {
+    if (newReservation.time && newReservation.amount) {
+      dispatch(
+        addReservation({
+          time: newReservation.time,
+          amount: Number(newReservation.amount),
+          isActive: true,
+        })
+      );
+      setNewReservation({ time: "", amount: "", isActive: true });
+      setIsAddModalOpen(false);
+    }
   };
 
   const handleDelete = (id: string) => {
-    dispatch(deleteReservation(id)); // Redux 상태에서 예약 삭제
+    dispatch(deleteReservation(id));
   };
 
   return (
@@ -68,15 +97,15 @@ const Reservation: React.FC = () => {
       <TopBar />
 
       <ContentSection>
-        {/* 예약 정보 섹션 */}
+        {/* 총 예약 정보 */}
         <div className="bg-white w-60 mx-auto rounded-lg border border-gray-200 p-6 mb-12 text-center">
           <h1 className="text-xl font-bold mb-4">총 {totalAmount}g 예약</h1>
           <button
-            onClick={() => setIsModalOpen(true)} // 모달 열기
+            onClick={() => setIsAddModalOpen(true)} // 추가 모달 열기
             className="inline-flex items-center px-5 py-2 bg-yellow text-black rounded-full"
           >
             <PlusIcon className="h-5 w-5 text-black mr-2" />
-            일정
+            일정 추가
           </button>
         </div>
 
@@ -85,55 +114,57 @@ const Reservation: React.FC = () => {
           {reservations.map((reservation) => (
             <ReservationItem
               key={reservation.id}
-              id={reservation.id}
-              time={reservation.time}
-              amount={reservation.amount}
-              isActive={reservation.isActive}
+              reservation={reservation}
               onToggle={handleToggle}
-              onDelete={handleDelete} // 삭제 핸들러 전달
+              onEdit={handleEdit}
+              onDelete={handleDelete}
             />
           ))}
         </div>
       </ContentSection>
 
       <BottomBar />
-      {/* 예약 설정 모달 */}
-      {isModalOpen && (
+
+      {/* 수정 모달 */}
+      {isEditModalOpen && editingReservation && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-700 bg-opacity-50">
-          {/* 모달 전체를 감싸는 컨테이너 */}
           <div className="relative bg-white rounded-lg shadow-lg p-6 w-[85%] max-w-lg mx-auto border border-gray-300">
-            <h2 className="text-xl font-bold mb-4 text-center">예약 설정</h2>
+            <h2 className="text-xl font-bold mb-4 text-center">예약 수정</h2>
 
             {/* 시간 설정 */}
             <div className="mb-6">
-              <label
-                htmlFor="time"
-                className="block text-gray-700 font-bold mb-2"
-              >
+              <label htmlFor="edit-time" className="block text-gray-700 font-bold mb-2">
                 시간
               </label>
               <input
-                id="time"
+                id="edit-time"
                 type="time"
-                value={time}
-                onChange={(e) => setTime(e.target.value)}
+                value={editingReservation.time}
+                onChange={(e) =>
+                  setEditingReservation({
+                    ...editingReservation,
+                    time: e.target.value,
+                  })
+                }
                 className="w-full border border-gray-300 rounded-lg p-2"
               />
             </div>
 
             {/* 급식량 설정 */}
             <div className="mb-6">
-              <label
-                htmlFor="amount"
-                className="block text-gray-700 font-bold mb-2"
-              >
+              <label htmlFor="edit-amount" className="block text-gray-700 font-bold mb-2">
                 급식량 (g)
               </label>
               <input
-                id="amount"
+                id="edit-amount"
                 type="number"
-                value={amount}
-                onChange={(e) => setAmount(Number(e.target.value))}
+                value={editingReservation.amount}
+                onChange={(e) =>
+                  setEditingReservation({
+                    ...editingReservation,
+                    amount: Number(e.target.value),
+                  })
+                }
                 min={1}
                 max={100}
                 className="w-full border border-gray-300 rounded-lg p-2"
@@ -143,16 +174,78 @@ const Reservation: React.FC = () => {
             {/* 버튼 섹션 */}
             <div className="flex justify-between">
               <button
-                onClick={() => setIsModalOpen(false)} // 모달 닫기
+                onClick={() => setIsEditModalOpen(false)}
                 className="py-2 px-4 bg-gray-300 text-black rounded-lg hover:bg-gray-400"
               >
                 취소하기
               </button>
               <button
-                onClick={handleSave} // 저장 로직 실행
+                onClick={handleSaveEdit}
                 className="py-2 px-4 bg-yellow text-black rounded-lg hover:bg-yellow-500"
               >
                 저장하기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 추가 모달 */}
+      {isAddModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-700 bg-opacity-50">
+          <div className="relative bg-white rounded-lg shadow-lg p-6 w-[85%] max-w-lg mx-auto border border-gray-300">
+            <h2 className="text-xl font-bold mb-4 text-center">일정 추가</h2>
+
+            {/* 시간 설정 */}
+            <div className="mb-6">
+              <label htmlFor="add-time" className="block text-gray-700 font-bold mb-2">
+                시간
+              </label>
+              <input
+                id="add-time"
+                type="time"
+                value={newReservation.time}
+                onChange={(e) =>
+                  setNewReservation({ ...newReservation, time: e.target.value })
+                }
+                className="w-full border border-gray-300 rounded-lg p-2"
+              />
+            </div>
+
+            {/* 급식량 설정 */}
+            <div className="mb-6">
+              <label htmlFor="add-amount" className="block text-gray-700 font-bold mb-2">
+                급식량 (g)
+              </label>
+              <input
+                id="add-amount"
+                type="number"
+                value={newReservation.amount}
+                onChange={(e) =>
+                  setNewReservation({
+                    ...newReservation,
+                    amount: e.target.value,
+                  })
+                }
+                min={1}
+                max={100}
+                className="w-full border border-gray-300 rounded-lg p-2"
+              />
+            </div>
+
+            {/* 버튼 섹션 */}
+            <div className="flex justify-between">
+              <button
+                onClick={() => setIsAddModalOpen(false)}
+                className="py-2 px-4 bg-gray-300 text-black rounded-lg hover:bg-gray-400"
+              >
+                취소하기
+              </button>
+              <button
+                onClick={handleAdd}
+                className="py-2 px-4 bg-yellow text-black rounded-lg hover:bg-yellow-500"
+              >
+                추가하기
               </button>
             </div>
           </div>
@@ -162,26 +255,20 @@ const Reservation: React.FC = () => {
   );
 };
 
-// ReservationItemProps 타입 정의
 interface ReservationItemProps {
-  id: string;
-  time: string;
-  amount: number;
-  isActive: boolean;
+  reservation: Reservation;
   onToggle: (id: string) => void;
+  onEdit: (reservation: Reservation) => void;
   onDelete: (id: string) => void;
 }
 
-// ReservationItem 컴포넌트 내장
 const ReservationItem: React.FC<ReservationItemProps> = ({
-  id,
-  time,
-  amount,
-  isActive,
+  reservation,
   onToggle,
+  onEdit,
   onDelete,
 }) => {
-  const [translateX, setTranslateX] = useState(0); // 슬라이드 거리 상태
+  const [translateX, setTranslateX] = useState(0);
 
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     e.currentTarget.dataset.startX = e.touches[0].clientX.toString();
@@ -194,30 +281,27 @@ const ReservationItem: React.FC<ReservationItemProps> = ({
     const deltaX = currentX - startX;
 
     if (deltaX < -30) {
-      // 왼쪽으로 슬라이드할 때만 동작하도록 설정
       setTranslateX(deltaX);
     }
   };
 
   const handleTouchEnd = () => {
     if (translateX <= -100) {
-      // 슬라이드가 충분히 이루어진 경우 삭제 버튼 표시 위치로 고정
       setTranslateX(-100);
     } else {
-      // 그렇지 않으면 원래 위치로 복원
       setTranslateX(0);
     }
   };
 
-  // 시간 형식을 변환하는 함수 호출
-  const { period, formattedTime } = formatTimeTo12Hour(time);
+  // 시간 변환 처리
+  const { period, formattedTime } = formatTimeTo12Hour(reservation.time);
 
   return (
     <div className="relative w-full overflow-hidden">
       {/* 삭제 버튼 */}
       {translateX <= -100 && (
         <button
-          onClick={() => onDelete(id)}
+          onClick={() => onDelete(reservation.id)}
           className="absolute right-[4px] top-[4px] bottom-[4px] w-[100px] mb-4 bg-red-500 text-white font-bold rounded-lg flex items-center justify-center"
         >
           삭제하기
@@ -231,13 +315,14 @@ const ReservationItem: React.FC<ReservationItemProps> = ({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onClick={() => onEdit(reservation)}
       >
         {/* 시간 정보 */}
         <div className="flex items-center space-x-2">
           {/* 오전/오후 정보 */}
           <span
             className={`text-xs mt-1 ${
-              isActive ? "text-gray-500" : "text-gray-300"
+              reservation.isActive ? "text-gray-500" : "text-gray-300"
             }`}
           >
             {period}
@@ -245,7 +330,7 @@ const ReservationItem: React.FC<ReservationItemProps> = ({
           {/* 시각 숫자 */}
           <span
             className={`text-xl font-bold ${
-              isActive ? "text-black" : "text-gray-300"
+              reservation.isActive ? "text-black" : "text-gray-300"
             }`}
           >
             {formattedTime}
@@ -257,23 +342,22 @@ const ReservationItem: React.FC<ReservationItemProps> = ({
           {/* 급식량 정보 */}
           <p
             className={`text-lg me-3 ${
-              isActive ? "text-black" : "text-gray-300"
+              reservation.isActive ? "text-black" : "text-gray-300"
             }`}
           >
-            {amount}g
+            {reservation.amount}g
           </p>
 
-          {/* react-switch 토글 버튼 */}
+          {/* 토글 버튼 */}
           <Switch
-            checked={isActive}
-            onChange={() => onToggle(id)}
-            onColor="#FFE76B" // 활성화 배경색 (노란색)
-            offColor="#E5E5E5" // 비활성화 배경색 (회색)
-            handleDiameter={22} // 핸들 크기
-            uncheckedIcon={false} // 비활성화 상태에서 아이콘 제거
-            checkedIcon={false} // 활성화 상태에서 아이콘 제거
-            height={28} // 토글 높이
-            width={48} // 토글 너비
+            checked={reservation.isActive}
+            onChange={() => onToggle(reservation.id)}
+            offColor="#E5E5E5"
+            onColor="#FFE76B"
+            uncheckedIcon={false}
+            checkedIcon={false}
+            height={28}
+            width={48}
           />
         </div>
       </div>

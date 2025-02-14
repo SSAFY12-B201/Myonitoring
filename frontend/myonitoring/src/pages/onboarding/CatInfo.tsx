@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Input from "../../components/Input";
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
-import ContentSection from "../../components/ContentSection";
+import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import infoCat from "../../assets/images/info_cat.png"
 
 const CatInfo = () => {
@@ -54,7 +54,7 @@ const CatInfo = () => {
       {/* 상단 헤더 */}
       <Header title="고양이 정보 등록" onBack={() => navigate(-1)} />
 
-      <ContentSection>
+      <ExceptTopContentSection>
         <div>
           <h2 className="text-lg font-semibold mb-2">
             반려묘의 정보를 입력해주세요.
@@ -241,7 +241,7 @@ const CatInfo = () => {
             />
           </form>
         </div>
-      </ContentSection>
+      </ExceptTopContentSection>
 
       {/* 하단 버튼 */}
       <footer className="sticky bottom-0 left-0 w-full p-4 bg-white">

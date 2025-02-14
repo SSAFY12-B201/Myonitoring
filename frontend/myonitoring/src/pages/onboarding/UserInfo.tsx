@@ -3,7 +3,7 @@ import { updateUserInfo } from "../../redux/slices/userSlice";
 import Input from "../../components/Input";
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
-import ContentSection from "../../components/ContentSection";
+import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -53,7 +53,7 @@ const UserInfo = () => {
         {/* 상단 헤더 */}
         <Header title="개인 정보 입력" onBack={() => navigate(-1)} />
 
-        <ContentSection>
+        <ExceptTopContentSection>
           <div>
             {/* 설명 */}
             <h2 className="text-lg font-semibold mb-2">처음 가입하시네요!</h2>
@@ -106,7 +106,7 @@ const UserInfo = () => {
               />
             </form>
           </div>
-        </ContentSection>
+        </ExceptTopContentSection>
 
         {/* 하단 버튼 */}
         <footer className="fixed bottom-0 left-0 w-full p-4 bg-white">

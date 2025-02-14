@@ -1,12 +1,9 @@
 import React from "react";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
-// 공통 클래스 정의
 const containerClass =
-  "flex items-center justify-between rounded-lg p-4 cursor-pointer hover:shadow-md transition-shadow border border-gray-200";
-const titleClass = "text-lg font-bold flex items-center space-x-2 mb-2"; // 아이콘과 제목 한 줄
-const descriptionClass = "text-sm text-gray-500";
-const badgeClass = "px-2 py-1 rounded-full font-bold";
+  "flex flex-col items-center shadow-sm justify-between rounded-lg p-4 cursor-pointer transition-transform transform border border-gray-200 w-full max-w-[500px] hover:scale-105";
+const titleClass = "text-md font-bold text-orange mb-4";
+const descriptionClass = "text-sm font-medium text-gray-600";
 
 interface HomeComponentBarProps {
   icon: React.ReactNode; // 아이콘 컴포넌트
@@ -27,21 +24,18 @@ const HomeComponentBar: React.FC<HomeComponentBarProps> = ({
 }) => {
   return (
     <div className={containerClass} onClick={onClick}>
-      <div>
-        <span className={titleClass}>
-          {icon}
-          {title}
-        </span>
-        <span className={`${descriptionClass} flex items-center`}>
-          {badge && (
-            <span className={`${badgeClass} ${badgeColor} mr-2`}>
-              {badge}
-            </span>
-          )}
-          {description}
-        </span>
-      </div>
-      <ChevronRightIcon style={{ color: "#FFD700" }} />
+      {/* 제목 */}
+      <h1 className={titleClass}>{title}</h1>
+
+      {/* 아이콘 */}
+      <div className="mb-4">{icon}</div>
+
+      {/* 설명 또는 배지 */}
+      {badge ? (
+        <span className={`text-base font-bold ${badgeColor}`}>{badge}</span>
+      ) : (
+        <p className={descriptionClass}>{description}</p>
+      )}
     </div>
   );
 };

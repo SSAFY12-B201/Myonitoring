@@ -1,4 +1,3 @@
-import React from "react";
 import { FaCog, FaFileAlt, FaChevronRight } from "react-icons/fa"; // react-icons에서 아이콘 가져오기
 import { useNavigate } from "react-router-dom"; // 페이지 이동을 위한 useNavigate 훅
 import Header from "../../components/Header";
@@ -28,7 +27,7 @@ const MyPage = () => {
                   </li>
                   <li 
                     className="flex justify-between items-center border-b pb-3 cursor-pointer"
-                    onClick={() => navigate("/device")}
+                    onClick={() => navigate("/device-settings")}
                   >
                     <span>연동 기기 설정</span>
                     <FaChevronRight className="text-yellow" />
