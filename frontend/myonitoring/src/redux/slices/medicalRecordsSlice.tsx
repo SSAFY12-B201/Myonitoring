@@ -45,7 +45,7 @@ const initialState: MedicalRecordsState = {
       title: "고양이종합백신 1회차",
       description: "종합백신 접종 완료",
       hospital: "행복동물병원",
-      date: "2024-12-29",
+      date: "2025-02-10",
       time: "10:00",
     },
     {
@@ -55,7 +55,7 @@ const initialState: MedicalRecordsState = {
       title: "예방 접종",
       description: "예방 접종 1회차차",
       hospital: "행복동물병원",
-      date: "2024-11-15",
+      date: "2025-02-10",
       time: "16:00",
     },
   ],

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useAppSelector } from "../../redux/hooks"; // 커스텀 훅 가져오기
 import {
   BarChart,
   Bar,
@@ -8,92 +9,101 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import axios from "axios";
 import ReportTabBar from "../../components/GraphComponents/ReportTabBar"; // 기존 탭 바 컴포넌트
 import TopBar from "../../components/TopBar";
 import CumulativeStatistics from "../../components/GraphComponents/CumulativeStatistics";
 import DateNavigationBar from "../../components/GraphComponents/DateNavigationBar"; // 날짜 이동 바 컴포넌트
 import BottomBar from "../../components/BottomBar";
-import dayData from "../../dummyData/day.json"; // 일간 데이터 가져오기
-import weekData from "../../dummyData/week.json"; // 주간 데이터 가져오기
-
-interface Interval {
-  time: string;
-  intake: number;
-  cumulative_intake: number;
-}
-
-interface FeedingTime {
-  time: string;
-  feed_amount: number;
-  intervals: Interval[];
-}
 
 interface WeeklyData {
   date: string; // 요일
+  fullDate: string;
   섭취량: number;
 }
 
 const Graph: React.FC = () => {
   const [weeklyData, setWeeklyData] = useState<WeeklyData[]>([]);
-  const [currentMonday, setCurrentMonday] = useState<Date>(new Date("2025-02-10")); // 초기 날짜 (월요일)
-  const [feedingTimes, setFeedingTimes] = useState<FeedingTime[]>([]);
-  const [feedingAmount, setFeedingAmount] = useState<number>(0); // 총 배급량
-  const [selectedDate, setSelectedDate] = useState<string>("2025-02-08"); // 선택된 날짜 (기본값: 2월 8일)
+  const [currentMonday, setCurrentMonday] = useState<Date>(new Date()); // 현재 날짜 기준
+  const [selectedDate, setSelectedDate] = useState<string>(""); // 선택된 날짜
+  const [loading, setLoading] = useState<boolean>(false);
+  const [detailedData, setDetailedData] = useState<any[]>([]);
+  const selectedCatId = useAppSelector((state) => state.cat.selectedCatId);
 
-  // 월요일부터 일요일까지의 데이터를 생성하는 함수
-  const generateWeeklyData = (monday: Date) => {
-    const weeklyGraphData: WeeklyData[] = [];
-    const daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"];
-
-    for (let i = 0; i < 7; i++) {
-      const currentDate = new Date(monday);
-      currentDate.setDate(monday.getDate() + i); // 월요일부터 일요일까지 날짜 생성
-      const dateKey = currentDate.toISOString().split("T")[0]; // YYYY-MM-DD 형식으로 변환
-
-      weeklyGraphData.push({
-        date: daysOfWeek[i], // 요일 추가
-        섭취량: weekData[dateKey]?.intake || 0, // 해당 날짜의 섭취량(intake)을 가져오거나 기본값 0
-      });
-    }
-
-    setWeeklyData(weeklyGraphData);
-  };
-
-  // 일간 데이터를 가공하는 함수
-  const processDailyData = (date: string) => {
-    console.log(`Processing daily data for ${date}`); // 디버깅용 로그
-    const processedFeedingTimes: FeedingTime[] = [];
-    let totalFeedingAmount = 0;
-
-    for (let i = 0; i < dayData.length; i++) {
-      const entry = dayData[i];
-
-      if (entry.type === "feeding") {
-        totalFeedingAmount += entry.data.amount; // 총 배급량 계산
-        processedFeedingTimes.push({
-          time: entry.data.time,
-          feed_amount: entry.data.amount,
-          intervals: [], // intervals는 intake에서 처리
-        });
-      } else if (entry.type === "intake" && Array.isArray(entry.data)) {
-        const lastFeedingTime = processedFeedingTimes[processedFeedingTimes.length - 1];
-        if (lastFeedingTime) {
-          lastFeedingTime.intervals = entry.data.map((interval) => ({
-            time: interval.start_time,
-            intake: interval.cumulative_amount,
-            cumulative_intake: interval.cumulative_amount,
-          }));
+  // API에서 주간 데이터를 가져오는 함수
+  const fetchWeeklyData = async (weekStart: string) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(
+        `/api/intake/${selectedCatId}/week/cum?week_start=${weekStart}`,
+        {
+          headers: {
+            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+          },
         }
-      }
-    }
+      );
+      const data = response.data;
 
-    setFeedingTimes(processedFeedingTimes);
-    setFeedingAmount(totalFeedingAmount);
+      // 데이터 가공
+      const daysOfWeek = ["월", "화", "수", "목", "금", "토", "일"];
+      const weeklyGraphData: WeeklyData[] = Object.keys(data).map(
+        (dateKey, index) => ({
+          date: daysOfWeek[index], // 요일 매핑
+          fullDate: dateKey,
+          섭취량: data[dateKey].intake || 0, // 섭취량 데이터
+        })
+      );
+
+      setWeeklyData(weeklyGraphData);
+    } catch (error) {
+      console.error("Failed to fetch weekly data:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // 날짜 이동 핸들러
+  // 상세 데이터를 가져오는 함수
+  const fetchDetailedData = async (date: string) => {
+    try {
+      const response = await axios.get(
+        `/api/intake/${selectedCatId}/detail?day=${date}`,
+        {
+          headers: {
+            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+          },
+        }
+      );
+      const rawData = response.data;
+      // console.log("Failed to fetch weekly data:",rawData );
+
+      // 상세 데이터 가공
+      const processedFeedingTimes = rawData.map((entry: any) => ({
+        time: entry.feeding.time,
+        feed_amount: entry.feeding.amount,
+        intervals: entry.intake.map((intakeEntry: any) => ({
+          start_time: intakeEntry.start_time,
+          end_time: intakeEntry.end_time,
+
+          cumulative_intake: intakeEntry.cumulative_amount,
+        })),
+      }));
+
+      setDetailedData(processedFeedingTimes);
+    } catch (error) {
+      console.error("Failed to fetch detailed data:", error);
+    }
+  };
+
+  // 현재 월요일을 기준으로 주간 데이터를 가져오기
+  useEffect(() => {
+    const monday = new Date(currentMonday);
+    monday.setDate(monday.getDate() - monday.getDay() + 1); // 월요일 계산
+    const weekStart = monday.toISOString().split("T")[0]; // YYYY-MM-DD 형식
+
+    fetchWeeklyData(weekStart);
+  }, [currentMonday]);
+
+  // 날짜 이동 핸들러 (이전 주/다음 주)
   const handleWeekChange = (direction: number) => {
     const newMonday = new Date(currentMonday);
     newMonday.setDate(currentMonday.getDate() + direction * 7); // 이전 주(-7일) 또는 다음 주(+7일)
@@ -103,15 +113,10 @@ const Graph: React.FC = () => {
   // 그래프 막대 클릭 핸들러
   const handleBarClick = (data: WeeklyData | undefined) => {
     if (!data) return;
-    console.log(`Clicked bar for date ${data.date}`);
-    setSelectedDate(data.date); // 선택된 날짜 업데이트
-    processDailyData(data.date); // 해당 날짜의 일간 데이터 처리
+    // console.log(`Clicked bar for date ${data.fullDate}`);
+    setSelectedDate(data.fullDate); // 선택된 날짜 업데이트
+    fetchDetailedData(data.fullDate);
   };
-
-  useEffect(() => {
-    generateWeeklyData(currentMonday); // 현재 월요일 기준으로 주간 데이터 생성
-    processDailyData(selectedDate); // 선택된 날짜에 해당하는 일간 데이터 처리
-  }, [currentMonday, selectedDate]);
 
   return (
     <>
@@ -122,35 +127,46 @@ const Graph: React.FC = () => {
         <ReportTabBar />
 
         {/* 날짜 이동 바 */}
-        <DateNavigationBar currentMonday={currentMonday} handleWeekChange={handleWeekChange} />
+        <DateNavigationBar
+          currentMonday={currentMonday}
+          handleWeekChange={handleWeekChange}
+        />
 
         {/* 반응형 그래프 */}
         <div className="w-full max-w-4xl px-2 mt-6 mx-auto">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart
-              data={weeklyData}
-              margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
-              onClick={(e) => handleBarClick(e?.activePayload?.[0]?.payload)}
-            >
-              {/* 격자선 제거 */}
-              <CartesianGrid strokeDasharray="0" vertical={false} horizontal={false} />
+          {loading ? (
+            <p className="text-center text-gray-600">데이터를 불러오는 중...</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart
+                data={weeklyData}
+                margin={{ top: 20, right: 20, left: 0, bottom: 5 }}
+                onClick={(e) => handleBarClick(e?.activePayload?.[0]?.payload)}
+              >
+                {/* 격자선 제거 */}
+                <CartesianGrid
+                  strokeDasharray="0"
+                  vertical={false}
+                  horizontal={false}
+                />
 
-              {/* X축과 Y축 */}
-              <XAxis dataKey="date" />
-              <YAxis unit="g" />
+                {/* X축과 Y축 */}
+                <XAxis dataKey="date" />
+                <YAxis unit="g" />
 
-              {/* 툴팁 */}
-              <Tooltip formatter={(value) => `${value}g`} />
+                {/* 툴팁 */}
+                <Tooltip formatter={(value) => `${value}g`} />
 
-              {/* 섭취량 막대 */}
-              <Bar
-                dataKey="섭취량"
-                fill="#FFC53E"
-                barSize={30}
-                radius={[5, 5, 5, 5]} // 위쪽 모서리를 둥글게 설정
-              />
-            </BarChart>
-          </ResponsiveContainer>
+                {/* 섭취량 막대 */}
+                <Bar
+                  dataKey="섭취량"
+                  fill="#FFC53E"
+                  barSize={30}
+                  radius={[5, 5, 5, 5]} // 위쪽 모서리를 둥글게 설정
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
         </div>
 
         {/* 구분선 */}
@@ -158,10 +174,19 @@ const Graph: React.FC = () => {
 
         {/* 누적 통계 및 배급량 표시 */}
         <div className="w-full max-w-4xl px-4 mt-2 mx-auto">
-          {feedingTimes.length > 0 ? (
-            <CumulativeStatistics feedingTimes={feedingTimes} feedingAmount={feedingAmount} />
+          {detailedData.length > 0 ? (
+            <CumulativeStatistics
+              feedingTimes={detailedData}
+              feedingAmount={detailedData.reduce(
+                (total, entry) => total + entry.feed_amount,
+                0
+              )} // 총 배급량 계산
+              selectedDate={selectedDate}
+            />
           ) : (
-            <p className="text-center text-gray-600">데이터가 없습니다.</p>
+            <p className="text-center text-gray-600 bg-gray-100 py-4 px-6 rounded-lg border border-gray-300 m-2 mt-6">
+              데이터가 없습니다.
+            </p>
           )}
         </div>
       </div>
