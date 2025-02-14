@@ -48,7 +48,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
+      '@heroicons/react/outline': '@heroicons/react/outline',
+      '@heroicons/react': '@heroicons/react',
+      '@': path.resolve(__dirname, './src')  // 절대 경로로 변경
+    }
+  }
 });

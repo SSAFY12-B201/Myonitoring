@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from "react";
 import {
   ChartBarIcon,
@@ -7,6 +8,10 @@ import {
 } from "@heroicons/react/outline"; // Heroicons 사용
 import { useSelector, useDispatch  } from "react-redux";
 import { RootState } from "../redux/store";
+=======
+import React from "react";
+import { ChartBarIcon, EyeIcon, ClipboardIcon, ExclamationCircleIcon } from "@heroicons/react/outline";
+>>>>>>> dev
 import TopBar from "../components/TopBar";
 import BottomBar from "../components/BottomBar";
 import HomeComponentBar from "../components/HomeComponents/HomeComponentBar";
