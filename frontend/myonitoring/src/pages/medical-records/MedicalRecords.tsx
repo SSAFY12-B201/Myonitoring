@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAppSelector } from "../../redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { AiOutlinePlus, AiOutlineCalendar } from "react-icons/ai";
@@ -17,8 +17,23 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
 
   // 로컬 상태로 필터링 조건 관리
   const [filterType, setFilterType] = useState<"전체" | "정기검진" | "치료" | "기타">("전체");
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>(""); // 시작 날짜
+  const [endDate, setEndDate] = useState<string>(""); // 종료 날짜
+
+  // 컴포넌트가 마운트될 때 기본 날짜 설정
+  useEffect(() => {
+    const today = new Date();
+
+    // 현재 달의 시작일 계산
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+    // 현재 달의 마지막 날 계산
+    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+    // 상태 업데이트 (YYYY-MM-DD 형식으로 변환)
+    setStartDate(firstDayOfMonth.toISOString().split("T")[0]);
+    setEndDate(lastDayOfMonth.toISOString().split("T")[0]);
+  }, []);
 
   // 필터링된 데이터 계산
   const filteredRecords = medicalRecords.filter((record) => {

@@ -1,8 +1,9 @@
 import React from "react";
 
 const containerClass =
-  "flex flex-col items-center shadow-sm justify-between rounded-lg p-4 cursor-pointer transition-transform transform border border-gray-200 w-full max-w-[500px] hover:scale-105";
-const titleClass = "text-md font-bold text-orange mb-4";
+  "flex flex-col items-center shadow-sm justify-between rounded-lg p-4 cursor-pointer transition-transform transform border border-gray-200 w-full max-w-[500px] max-h-[100px] hover:scale-105";
+const titleWithIconClass = "flex items-center space-x-2 mb-4"; // 아이콘과 제목을 한 줄로 정렬
+const titleClass = "text-md font-bold text-orange"; // 제목 스타일
 const descriptionClass = "text-sm font-medium text-gray-600";
 
 interface HomeComponentBarProps {
@@ -24,11 +25,11 @@ const HomeComponentBar: React.FC<HomeComponentBarProps> = ({
 }) => {
   return (
     <div className={containerClass} onClick={onClick}>
-      {/* 제목 */}
-      <h1 className={titleClass}>{title}</h1>
-
-      {/* 아이콘 */}
-      <div className="mb-4">{icon}</div>
+      {/* 아이콘과 제목 */}
+      <div className={titleWithIconClass}>
+        <div className="h-6 w-6">{icon}</div> {/* 아이콘 크기 조정 */}
+        <h1 className={titleClass}>{title}</h1>
+      </div>
 
       {/* 설명 또는 배지 */}
       {badge ? (

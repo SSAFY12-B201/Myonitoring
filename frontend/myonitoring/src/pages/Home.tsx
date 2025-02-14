@@ -69,7 +69,7 @@ const Home: React.FC = () => {
   const barsData = data
     ? [
         {
-          icon: <ChartBarIcon className="h-12 w-12" />,
+          icon: <ChartBarIcon className="h-7 w-7" />,
           title: "총 섭취량",
           description: "",
           badge: `${data.total_intake}g`,
@@ -77,7 +77,7 @@ const Home: React.FC = () => {
           onClick: () => navigate("/graph"),
         },
         {
-          icon: <ClipboardListIcon className="h-12 w-12" />,
+          icon: <ClipboardListIcon className="h-7 w-7" />,
           title: "섭취량 통계",
           description: "",
           badge:
@@ -95,7 +95,7 @@ const Home: React.FC = () => {
           onClick: () => navigate("/statistics"),
         },
         {
-          icon: <EyeIcon className="h-12 w-12" />,
+          icon: <EyeIcon className="h-7 w-7" />,
           title: "안구 건강",
           description: "",
           badge: data.eye_alert.flag === 1 ? "문제 있음" : "건강",
@@ -105,7 +105,7 @@ const Home: React.FC = () => {
         ...(data.medical.flag === 1
           ? [
               {
-                icon: <DocumentTextIcon className="h-12 w-12" />,
+                icon: <DocumentTextIcon className="h-7 w-7" />,
                 title: "의료 기록",
                 description: "",
                 badge: `${data.medical.data.title}`,
@@ -115,7 +115,7 @@ const Home: React.FC = () => {
             ]
           : [
               {
-                icon: <DocumentTextIcon className="h-12 w-12" />,
+                icon: <DocumentTextIcon className="h-7 w-7" />,
                 title: "의료 기록",
                 description: "",
                 badge: "추가",

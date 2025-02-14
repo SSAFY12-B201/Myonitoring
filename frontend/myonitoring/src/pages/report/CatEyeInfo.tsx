@@ -170,7 +170,7 @@ const CatEyeInfo: React.FC = () => {
                   <hr className="mt-6 mb-6 border-gray-300" />
 
                   {/* 안구 건강 상태 메시지 */}
-                  <div className="p-6 bg-green-100 rounded-lg border border-green-300 shadow-sm">
+                  <div className="p-6 bg-green-50 rounded-lg border border-green-300 shadow-sm">
                     <h1 className="text-lg font-bold text-green-700 mb-2">
                       고양이의 안구 건강에 문제가 없습니다.
                     </h1>

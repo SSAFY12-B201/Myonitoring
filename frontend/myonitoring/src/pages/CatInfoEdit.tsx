@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../redux/hooks"; // 커스텀 훅 가져오기
-import { updateCatInfo } from "../redux/slices/catSlice"; // 고양이 정보 슬라이스
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Input from "../components/Input";
@@ -284,8 +283,21 @@ const CatInfoEdit: React.FC = () => {
               }
             />
           </form>
+
+          
         </div>
       </ExceptTopContentSection>
+
+      {/* 고양이 삭제 */}
+      <div className="flex text-xs justify-end mr-8 mb-2">
+            <span
+              onClick={() => handleDelete()}
+              className="cursor-pointer hover:text-orange transition-colors duration-[200ms]"
+            >
+              고양이 정보 삭제
+            </span>
+        </div>
+   
 
       {/* 하단 버튼 */}
       <footer className="sticky bottom-0 left-0 w-full p-4 bg-white">
