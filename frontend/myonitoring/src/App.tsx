@@ -31,7 +31,7 @@ import CatEyeInfo from "./pages/report/CatEyeInfo";
 import CatInfoEdit from "./pages/CatInfoEdit";
 
 const App: React.FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
 

@@ -22,29 +22,30 @@ public class ScheduleController {
     /**
      * 예약 스케줄 생성 API
      *
-     * @param devicePk 디바이스 ID (Primary Key)
-     * @param request  예약 스케줄 생성 요청 데이터 (시간, 양)
+     * @param catId 고양이 ID (Primary Key)
+     * @param request 예약 스케줄 생성 요청 데이터 (시간, 양)
      * @return 생성된 스케줄 ID 반환
      */
-    @PostMapping("/{devicePk}")
+    @PostMapping("/{catId}")
     public ResponseEntity<Long> createSchedule(
-            @PathVariable("devicePk") Long devicePk,
+            @PathVariable("catId") Long catId,
             @RequestBody ScheduleRequestDto request) {
-        Long scheduleId = scheduleService.createSchedule(devicePk, request);
+        Long scheduleId = scheduleService.createSchedule(catId, request);
         return ResponseEntity.ok(scheduleId);
     }
 
     /**
      * 예약 스케줄 조회 API
      *
-     * @param devicePk 디바이스 ID (Primary Key)
-     * @return 해당 디바이스의 모든 스케줄 리스트 반환 (DTO)
+     * @param catId 고양이 ID (Primary Key)
+     * @return 해당 고양이의 디바이스에 대한 모든 스케줄 리스트 반환 (DTO)
      */
-    @GetMapping("/{devicePk}")
-    public ResponseEntity<List<ScheduleResponseDto>> getSchedules(@PathVariable("devicePk") Long devicePk) {
-        List<ScheduleResponseDto> schedules = scheduleService.getSchedules(devicePk);
+    @GetMapping("/{catId}")
+    public ResponseEntity<List<ScheduleResponseDto>> getSchedules(@PathVariable("catId") Long catId) {
+        List<ScheduleResponseDto> schedules = scheduleService.getSchedules(catId);
         return ResponseEntity.ok(schedules);
     }
+
 
     /**
      * 예약 스케줄 수정 (시간, 양) API

@@ -30,4 +30,14 @@ public interface MedicalRepository extends JpaRepository<Medical, Long> {
      * @return 가장 최신의 의료 기록 데이터 (Optional)
      */
     Optional<Medical> findTopByCatIdAndVisitDateOrderByVisitTimeDesc(Long catId, LocalDate visitDate);
+
+    /**
+     * 특정 고양이의 특정 날짜 의료 기록을 조회합니다.
+     * 해당 날짜에 해당하는 모든 의료 기록의 카테고리를 리스트로 반환하며, 중복 카테고리는 제외됩니다.
+     *
+     * @param catId 고양이 ID
+     * @param day   조회할 날짜
+     * @return 카테고리 목록을 포함한 데이터 (flag: 0 또는 1)
+     */
+    List<Medical> findByCatIdAndVisitDateOrderByVisitTimeDesc(Long catId, LocalDate day);
 }
