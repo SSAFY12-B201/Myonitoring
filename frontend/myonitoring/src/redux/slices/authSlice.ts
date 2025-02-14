@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   isLoggedIn: false, // 로그인 여부
   accessToken: null, // 액세스 토큰
-  refreshToken: null, // 리프레시 토큰
 };
 
 const authSlice = createSlice({
@@ -17,7 +16,6 @@ const authSlice = createSlice({
     logout(state) {
       state.isLoggedIn = false;
       state.accessToken = null;
-      state.refreshToken = null;
     },
     refreshAccessToken(state, action) {
       state.accessToken = action.payload.accessToken;

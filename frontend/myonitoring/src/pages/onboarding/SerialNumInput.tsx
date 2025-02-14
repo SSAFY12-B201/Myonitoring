@@ -8,6 +8,7 @@ import { useAppDispatch } from "../../redux/hooks";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import { log } from "console";
 
+
 const SerialNumberInput = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch()
@@ -24,18 +25,20 @@ const SerialNumberInput = () => {
     }
 
     try {
+      const token = localStorage.getItem("kakao_access_token"); // 로컬 스토리지에서 토큰 가져오기
+
       // axios로 백엔드에 시리얼 넘버 전송
       const response = await axios.post(
         "http://localhost:8080/api/devices",
         { serialNumber }, // 본문에 시리얼 넘버 포함
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNjI4NTYsImV4cCI6MTc3MDc5ODg1Nn0.fTu6cCHtFgrH1qlsX_CCI7T5WdwcBJVSfiuo1kEcaZCvqwfY1rEsuEr7qOIHHsBFGVKAH-rgg5QPLQhEwOwEFw`, // 실제 토큰 값 입력
+            Authorization: token ? `Bearer ${token}` : "", 
           },
         }
       );
 
-      console.log(response)
+      console.log(response.data)
       
       // if (response.status !== 200) {
       //   throw new Error("Failed to register device");
