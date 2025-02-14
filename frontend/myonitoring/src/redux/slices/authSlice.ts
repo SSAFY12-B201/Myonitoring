@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   isLoggedIn: false, // 로그인 여부
-  accessToken: null, // 액세스 토큰
+  accessToken: null, // 액세스 토큰(jwt토큰)
 };
 
 const authSlice = createSlice({

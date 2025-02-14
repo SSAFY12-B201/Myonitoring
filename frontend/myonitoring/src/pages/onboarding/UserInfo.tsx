@@ -1,5 +1,5 @@
 import { useAppDispatch } from "../../redux/hooks"; // 커스텀 훅 가져오기
-import axios from "axios"; // axios 임포트
+import { api } from '../../api/axios';
 import { updateUserInfo } from "../../redux/slices/userSlice";
 import { login } from "../../redux/slices/authSlice";
 import Input from "../../components/Input";
@@ -9,6 +9,7 @@ import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
+
 
 const UserInfo = () => {
   const dispatch = useAppDispatch();
@@ -45,9 +46,9 @@ const UserInfo = () => {
     try {
       const authToken = localStorage.getItem("kakao_access_token"); // 로컬 스토리지에서 토큰 가져오기
 
-      // axios로 백엔드에 토큰과 함께 추가 개인정보 전달달
-      const response = await axios.post(
-        "http://localhost:8080/api/auth/kakao/register",
+      // axios로 백엔드에 토큰과 함께 추가 개인정보 전달
+      const response = await api.post(
+        "api/auth/kakao/register",
         {
           nickname: formData.nickname,
           phoneNumber: formData.phoneNumber,
@@ -71,6 +72,9 @@ const UserInfo = () => {
       // Redux 인증 상태 업데이트 (isLoggedIn: true, accessToken을 jwt 토큰으로 저장)
       const accessToken = response.data.accessToken;
       dispatch(login({ accessToken }));
+
+      // 로컬 스토리지에 jwt 토큰 저장 (선택 사항)
+      localStorage.setItem("jwt_access_token", accessToken);
 
       // 모든 필드가 채워졌다면 다음 단계로 이동
       navigate("/device-guide");
