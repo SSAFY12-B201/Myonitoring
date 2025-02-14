@@ -2,6 +2,11 @@ import React, { useState } from "react";
 import naverIcon from "../../assets/images/naver_icon.png";
 import kakaoIcon from "../../assets/images/kakao_icon.png";
 import googleIcon from "../../assets/images/google_icon.png";
+import axios from "axios";
+
+const api = axios.create({
+  baseURL: 'https://myonitoring.site'
+});
 
 const LoginSignUp: React.FC = () => {
   // 현재 활성화된 탭 상태 (login 또는 signup)
@@ -41,12 +46,18 @@ const LoginSignUp: React.FC = () => {
       </p>
     );
 
-  const handleKakaoLogin = () => {
-    const REST_API_KEY = import.meta.env.VITE_KAKAO_API_KEY; // 카카오 REST API 키
-    const REDIRECT_URI = import.meta.env.VITE_KAKAO_REDIRECT_URL; // Redirect URI
-    const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-
-    window.location.href = KAKAO_AUTH_URL; // 카카오 로그인 페이지로 리디렉션
+  const handleKakaoLogin = async () => {
+    try {
+      // axios를 사용하여 환경변수를 API에서 가져옴
+      const { data: config } = await api.get('/api/env/oauth/kakao');
+      
+      const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${config.KAKAO_CLIENT_ID}&redirect_uri=${config.KAKAO_REDIRECT_URI}&response_type=code`;
+      
+      window.location.href = KAKAO_AUTH_URL;
+    } catch (error) {
+      console.error('Failed to fetch OAuth configuration:', error);
+      // 에러 처리 - 사용자에게 알림을 보여줄 수 있습니다
+    }
   };
 
   // 소셜 로그인 버튼 내용
