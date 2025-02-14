@@ -40,8 +40,8 @@ const App: React.FC = () => {
   // 유저 상태 확인 함수
   const checkUserStatus = async () => {
     return {
-      isLoggedIn: false,
-      isRegistered: false,
+      isLoggedIn: true,
+      isRegistered: true,
     };
   };
 

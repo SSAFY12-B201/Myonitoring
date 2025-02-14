@@ -3,17 +3,13 @@ import Switch from "react-switch";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import TopBar from "../../components/TopBar";
 import ContentSection from "../../components/ContentSection";
-import BottomBar from "../../components/BottomBar";
 import {
   toggleReservation,
   addReservation,
   deleteReservation,
   updateReservation,
 } from "../../redux/slices/reservationsSlice";
-<<<<<<< HEAD
-=======
 import BottomBar from "../../components/BottomBar";
->>>>>>> dev
 import { PlusIcon } from "@heroicons/react/outline";
 
 // 시간 형식 변환 함수
