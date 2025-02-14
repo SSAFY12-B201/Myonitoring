@@ -69,28 +69,62 @@ public class DeviceService {
     /**
      * 특정 기기를 조회하고 DTO로 변환하여 반환하는 로직
      *
-     * @param deviceId 조회할 기기 ID (Primary Key)
+     * @param catId 조회할 기기에 연결된 고양이 ID (Primary Key)
      * @return 조회된 기기에 대한 상세 응답 DTO 객체
      */
-    public DeviceDetailResponseDto getDeviceById(Long deviceId) {
-        Device device = deviceRepository.findById(deviceId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 기기를 찾을 수 없습니다. ID: " + deviceId));
+    public DeviceDetailResponseDto getDeviceByCatId(Long catId) {
+        Device device = deviceRepository.findDeviceByCatId(catId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 고양이 ID에 연결된 기기를 찾을 수 없습니다. ID: " + catId));
+
+        if (!isDeviceOwner(device)) {
+            throw new IllegalArgumentException("해당 기기의 조회 권한이 없습니다.");
+        }
+
+        return convertToDto(device);
+    }
+
+    /**
+     * 특정 고양이에 연결된 기기를 삭제하는 로직
+     *
+     * @param catId 삭제할 기기에 연결된 고양이 ID (Primary Key)
+     */
+    @Transactional
+    public void deleteDeviceByCatId(Long catId) {
+        Device device = deviceRepository.findDeviceByCatId(catId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 고양이 ID에 연결된 기기를 찾을 수 없습니다. ID: " + catId));
 
         // 기기의 소유자 확인
         boolean isOwner = device.getUsers().stream()
                 .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
         if (!isOwner) {
-            throw new IllegalArgumentException("해당 기기의 조회 권한이 없습니다.");
+            throw new IllegalArgumentException("해당 기기의 삭제 권한이 없습니다.");
         }
 
-        // 고양이 정보 추출
+        deviceRepository.delete(device);
+    }
+
+    /**
+     * 기기의 소유자인지 확인하는 메서드
+     *
+     * @param device 확인할 기기 객체
+     * @return 현재 로그인한 사용자가 해당 기기의 소유자인 경우 true, 그렇지 않으면 false
+     */
+    private boolean isDeviceOwner(Device device) {
+        return device.getUsers().stream()
+                .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
+    }
+
+    /**
+     * Device 엔티티를 DeviceDetailResponseDto로 변환하는 메서드
+     *
+     * @param device 변환할 기기 객체
+     * @return 기기 정보를 담은 DeviceDetailResponseDto 객체
+     */
+    public DeviceDetailResponseDto convertToDto(Device device) {
         Cat cat = device.getCat();
-        DeviceDetailResponseDto.CatInfo catInfo = null;
-        if (cat != null) {
-            catInfo = new DeviceDetailResponseDto.CatInfo(cat.getId(), cat.getName());
-        }
+        DeviceDetailResponseDto.CatInfo catInfo = (cat != null) ?
+                new DeviceDetailResponseDto.CatInfo(cat.getId(), cat.getName()) : null;
 
-        // 유저 정보 추출
         List<DeviceDetailResponseDto.UserInfo> users = device.getUsers().stream()
                 .map(user -> new DeviceDetailResponseDto.UserInfo(user.getId(), user.getEmail()))
                 .collect(Collectors.toList());
@@ -104,23 +138,4 @@ public class DeviceService {
         );
     }
 
-    /**
-     * 특정 기기를 삭제하는 로직
-     *
-     * @param deviceId 삭제할 기기 ID (Primary Key)
-     */
-    @Transactional
-    public void deleteDeviceById(Long deviceId) {
-        Device device = deviceRepository.findById(deviceId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 기기를 찾을 수 없습니다. ID: " + deviceId));
-
-        // 기기의 소유자 확인
-        boolean isOwner = device.getUsers().stream()
-                .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
-        if (!isOwner) {
-            throw new IllegalArgumentException("해당 기기의 삭제 권한이 없습니다.");
-        }
-
-        deviceRepository.delete(device);
-    }
 }

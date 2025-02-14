@@ -11,6 +11,7 @@ interface CatInfoState {
   age: number | null; // 나이 (숫자, 필수)
   weight: number | null; // 몸무게 (숫자, 선택)
   characteristics: string; // 특징 (텍스트, 선택)
+  selectedCatId: number | null; // 선택된 고양이 ID 추가
 }
 
 // 초기 상태 값 설정
@@ -24,6 +25,7 @@ const initialState: CatInfoState = {
   age: null,
   weight: null,
   characteristics: "",
+  selectedCatId: null, // 초기값
 };
 
 // Slice 생성
@@ -31,24 +33,19 @@ const catSlice = createSlice({
   name: "cat",
   initialState,
   reducers: {
-    /**
-     * 고양이 정보 업데이트
-     * @param state 현재 상태
-     * @param action 업데이트할 필드와 값
-     */
     updateCatInfo(state, action: PayloadAction<Partial<CatInfoState>>) {
-      return { ...state, ...action.payload }; // 상태 업데이트
+      return { ...state, ...action.payload };
     },
-    /**
-     * 고양이 정보 초기화
-     * @returns 초기 상태로 리셋
-     */
     resetCatInfo() {
       return initialState;
+    },
+    setSelectedCatId(state, action: PayloadAction<number>) {
+      state.selectedCatId = action.payload; // 선택된 고양이 ID 설정
     },
   },
 });
 
 // 액션 및 리듀서 내보내기
-export const { updateCatInfo, resetCatInfo } = catSlice.actions;
+export const { updateCatInfo, resetCatInfo, setSelectedCatId } =
+  catSlice.actions;
 export default catSlice.reducer;

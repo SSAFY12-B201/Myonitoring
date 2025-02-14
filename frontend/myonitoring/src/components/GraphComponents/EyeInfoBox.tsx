@@ -109,6 +109,7 @@ const EyeInfoBox: React.FC<EyeInfoBoxProps> = ({
               outerRadius={50}
               startAngle={90}
               endAngle={450}
+              cornerRadius={10}
             >
               {[{ name: '확률', value: rightEyeProbability }, { name: '나머지', value: 100 - rightEyeProbability }].map(
                 (entry, index) => (
@@ -149,6 +150,7 @@ const EyeInfoBox: React.FC<EyeInfoBoxProps> = ({
               outerRadius={50}
               startAngle={90}
               endAngle={450}
+              cornerRadius={10}
             >
               {[{ name: '확률', value: leftEyeProbability }, { name: '나머지', value: 100 - leftEyeProbability }].map(
                 (entry, index) => (

@@ -1,0 +1,110 @@
+[
+    {
+        "type": "feeding",
+        "data": {
+            "amount": 30,
+            "time": "08:10"
+        }
+    },
+    {
+        "type": "intake",
+        "data": [
+            {
+                "start_time": "08:11",
+                "end_time": "09:16",
+                "cumulative_amount": 30
+            },
+            {
+                "start_time": "12:11",
+                "end_time": "13:36",
+                "cumulative_amount": 66
+            },
+            {
+                "start_time": "08:11",
+                "end_time": "09:16",
+                "cumulative_amount": 96
+            },
+            {
+                "start_time": "12:11",
+                "end_time": "13:36",
+                "cumulative_amount": 132
+            }
+        ]
+    },
+    {
+        "type": "feeding",
+        "data": {
+            "amount": 40,
+            "time": "12:10"
+        }
+    },
+    {
+        "type": "intake",
+        "data": [
+            {
+                "start_time": "12:11",
+                "end_time": "13:36",
+                "cumulative_amount": 36
+            },
+            {
+                "start_time": "12:11",
+                "end_time": "13:36",
+                "cumulative_amount": 72
+            }
+        ]
+    },
+    {
+        "type": "feeding",
+        "data": {
+            "amount": 35,
+            "time": "18:10"
+        }
+    },
+    {
+        "type": "intake",
+        "data": [
+            {
+                "start_time": "18:11",
+                "end_time": "19:21",
+                "cumulative_amount": 32
+            },
+            {
+                "start_time": "22:11",
+                "end_time": "23:06",
+                "cumulative_amount": 59
+            },
+            {
+                "start_time": "18:11",
+                "end_time": "19:21",
+                "cumulative_amount": 91
+            },
+            {
+                "start_time": "22:11",
+                "end_time": "23:06",
+                "cumulative_amount": 118
+            }
+        ]
+    },
+    {
+        "type": "feeding",
+        "data": {
+            "amount": 25,
+            "time": "22:10"
+        }
+    },
+    {
+        "type": "intake",
+        "data": [
+            {
+                "start_time": "22:11",
+                "end_time": "23:06",
+                "cumulative_amount": 27
+            },
+            {
+                "start_time": "22:11",
+                "end_time": "23:06",
+                "cumulative_amount": 54
+            }
+        ]
+    }
+]

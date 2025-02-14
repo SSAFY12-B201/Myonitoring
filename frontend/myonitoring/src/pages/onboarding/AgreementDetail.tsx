@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom"; // React Router 사용
 import Header from "../../components/Header";
 import termsDetails from "../../data/TermsDetails";
-import ContentSection from "../../components/ContentSection";
+import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import { motion } from "framer-motion";
 import {
   slideInVariants,
@@ -49,7 +49,7 @@ const AgreementDetail = () => {
         {/* 상단 헤더 */}
         <Header title="약관 상세 내용" onBack={() => navigate(-1)} />
 
-        <ContentSection>
+        <ExceptTopContentSection>
           {/* 상세 내용 */}
           <main>
             {/* 제목 */}
@@ -71,7 +71,7 @@ const AgreementDetail = () => {
               ))}
             </div>
           </main>
-        </ContentSection>
+        </ExceptTopContentSection>
       </div>
     </motion.div>
   );

@@ -8,7 +8,7 @@ import {
 } from "../../animations";
 import WideButton from "../../components/WideButton";
 import Header from "../../components/Header";
-import ContentSection from "../../components/ContentSection";
+import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 
 const Agreement = () => {
   const [allChecked, setAllChecked] = useState(false);
@@ -68,7 +68,7 @@ const Agreement = () => {
         <Header title="약관 동의" onBack={() => navigate(-1)} />
 
         {/* 설명 */}
-        <ContentSection>
+        <ExceptTopContentSection>
           <main className="flex-grow">
             <h2 className="text-lg font-semibold mb-2">
               서비스 이용을 위해 아래 약관에 동의해주세요.
@@ -151,7 +151,7 @@ const Agreement = () => {
               </label>
             </div>
           </main>
-        </ContentSection>
+        </ExceptTopContentSection>
 
         {/* 하단 버튼 */}
         <footer className="fixed bottom-0 left-0 w-full p-4 bg-white">

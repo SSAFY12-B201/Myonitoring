@@ -13,7 +13,6 @@ const authSlice = createSlice({
     login(state, action) {
       state.isLoggedIn = true;
       state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refreshToken;
     },
     logout(state) {
       state.isLoggedIn = false;
