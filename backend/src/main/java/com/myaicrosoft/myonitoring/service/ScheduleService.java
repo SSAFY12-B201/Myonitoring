@@ -26,14 +26,14 @@ public class ScheduleService {
     /**
      * 예약 스케줄 생성 로직
      *
-     * @param deviceId 디바이스 ID (Primary Key)
-     * @param request  예약 스케줄 생성 요청 데이터 (시간, 양)
+     * @param catId 고양이 ID (Primary Key)
+     * @param request 예약 스케줄 생성 요청 데이터 (시간, 양)
      * @return 생성된 스케줄 ID 반환
      */
     @Transactional
-    public Long createSchedule(Long deviceId, ScheduleRequestDto request) {
-        Device device = deviceRepository.findById(deviceId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 디바이스를 찾을 수 없습니다. ID: " + deviceId));
+    public Long createSchedule(Long catId, ScheduleRequestDto request) {
+        Device device = deviceRepository.findDeviceByCatId(catId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 고양이 ID에 연결된 디바이스를 찾을 수 없습니다. ID: " + catId));
 
         Schedule schedule = Schedule.builder()
                 .device(device)
@@ -45,14 +45,18 @@ public class ScheduleService {
         return scheduleRepository.save(schedule).getId();
     }
 
+
     /**
-     * 특정 디바이스의 모든 예약 스케줄 조회 로직
+     * 특정 고양이의 디바이스에 대한 모든 예약 스케줄 조회 로직
      *
-     * @param deviceId 디바이스 ID (Primary Key)
-     * @return 해당 디바이스의 모든 스케줄 리스트 반환 (DTO)
+     * @param catId 고양이 ID (Primary Key)
+     * @return 해당 고양이의 디바이스에 대한 모든 스케줄 리스트 반환 (DTO)
      */
-    public List<ScheduleResponseDto> getSchedules(Long deviceId) {
-        List<Schedule> schedules = scheduleRepository.findByDeviceId(deviceId);
+    public List<ScheduleResponseDto> getSchedules(Long catId) {
+        Device device = deviceRepository.findDeviceByCatId(catId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 고양이 ID에 연결된 디바이스를 찾을 수 없습니다. ID: " + catId));
+
+        List<Schedule> schedules = scheduleRepository.findByDeviceId(device.getId());
 
         return schedules.stream()
                 .map(schedule -> new ScheduleResponseDto(

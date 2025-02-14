@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * 기기(Device) 엔티티에 대한 데이터베이스 접근을 처리하는 레포지토리 인터페이스
@@ -20,4 +21,13 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
      */
     @Query("SELECT d FROM Device d JOIN d.users u WHERE u.id = :userId")
     List<Device> findAllByUserId(@Param("userId") Long userId);
+
+    /**
+     * cat_pk로 device를 조회합니다.
+     *
+     * @param catId 고양이 ID (Primary Key)
+     * @return Cat 엔티티 (Optional)
+     */
+    @Query("SELECT c.device FROM Cat c WHERE c.id = :catId")
+    Optional<Device> findDeviceByCatId(@Param("catId") Long catId);
 }
