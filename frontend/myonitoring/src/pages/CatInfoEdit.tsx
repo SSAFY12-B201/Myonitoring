@@ -79,21 +79,43 @@ const CatInfoEdit: React.FC = () => {
     }
   }, [selectedCatId]);
 
-  const handleNext = () => {
-    const newErrors = {
-      name: !catDetails.name,
-      gender: !catDetails.gender,
-      neutered: !catDetails.neutered,
-      birthdate: !catDetails.birthdate,
-      age: catDetails.age === null || catDetails.age <= 0,
-      weight: catDetails.weight === null || catDetails.weight <= 0,
-    };
-    setErrors(newErrors);
-
-    if (Object.values(newErrors).some((error) => error)) {
-      return;
+  const handleSave = async () => {
+    try {
+      await axios.put(`/api/cats/${selectedCatId}`, {
+        name: catDetails.name,
+        breed: catDetails.breed,
+        gender: catDetails.gender,
+        isNeutered: catDetails.neutered === "중성화 완료", // 서버에서 기대하는 형식으로 변환
+        birthDate: catDetails.birthdate,
+        age: catDetails.age,
+        weight: catDetails.weight,
+        characteristics: catDetails.characteristics,
+        profileImageUrl: catDetails.image,
+      }, {
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 입력
+        },
+      });
+      alert("저장되었습니다.");
+    } catch (error) {
+      console.error("Failed to save cat details", error);
+      alert("저장 중 오류가 발생했습니다.");
     }
+    navigate("/home");
+  };
 
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`/api/cats/${selectedCatId}`, {
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 입력
+        },
+      })
+      alert("삭제제되었습니다.");
+    } catch (error) {
+      console.error("Failed to save cat details", error);
+      alert("저장 중 오류가 발생했습니다.");
+    }
     navigate("/home");
   };
 
@@ -269,7 +291,7 @@ const CatInfoEdit: React.FC = () => {
       <footer className="sticky bottom-0 left-0 w-full p-4 bg-white">
         <WideButton
           text="저장"
-          onClick={handleNext}
+          onClick={handleSave}
           bgColor={
             Object.values(errors).some((error) => error)
               ? "bg-lightGray cursor-not-allowed"
