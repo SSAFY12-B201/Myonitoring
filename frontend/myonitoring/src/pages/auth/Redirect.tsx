@@ -2,6 +2,10 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const api = axios.create({
+  baseURL: 'http://localhost:8080'
+});
+
 const Redirect: React.FC = () => {
   const navigate = useNavigate();
 
@@ -11,7 +15,7 @@ const Redirect: React.FC = () => {
     if (code) {
       // 카카오 인증 코드를 백엔드로 전달
       console.log(code)
-      axios
+      api
         .post(`/api/auth/kakao/authenticate`, null, {
           params: { code }, // URL 파라미터로 인증 코드 전달
         })
