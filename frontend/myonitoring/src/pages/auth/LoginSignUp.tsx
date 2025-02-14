@@ -2,11 +2,7 @@ import React, { useState } from "react";
 import naverIcon from "../../assets/images/naver_icon.png";
 import kakaoIcon from "../../assets/images/kakao_icon.png";
 import googleIcon from "../../assets/images/google_icon.png";
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: 'https://myonitoring.site'
-});
+import { api } from '../../api/axios';
 
 const LoginSignUp: React.FC = () => {
   // 현재 활성화된 탭 상태 (login 또는 signup)
