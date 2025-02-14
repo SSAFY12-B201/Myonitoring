@@ -93,16 +93,18 @@ public class MainPageService {
         response.put("eye_alert", eyeAlert);
 
         // 4. 의료 기록 데이터 조회
-        Optional<Medical> latestMedicalRecord = medicalRepository.findTopByCatIdAndVisitDateOrderByVisitTimeDesc(catId, day);
+        List<Medical> medicalRecords = medicalRepository.findByCatIdAndVisitDateOrderByVisitTimeDesc(catId, day);
         Map<String, Object> medicalData = new HashMap<>();
-        if (latestMedicalRecord.isPresent()) {
-            Medical medical = latestMedicalRecord.get();
+        if (!medicalRecords.isEmpty()) {
+            Set<String> categories = new HashSet<>(); // 중복을 제거하기 위해 Set 사용
+
+            // 모든 의료 기록의 category를 Set에 추가
+            for (Medical medical : medicalRecords) {
+                categories.add(medical.getCategory().name().toLowerCase());
+            }
+
             medicalData.put("flag", 1);
-            medicalData.put("data", Map.of(
-                    "category", medical.getCategory().name().toLowerCase(),
-                    "time", medical.getVisitTime().toString(),
-                    "title", medical.getTitle()
-            ));
+            medicalData.put("data", new ArrayList<>(categories)); // Set을 List로 변환하여 반환
         } else {
             medicalData.put("flag", 0);
         }
