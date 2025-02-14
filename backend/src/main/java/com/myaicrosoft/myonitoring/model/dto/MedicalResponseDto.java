@@ -13,6 +13,7 @@ import java.time.LocalTime;
 @Data
 @AllArgsConstructor
 public class MedicalResponseDto {
+    private Long id;
     private MedicalCategory category; // 카테고리(CHECKUP, TREATMENT 등)
     private String title;             // 제목(100자 이내)
     private LocalDate visitDate;      // 방문 날짜(YYYY-MM-DD 형식)
