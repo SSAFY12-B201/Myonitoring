@@ -12,12 +12,14 @@ import {
   updateReservationDetails,
   deleteReservation,
 } from "../../redux/slices/reservationsSlice";
+import { log } from "console";
 
+// Reservation 인터페이스 정의
 interface Reservation {
   id: string;
-  time: string;
-  amount: number;
-  isActive: boolean;
+  scheduledTime: string; // 예약 시간 (24시간 형식)
+  scheduledAmount: number; // 급식량
+  isActive: boolean; // 활성화 여부
 }
 
 const Reservation: React.FC = () => {
@@ -33,35 +35,63 @@ const Reservation: React.FC = () => {
     useState<Reservation | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // 총 예약량 계산
   const totalAmount = reservations.reduce(
-    (sum, r) => (r.isActive ? sum + r.amount : sum),
+    (sum, r) => (r.isActive ? sum + r.scheduledAmount : sum),
     0
   );
+
+  // 시간 형식을 "HH:mm:ss"로 변환하는 함수
+  const formatTimeWithSeconds = (time: string): string => {
+    if (time.length === 5) {
+      return `${time}:00`; // "HH:mm" -> "HH:mm:ss"
+    }
+    return time; // 이미 초 단위가 포함된 경우 그대로 반환
+  };
 
   // API 요청 함수 - 예약 추가
   const handleAddReservation = async (reservation: Omit<Reservation, "id">) => {
     try {
+      console.log(`선택된 고양이 id: ${selectedCatId}`);
       if (!selectedCatId) {
         setError("선택된 고양이가 없습니다. 고양이를 선택해주세요.");
         return;
       }
 
       const token = localStorage.getItem("jwt_access_token");
+      console.log(token);
+
+      const scheduledTime = formatTimeWithSeconds(reservation.scheduledTime);
+      if (!scheduledTime) {
+        throw new Error("예약 시간이 유효하지 않습니다.");
+      }
+
+      // API 요청 데이터 변환
+      const requestData = {
+        scheduledTime: formatTimeWithSeconds(reservation.scheduledTime), // 초 단위 추가
+        scheduledAmount: reservation.scheduledAmount,
+      };
+      console.log(requestData);
+
       const response = await api.post(
         `/api/schedule/${selectedCatId}`,
-        reservation,
+        requestData,
         {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
+          headers: { Authorization: token ? `Bearer ${token}` : "" },
         }
       );
 
-      // 서버 응답 데이터
       const newReservation = response.data;
 
-      // Redux 상태 업데이트
-      dispatch(addReservation(newReservation));
+      // Redux 상태 업데이트 (응답 데이터를 Redux 상태 형식으로 변환)
+      dispatch(
+        addReservation({
+          id: newReservation.id,
+          scheduledTime: newReservation.scheduledTime,
+          scheduledAmount: newReservation.scheduledAmount,
+          isActive: newReservation.isActive,
+        })
+      );
 
       setError(null); // 에러 초기화
     } catch (err) {
@@ -82,14 +112,9 @@ const Reservation: React.FC = () => {
       await api.put(
         `/api/schedule/${id}/active`,
         { isActive },
-        {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        }
+        { headers: { Authorization: token ? `Bearer ${token}` : "" } }
       );
 
-      // Redux 상태 업데이트
       dispatch(toggleReservation({ id, isActive }));
     } catch (err) {
       console.error("Failed to toggle reservation:", err);
@@ -100,7 +125,7 @@ const Reservation: React.FC = () => {
   // API 요청 함수 - 예약 수정
   const handleUpdateReservation = async (
     id: string,
-    updates: { time?: string; amount?: number }
+    updates: { scheduledTime?: string; scheduledAmount?: number }
   ) => {
     try {
       if (!selectedCatId) {
@@ -109,17 +134,21 @@ const Reservation: React.FC = () => {
       }
 
       const token = localStorage.getItem("jwt_access_token");
-      await api.put(
-        `/api/schedule/${id}`,
-        updates,
-        {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-          },
-        }
-      );
 
-      // Redux 상태 업데이트
+      // API 요청 데이터 변환
+      const requestData = {
+        ...(updates.scheduledTime && {
+          scheduledTime: formatTimeWithSeconds(updates.scheduledTime), // 초 단위 추가
+        }),
+        ...(updates.scheduledAmount && {
+          scheduledAmount: updates.scheduledAmount,
+        }),
+      };
+
+      await api.put(`/api/schedule/${id}`, requestData, {
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
+      });
+
       dispatch(updateReservationDetails({ id, ...updates }));
     } catch (err) {
       console.error("Failed to update reservation:", err);
@@ -213,6 +242,7 @@ const Reservation: React.FC = () => {
           ))}
         </div>
       </ContentSection>
+
       <BottomBar />
 
       {/* 모달 */}

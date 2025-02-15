@@ -2,8 +2,8 @@ import React from "react";
 
 interface Reservation {
   id: string;
-  time: string;
-  amount: number;
+  scheduledTime: string; // 기존 time -> scheduledTime
+  scheduledAmount: number; // 기존 amount -> scheduledAmount
   isActive: boolean;
 }
 
@@ -12,7 +12,7 @@ interface ReservationModalProps {
   mode: "add" | "edit";
   reservationData: Reservation | null; // 수정 시 전달되는 데이터
   onClose: () => void;
-  onSave: (reservation: Reservation) => void; // 저장 핸들러
+  onSave: (reservation: Omit<Reservation, "id">) => void; // 저장 핸들러
 }
 
 const ReservationModal: React.FC<ReservationModalProps> = ({
@@ -22,22 +22,27 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   onClose,
   onSave,
 }) => {
-  const [time, setTime] = React.useState<string>(reservationData?.time || "");
-  const [amount, setAmount] = React.useState<number>(
-    reservationData?.amount || 0
+  const [scheduledTime, setScheduledTime] = React.useState<string>(
+    reservationData?.scheduledTime || ""
+  );
+  const [scheduledAmount, setScheduledAmount] = React.useState<number>(
+    reservationData?.scheduledAmount || 0
   );
 
   const handleSave = () => {
-    if (time && amount > 0) {
-      const updatedReservation = {
-        ...reservationData,
-        time,
-        amount,
-        isActive: true, // 기본 활성 상태
-      } as Reservation;
-      onSave(updatedReservation);
-      onClose();
+    if (!scheduledTime || scheduledAmount <= 0) {
+      console.error("유효하지 않은 예약 데이터:", { scheduledTime, scheduledAmount });
+      return;
     }
+  
+    const updatedReservation = {
+      scheduledTime,
+      scheduledAmount,
+      isActive: true, // 기본 활성 상태
+    };
+  
+    onSave(updatedReservation);
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -57,8 +62,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
           <input
             id="modal-time"
             type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
+            value={scheduledTime}
+            onChange={(e) => setScheduledTime(e.target.value)}
             className="w-full border border-gray-300 rounded-lg p-2"
           />
         </div>
@@ -71,8 +76,8 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
           <input
             id="modal-amount"
             type="number"
-            value={amount}
-            onChange={(e) => setAmount(Number(e.target.value))}
+            value={scheduledAmount}
+            onChange={(e) => setScheduledAmount(Number(e.target.value))}
             min={1}
             max={100}
             className="w-full border border-gray-300 rounded-lg p-2"

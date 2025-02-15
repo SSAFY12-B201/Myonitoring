@@ -4,8 +4,8 @@ import Switch from "react-switch";
 // 예약 데이터 타입 정의
 interface Reservation {
   id: string;
-  time: string; // 예약 시간 (24시간 형식)
-  amount: number; // 급식량
+  scheduledTime: string; // 기존 time -> scheduledTime
+  scheduledAmount: number; // 기존 amount -> scheduledAmount
   isActive: boolean; // 활성화 여부
 }
 
@@ -57,7 +57,7 @@ const ReservationItem: React.FC<ReservationItemProps> = ({
     else setTranslateX(0); // 원래 위치로 복귀
   };
 
-  const { period, formattedTime } = formatTimeTo12Hour(reservation.time);
+  const { period, formattedTime } = formatTimeTo12Hour(reservation.scheduledTime);
 
   return (
     <div className="relative w-full overflow-hidden">
@@ -80,7 +80,7 @@ const ReservationItem: React.FC<ReservationItemProps> = ({
         </div>
         <div className="flex items-center space-x-2">
           <p className={`text-lg me-3 ${reservation.isActive ? "text-black" : "text-gray-300"}`}>
-            {reservation.amount}g
+            {reservation.scheduledAmount}g
           </p>
           <Switch
             checked={reservation.isActive}

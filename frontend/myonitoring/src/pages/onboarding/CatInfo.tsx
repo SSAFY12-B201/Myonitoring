@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { api } from "../../api/axios";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { updateCatInfo } from "../../redux/slices/catSlice"; // Redux 액션 가져오기
+import { setSelectedCatId, updateCatInfo } from "../../redux/slices/catSlice"; // Redux 액션 가져오기
 import { useNavigate } from "react-router-dom";
 import Input from "../../components/Input";
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import infoCat from "../../assets/images/info_cat.png";
+
 
 // CatInfoState와 동일한 타입 사용
 interface CatInfoState {
@@ -84,20 +85,20 @@ const CatInfo = () => {
     try {
       console.log("try문 시작");
       const token = localStorage.getItem("jwt_access_token"); // 토큰 가져오기
-      
+
       // 중성화 여부를 true/false로 변환
       const isNeutered = formData.neutered === "중성화 완료";
-      
+
       // 성별을 M/F로 변환
       const genderCode =
-      formData.gender === "남아"
-      ? "M"
-      : formData.gender === "여아"
-      ? "F"
-      : null;
-      
+        formData.gender === "남아"
+          ? "M"
+          : formData.gender === "여아"
+          ? "F"
+          : null;
+
       // 디바이스 ID 확인
-      console.log(deviceId)
+      console.log(deviceId);
       if (!deviceId) {
         throw new Error("Device ID is not available");
       }
@@ -128,8 +129,14 @@ const CatInfo = () => {
 
       console.log("고양이 정보 등록 성공:", response.data);
 
-      // Redux 상태 업데이트
+      // Redux 고양이 정보 상태 업데이트
       dispatch(updateCatInfo(formData));
+
+      // Redux 선택된 고양이 상태 업데이트 (선택된 고양이 ID)
+      if (response.data.id) {
+        dispatch(setSelectedCatId(response.data.id)); // 응답 데이터에서 고양이 ID 저장
+        console.log("선택된 고양이 ID:", response.data.id);
+      }
 
       // 다음 단계로 이동
       navigate("/greeting");

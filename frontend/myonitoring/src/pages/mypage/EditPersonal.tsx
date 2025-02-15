@@ -1,44 +1,60 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // 페이지 이동을 위한 navigate 사용
+import { useNavigate } from "react-router-dom";
+import { api } from "../../api/axios"; // Axios 인스턴스 임포트
 import Header from "../../components/Header";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
-import { FaTrashAlt } from "react-icons/fa"; // 쓰레기통 아이콘
 import Input from "../../components/Input";
+import { useAppDispatch } from "../../redux/hooks"; // Redux 디스패치 훅
+import { logout } from "../../redux/slices/authSlice"; // Redux 액션
+import { resetUserInfo } from "../../redux/slices/userSlice"; // 유저 정보 초기화 액션
 
 const EditPersonal = () => {
-  const navigate = useNavigate(); // navigate 훅 선언
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+
   const [terms, setTerms] = useState({
     termsOfService: true,
     privacyPolicy: true,
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
+  const [error, setError] = useState(false); // 에러 상태 관리
 
-  const handleSave = () => {
-    if (terms.termsOfService && terms.privacyPolicy) {
-      console.log("저장되었습니다.");
-    } else {
-      console.log("필수 항목에 동의해주세요.");
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("jwt_access_token"); // 로컬 스토리지에서 토큰 가져오기
+      console.log(token);
+      
+      if (!token) {
+        throw new Error("No access token found");
+      }
+
+      // 로그아웃 API 호출
+      await api.post(
+        "/api/auth/signout",
+        {}, // 로그아웃 API에 필요한 데이터가 없으므로 빈 객체 전달
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
+          },
+        }
+      );
+
+      // Redux 상태 초기화
+      dispatch(logout());
+      dispatch(resetUserInfo());
+
+      // 로컬 스토리지 정리
+      localStorage.removeItem("kakao_access_token");
+      localStorage.removeItem("jwt_access_token");
+
+      // 홈 화면으로 이동
+      console.log("로그아웃 성공")
+      navigate("/");
+    } catch (error) {
+      console.error("로그아웃 실패:", error);
+      setError(true); // 에러 상태 업데이트
     }
-  };
-
-  const handleLogoutOrDelete = (option: string) => {
-    if (option === "회원탈퇴") {
-      setIsModalOpen(true); // 회원탈퇴 클릭 시 모달 열기
-    } else {
-      navigate("/"); // 로그아웃 시 홈으로 이동
-    }
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
-
-  const confirmDelete = () => {
-    console.log("회원탈퇴가 완료되었습니다."); // 회원탈퇴 로직 추가 가능
-    setIsModalOpen(false);
-    navigate("/"); // 회원탈퇴 후 홈으로 이동
   };
 
   return (
@@ -48,7 +64,9 @@ const EditPersonal = () => {
         <div className="max-w-md mx-auto bg-white pb-6">
           {/* 이름 */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-400 mb-2">이름</label>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              이름
+            </label>
             <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed">
               김철수
             </div>
@@ -64,7 +82,9 @@ const EditPersonal = () => {
 
           {/* 이메일 */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-400 mb-2">이메일</label>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              이메일
+            </label>
             <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed">
               example@google.com
             </div>
@@ -88,7 +108,9 @@ const EditPersonal = () => {
 
           {/* 연동 계정 */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-400 mb-2">연동 계정</label>
+            <label className="block text-sm font-medium text-gray-400 mb-2">
+              연동 계정
+            </label>
             <div className="w-full px-[12px] py-[10px] border border-gray-[#ccc] text-gray-500 rounded-md bg-[#f7f7f7] cursor-not-alowed">
               카카오 로그인
             </div>
@@ -97,19 +119,26 @@ const EditPersonal = () => {
           {/* 로그아웃 | 회원탈퇴 */}
           <div className="flex text-xs justify-end items-center space-x-2">
             <span
-              onClick={() => handleLogoutOrDelete("로그아웃")}
+              onClick={handleLogout}
               className="cursor-pointer hover:text-orange transition-colors duration-[200ms]"
             >
               로그아웃
             </span>
             <span>|</span>
             <span
-              onClick={() => handleLogoutOrDelete("회원탈퇴")}
+              onClick={() => console.log("회원탈퇴 로직 실행")}
               className="cursor-pointer hover:text-orange transition-colors duration-[200ms]"
             >
               회원탈퇴
             </span>
           </div>
+
+          {/* 에러 메시지 */}
+          {error && (
+            <p className="text-red-500 text-xs mt-2">
+              로그아웃에 실패했습니다. 다시 시도해주세요.
+            </p>
+          )}
         </div>
       </ExceptTopContentSection>
 
@@ -117,52 +146,24 @@ const EditPersonal = () => {
       <footer className="fixed bottom-2 left-0 w-full p-4">
         <WideButton
           text="저장하기"
-          onClick={handleSave}
+          onClick={() =>
+            terms.termsOfService && terms.privacyPolicy
+              ? console.log("저장되었습니다.")
+              : console.log("필수 항목에 동의해주세요.")
+          }
           disabled={!terms.termsOfService || !terms.privacyPolicy}
           bgColor={
-            terms.termsOfService && terms.privacyPolicy ? "bg-orange" : "bg-lightGray cursor-not-allowed"
+            terms.termsOfService && terms.privacyPolicy
+              ? "bg-orange"
+              : "bg-lightGray cursor-not-allowed"
           }
           textColor={
-            terms.termsOfService && terms.privacyPolicy ? "text-white" : "text-gray-400"
+            terms.termsOfService && terms.privacyPolicy
+              ? "text-white"
+              : "text-gray-400"
           }
         />
       </footer>
-
-      {/* 회원탈퇴 모달 */}
-      {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-[0.5] z-[1000]">
-          <div className="bg-white p-[24px] m-[16px] rounded-lg shadow-lg max-w-sm w-full relative">
-            
-            {/* 닫기 버튼 */}
-            <button onClick={closeModal} className="absolute top-[10px] right-[10px] text-gray-400 hover:text-black">
-              ✕
-            </button>
-
-            {/* 아이콘 및 메시지 */}
-            <div className="text-center mb-[20px] flex flex-col items-center">
-              <FaTrashAlt size={38} color="#000" className="mb-2" />
-              <h2 className="font-bold text-lg mt-[10px]">정말 탈퇴하시겠어요?</h2>
-              <p className="text-sm mt-[5px]">탈퇴 버튼 선택 시 계정은 삭제되며 복구되지 않습니다.</p>
-            </div>
-
-            {/* 버튼들 */}
-            <div className="flex justify-between mt-[20px]">
-              <button
-                onClick={closeModal}
-                className="w-[48%] py-[10px] bg-gray-200 rounded-md hover:bg-gray-300 transition-colors duration-[200ms]"
-              >
-                취소
-              </button>
-              <button
-                onClick={confirmDelete}
-                className="w-[48%] py-[10px] bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-[200ms]"
-              >
-                탈퇴
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };

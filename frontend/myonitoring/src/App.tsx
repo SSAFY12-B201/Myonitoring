@@ -83,6 +83,10 @@ const App: React.FC = () => {
             <Route path="/agreements" element={<Agreement />} />
             <Route path="/agreement-detail" element={<AgreementDetail />} />
             <Route path="/user-info" element={<UserInfo />} />
+          </>
+        ) : (
+          <>
+            {/* 메인 페이지 */}
             <Route path="/device-guide" element={<DeviceGuide />} />
             <Route
               path="/serial-number-input"
@@ -91,10 +95,6 @@ const App: React.FC = () => {
             <Route path="/connection-success" element={<ConnectionSuccess />} />
             <Route path="/cat-info" element={<CatInfo />} />
             <Route path="/greeting" element={<Greeting />} />
-          </>
-        ) : (
-          <>
-            {/* 메인 페이지 */}
             <Route path="/" element={<Home />} />
             <Route path="/home" element={<Home />} />
             <Route path="/reservation" element={<Reservation />} />

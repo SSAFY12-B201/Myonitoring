@@ -1,9 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+// Reservation 인터페이스 정의 (Reservation 컴포넌트 기준)
 interface Reservation {
   id: string;
-  time: string;
-  amount: number;
+  scheduledTime: string; // 기존 time -> scheduledTime
+  scheduledAmount: number; // 기존 amount -> scheduledAmount
   isActive: boolean;
 }
 
@@ -13,26 +14,7 @@ interface ReservationState {
 
 // 초기 상태에 더미 데이터 추가
 const initialState: ReservationState = {
-  reservations: [
-    {
-      id: "1",
-      time: "08:00",
-      amount: 50,
-      isActive: true,
-    },
-    {
-      id: "2",
-      time: "12:00",
-      amount: 70,
-      isActive: true,
-    },
-    {
-      id: "3",
-      time: "18:00",
-      amount: 60,
-      isActive: false,
-    },
-  ],
+  reservations: [],
 };
 
 const reservationsSlice = createSlice({
@@ -45,7 +27,10 @@ const reservationsSlice = createSlice({
     },
 
     // 활성화 여부 토글 (isActive 상태만 업데이트)
-    toggleReservation(state, action: PayloadAction<{ id: string; isActive: boolean }>) {
+    toggleReservation(
+      state,
+      action: PayloadAction<{ id: string; isActive: boolean }>
+    ) {
       const reservation = state.reservations.find(
         (res) => res.id === action.payload.id
       );
@@ -57,17 +42,21 @@ const reservationsSlice = createSlice({
     // 배급 시간 및 배급량 수정
     updateReservationDetails(
       state,
-      action: PayloadAction<{ id: string; time?: string; amount?: number }>
+      action: PayloadAction<{
+        id: string;
+        scheduledTime?: string;
+        scheduledAmount?: number;
+      }>
     ) {
       const reservation = state.reservations.find(
         (res) => res.id === action.payload.id
       );
       if (reservation) {
-        if (action.payload.time !== undefined) {
-          reservation.time = action.payload.time; // 시간 업데이트
+        if (action.payload.scheduledTime !== undefined) {
+          reservation.scheduledTime = action.payload.scheduledTime; // 시간 업데이트
         }
-        if (action.payload.amount !== undefined) {
-          reservation.amount = action.payload.amount; // 배급량 업데이트
+        if (action.payload.scheduledAmount !== undefined) {
+          reservation.scheduledAmount = action.payload.scheduledAmount; // 배급량 업데이트
         }
       }
     },
