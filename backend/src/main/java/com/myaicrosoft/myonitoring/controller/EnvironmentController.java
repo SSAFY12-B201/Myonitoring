@@ -19,26 +19,29 @@ public class EnvironmentController {
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String kakaoClientId;
 
-    @Value("${firebase.config.apiKey}")
+    @Value("${firebase.config.api-key}")
     private String firebaseApiKey;
-    
-    @Value("${firebase.config.authDomain}")
+
+    @Value("${firebase.config.auth-domain}")
     private String firebaseAuthDomain;
-    
-    @Value("${firebase.config.projectId}")
+
+    @Value("${firebase.config.project-id}")
     private String firebaseProjectId;
-    
-    @Value("${firebase.config.storageBucket}")
+
+    @Value("${firebase.config.storage-bucket}")
     private String firebaseStorageBucket;
-    
-    @Value("${firebase.config.messagingSenderId}")
+
+    @Value("${firebase.config.messaging-sender-id}")
     private String firebaseMessagingSenderId;
-    
-    @Value("${firebase.config.appId}")
+
+    @Value("${firebase.config.app-id}")
     private String firebaseAppId;
-    
-    @Value("${firebase.config.vapidKey}")
+
+    @Value("${firebase.config.vapid-key}")
     private String firebaseVapidKey;
+
+    @Value("${firebase.config.measurement-id}")
+    private String firebaseMeasurementId;
 
     @GetMapping("/oauth/kakao")
     public Map<String, String> getKakaoOAuthConfig() {
@@ -59,7 +62,8 @@ public class EnvironmentController {
         config.put("messagingSenderId", firebaseMessagingSenderId);
         config.put("appId", firebaseAppId);
         config.put("vapidKey", firebaseVapidKey);
-        
+        config.put("measurementId", firebaseMeasurementId);
+
         return ResponseEntity.ok(config);
     }
 } 
