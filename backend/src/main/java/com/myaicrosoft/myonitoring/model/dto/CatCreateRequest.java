@@ -16,7 +16,6 @@ public class CatCreateRequest {
     private LocalDate birthDate; // 생년월일 (필수)
     private Integer age; // 나이 (필수)
     private BigDecimal weight; // 체중 (필수)
-    private BigDecimal targetDailyIntake; // 권장섭취량 (선택)
     private String characteristics; // 특징 (선택)
     private String profileImageUrl; // 프로필 이미지 URL (선택)
 }

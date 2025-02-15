@@ -18,7 +18,6 @@ public class CatDetailResponseDto {
     private LocalDate birthDate;
     private Integer age;
     private BigDecimal weight;
-    private BigDecimal targetDailyIntake; // 선택 값
     private String characteristics; // 선택 값
     private String profileImageUrl; // 선택 값
 }

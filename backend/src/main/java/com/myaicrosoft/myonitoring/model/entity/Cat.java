@@ -45,9 +45,6 @@ public class Cat {
     @Column(precision = 5, scale = 2, nullable = false)
     private BigDecimal weight;
 
-    @Column(precision = 6, scale = 2)
-    private BigDecimal targetDailyIntake;
-
     @Column(columnDefinition = "TEXT")
     private String characteristics;
 
