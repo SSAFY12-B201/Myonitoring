@@ -56,7 +56,6 @@ public class CatService {
                 .birthDate(request.getBirthDate())
                 .age(request.getAge())
                 .weight(request.getWeight())
-                .targetDailyIntake(request.getTargetDailyIntake())
                 .characteristics(request.getCharacteristics())
                 .profileImageUrl(request.getProfileImageUrl())
                 .build();
@@ -106,7 +105,6 @@ public class CatService {
                 cat.getBirthDate(),
                 cat.getAge(),
                 cat.getWeight(),
-                cat.getTargetDailyIntake(),
                 cat.getCharacteristics(),
                 cat.getProfileImageUrl()
         );
@@ -141,7 +139,6 @@ public class CatService {
         existingCat.setWeight(request.getWeight());
 
         // 3. 선택 필드 업데이트 (null 허용)
-        existingCat.setTargetDailyIntake(request.getTargetDailyIntake()); // null 가능
         existingCat.setCharacteristics(request.getCharacteristics());     // null 가능
         existingCat.setProfileImageUrl(request.getProfileImageUrl());     // null 가능
 
@@ -157,7 +154,6 @@ public class CatService {
                 updatedCat.getBirthDate(),
                 updatedCat.getAge(),
                 updatedCat.getWeight(),
-                updatedCat.getTargetDailyIntake(),
                 updatedCat.getCharacteristics(),
                 updatedCat.getProfileImageUrl()
         );
