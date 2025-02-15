@@ -1,10 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// Reservation 인터페이스 정의 (Reservation 컴포넌트 기준)
 interface Reservation {
   id: string;
-  scheduledTime: string; // 기존 time -> scheduledTime
-  scheduledAmount: number; // 기존 amount -> scheduledAmount
+  scheduledTime: string;
+  scheduledAmount: number;
   isActive: boolean;
 }
 
@@ -12,69 +11,55 @@ interface ReservationState {
   reservations: Reservation[];
 }
 
-// 초기 상태에 더미 데이터 추가
 const initialState: ReservationState = {
   reservations: [],
+};
+
+// 예약 데이터를 시간 기준으로 정렬하는 함수
+const sortReservations = (reservations: Reservation[]) => {
+  return reservations.sort((a, b) => {
+    const timeA = a.scheduledTime.split(":").map(Number);
+    const timeB = b.scheduledTime.split(":").map(Number);
+    return timeA[0] - timeB[0] || timeA[1] - timeB[1]; // 시간과 분을 비교
+  });
 };
 
 const reservationsSlice = createSlice({
   name: "reservation",
   initialState,
   reducers: {
-    // 서버에서 반환된 예약 데이터를 Redux 상태에 추가
     addReservation(state, action: PayloadAction<Reservation>) {
-      state.reservations.push(action.payload); // 서버에서 반환된 데이터 그대로 추가
+      state.reservations.push(action.payload);
+      state.reservations = sortReservations(state.reservations); // 시간 기준 정렬
     },
-
-    // 활성화 여부 토글 (isActive 상태만 업데이트)
-    toggleReservation(
-      state,
-      action: PayloadAction<{ id: string; isActive: boolean }>
-    ) {
-      const reservation = state.reservations.find(
-        (res) => res.id === action.payload.id
-      );
+    toggleReservation(state, action: PayloadAction<{ id: string; isActive: boolean }>) {
+      const reservation = state.reservations.find((res) => res.id === action.payload.id);
       if (reservation) {
-        reservation.isActive = action.payload.isActive; // 서버에서 반환된 활성화 상태로 업데이트
+        reservation.isActive = action.payload.isActive;
       }
     },
-
-    // 배급 시간 및 배급량 수정
     updateReservationDetails(
       state,
-      action: PayloadAction<{
-        id: string;
-        scheduledTime?: string;
-        scheduledAmount?: number;
-      }>
+      action: PayloadAction<{ id: string; scheduledTime?: string; scheduledAmount?: number }>
     ) {
-      const reservation = state.reservations.find(
-        (res) => res.id === action.payload.id
-      );
+      const reservation = state.reservations.find((res) => res.id === action.payload.id);
       if (reservation) {
         if (action.payload.scheduledTime !== undefined) {
-          reservation.scheduledTime = action.payload.scheduledTime; // 시간 업데이트
+          reservation.scheduledTime = action.payload.scheduledTime;
         }
         if (action.payload.scheduledAmount !== undefined) {
-          reservation.scheduledAmount = action.payload.scheduledAmount; // 배급량 업데이트
+          reservation.scheduledAmount = action.payload.scheduledAmount;
         }
       }
+      state.reservations = sortReservations(state.reservations); // 시간 기준 정렬
     },
-
-    // 예약 삭제
     deleteReservation(state, action: PayloadAction<string>) {
-      state.reservations = state.reservations.filter(
-        (res) => res.id !== action.payload
-      );
+      state.reservations = state.reservations.filter((res) => res.id !== action.payload);
     },
   },
 });
 
-export const {
-  addReservation,
-  toggleReservation,
-  updateReservationDetails,
-  deleteReservation,
-} = reservationsSlice.actions;
+export const { addReservation, toggleReservation, updateReservationDetails, deleteReservation } =
+  reservationsSlice.actions;
 
 export default reservationsSlice.reducer;

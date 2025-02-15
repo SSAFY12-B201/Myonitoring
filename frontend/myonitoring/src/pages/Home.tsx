@@ -34,7 +34,7 @@ const Home: React.FC = () => {
   const selectedCatId = useSelector(
     (state: RootState) => state.cat.selectedCatId
   );
-  console.log(`현재 선택된 고양이: ${selectedCatId}`)
+  console.log(`현재 선택된 고양이: ${selectedCatId}`);
 
   // API 데이터 가져오기
   useEffect(() => {
@@ -49,17 +49,26 @@ const Home: React.FC = () => {
 
         const token = localStorage.getItem("jwt_access_token"); // 로컬 스토리지에서 토큰 가져오기
 
+        if (token) {
+          console.log("로그인 상태: true"); // 로그인 상태 콘솔 출력
+        } else {
+          console.log("로그인 상태: false"); // 로그인 상태 콘솔 출력
+        }
+        
         if (!token) {
           throw new Error("토큰이 없습니다.");
         }
 
         // Axios 요청 보내기
-        const response = await api.get(`/api/main/${selectedCatId}?day=${today}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        });
+        const response = await api.get(
+          `/api/main/${selectedCatId}?day=${today}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
+          }
+        );
 
         setData(response.data); // 데이터 설정
         setError(null); // 에러 초기화

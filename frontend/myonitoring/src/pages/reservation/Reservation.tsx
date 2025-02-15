@@ -83,15 +83,15 @@ const Reservation: React.FC = () => {
 
       const newReservation = response.data;
 
-      // Redux 상태 업데이트 (응답 데이터를 Redux 상태 형식으로 변환)
-      dispatch(
-        addReservation({
-          id: newReservation.id,
-          scheduledTime: newReservation.scheduledTime,
-          scheduledAmount: newReservation.scheduledAmount,
-          isActive: newReservation.isActive,
-        })
-      );
+     // Redux 상태 업데이트 (사용자 입력 데이터 기반으로 추가)
+     dispatch(
+      addReservation({
+        id: Date.now().toString(), // 임의 ID 생성 (백엔드 ID 대신)
+        scheduledTime: reservation.scheduledTime,
+        scheduledAmount: reservation.scheduledAmount,
+        isActive: true,
+      })
+    );
 
       setError(null); // 에러 초기화
     } catch (err) {

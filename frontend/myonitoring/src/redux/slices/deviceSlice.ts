@@ -27,7 +27,10 @@ const devicesSlice = createSlice({
     },
 
     // 기기 수정
-    updateDevice(state, action: PayloadAction<{ id: number; changes: Partial<Device> }>) {
+    updateDevice(
+      state,
+      action: PayloadAction<{ id: number; changes: Partial<Device> }>
+    ) {
       const { id, changes } = action.payload;
       const index = state.findIndex((device) => device.id === id); // ID로 기기 찾기
       if (index !== -1) {
@@ -42,7 +45,10 @@ const devicesSlice = createSlice({
     },
 
     // 고양이를 기기에 연결 (1:1 관계)
-    assignCatToDevice(state, action: PayloadAction<{ deviceId: number; catId: number }>) {
+    assignCatToDevice(
+      state,
+      action: PayloadAction<{ deviceId: number; catId: number }>
+    ) {
       const { deviceId, catId } = action.payload;
       const device = state.find((device) => device.id === deviceId);
       if (device) {
@@ -58,6 +64,9 @@ const devicesSlice = createSlice({
         device.catId = null; // 고양이 연결 해제
       }
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase("resetAllState", () => initialState); // 상태 초기화
   },
 });
 

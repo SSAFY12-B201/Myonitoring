@@ -6,8 +6,6 @@ import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
 import Input from "../../components/Input";
 import { useAppDispatch } from "../../redux/hooks"; // Redux 디스패치 훅
-import { logout } from "../../redux/slices/authSlice"; // Redux 액션
-import { resetUserInfo } from "../../redux/slices/userSlice"; // 유저 정보 초기화 액션
 
 const EditPersonal = () => {
   const navigate = useNavigate();
@@ -23,37 +21,49 @@ const EditPersonal = () => {
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem("jwt_access_token"); // 로컬 스토리지에서 토큰 가져오기
-      console.log(token);
-      
-      if (!token) {
-        throw new Error("No access token found");
-      }
+      if (!token) throw new Error("No access token found");
 
       // 로그아웃 API 호출
-      await api.post(
-        "/api/auth/signout",
-        {}, // 로그아웃 API에 필요한 데이터가 없으므로 빈 객체 전달
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Authorization 헤더에 토큰 추가
-          },
-        }
-      );
+      await api.post("/api/auth/signout", {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       // Redux 상태 초기화
-      dispatch(logout());
-      dispatch(resetUserInfo());
+      dispatch({ type: "resetAllState" });
 
       // 로컬 스토리지 정리
       localStorage.removeItem("kakao_access_token");
       localStorage.removeItem("jwt_access_token");
 
-      // 홈 화면으로 이동
-      console.log("로그아웃 성공")
       navigate("/");
     } catch (error) {
       console.error("로그아웃 실패:", error);
-      setError(true); // 에러 상태 업데이트
+      setError(true);
+    }
+  };
+
+  const handleWithdraw = async () => {
+    try {
+      const token = localStorage.getItem("jwt_access_token");
+      if (!token) throw new Error("No access token found");
+
+      // 회원탈퇴 API 호출
+      await api.delete("/api/users/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Redux 상태 초기화
+      dispatch({ type: "resetAllState" });
+
+      // 로컬 스토리지 정리
+      localStorage.removeItem("kakao_access_token");
+      localStorage.removeItem("jwt_access_token");
+
+      alert("회원탈퇴가 완료되었습니다.");
+      navigate("/");
+    } catch (error) {
+      console.error("회원탈퇴 실패:", error);
+      alert("회원탈퇴에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
@@ -73,12 +83,7 @@ const EditPersonal = () => {
           </div>
 
           {/* 닉네임 */}
-          <Input
-            label="닉네임"
-            type="text"
-            value="냥집사 도라에몽"
-            onChange={(value) => console.log("닉네임 변경:", value)}
-          />
+          <Input label="닉네임" type="text" value="냥집사 도라에몽" onChange={(value) => console.log("닉네임 변경:", value)} />
 
           {/* 이메일 */}
           <div className="mb-4">
@@ -91,20 +96,10 @@ const EditPersonal = () => {
           </div>
 
           {/* 휴대폰 번호 */}
-          <Input
-            label="휴대폰 번호"
-            type="tel"
-            value="010-1234-5678"
-            onChange={(value) => console.log("휴대폰 번호 변경:", value)}
-          />
+          <Input label="휴대폰 번호" type="tel" value="010-1234-5678" onChange={(value) => console.log("휴대폰 번호 변경:", value)} />
 
           {/* 주소 */}
-          <Input
-            label="주소"
-            type="text"
-            value="대전광역시 유성구 동서대로 98-39"
-            onChange={(value) => console.log("주소 변경:", value)}
-          />
+          <Input label="주소" type="text" value="대전광역시 유성구 동서대로 98-39" onChange={(value) => console.log("주소 변경:", value)} />
 
           {/* 연동 계정 */}
           <div className="mb-4">
@@ -118,26 +113,14 @@ const EditPersonal = () => {
 
           {/* 로그아웃 | 회원탈퇴 */}
           <div className="flex text-xs justify-end items-center space-x-2">
-            <span
-              onClick={handleLogout}
-              className="cursor-pointer hover:text-orange transition-colors duration-[200ms]"
-            >
-              로그아웃
-            </span>
+            <span onClick={handleLogout} className="cursor-pointer hover:text-orange transition-colors duration-[200ms]">로그아웃</span>
             <span>|</span>
-            <span
-              onClick={() => console.log("회원탈퇴 로직 실행")}
-              className="cursor-pointer hover:text-orange transition-colors duration-[200ms]"
-            >
-              회원탈퇴
-            </span>
+            <span onClick={handleWithdraw} className="cursor-pointer hover:text-orange transition-colors duration-[200ms]">회원탈퇴</span>
           </div>
 
           {/* 에러 메시지 */}
           {error && (
-            <p className="text-red-500 text-xs mt-2">
-              로그아웃에 실패했습니다. 다시 시도해주세요.
-            </p>
+            <p className="text-red-500 text-xs mt-2">로그아웃에 실패했습니다. 다시 시도해주세요.</p>
           )}
         </div>
       </ExceptTopContentSection>
@@ -147,21 +130,11 @@ const EditPersonal = () => {
         <WideButton
           text="저장하기"
           onClick={() =>
-            terms.termsOfService && terms.privacyPolicy
-              ? console.log("저장되었습니다.")
-              : console.log("필수 항목에 동의해주세요.")
+            terms.termsOfService && terms.privacyPolicy ? console.log("저장되었습니다.") : console.log("필수 항목에 동의해주세요.")
           }
           disabled={!terms.termsOfService || !terms.privacyPolicy}
-          bgColor={
-            terms.termsOfService && terms.privacyPolicy
-              ? "bg-orange"
-              : "bg-lightGray cursor-not-allowed"
-          }
-          textColor={
-            terms.termsOfService && terms.privacyPolicy
-              ? "text-white"
-              : "text-gray-400"
-          }
+          bgColor={terms.termsOfService && terms.privacyPolicy ? "bg-orange" : "bg-lightGray cursor-not-allowed"}
+          textColor={terms.termsOfService && terms.privacyPolicy ? "text-white" : "text-gray-400"}
         />
       </footer>
     </>

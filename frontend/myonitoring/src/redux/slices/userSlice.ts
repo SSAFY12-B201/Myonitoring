@@ -17,6 +17,9 @@ const userSlice = createSlice({
       return initialState;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase("resetAllState", () => initialState); // 상태 초기화
+  },
 });
 
 export const { updateUserInfo, resetUserInfo } = userSlice.actions;

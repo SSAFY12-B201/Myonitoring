@@ -1,8 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  isLoggedIn: false, // 로그인 여부
-  accessToken: null, // 액세스 토큰(jwt토큰)
+  isLoggedIn: false,
+  accessToken: null,
 };
 
 const authSlice = createSlice({
@@ -20,6 +20,9 @@ const authSlice = createSlice({
     refreshAccessToken(state, action) {
       state.accessToken = action.payload.accessToken;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase("resetAllState", () => initialState); // 상태 초기화
   },
 });
 
