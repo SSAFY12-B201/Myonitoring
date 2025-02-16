@@ -18,6 +18,7 @@ import Home from "./pages/Home";
 import Reservation from "./pages/reservation/Reservation";
 import MedicalRecords from "./pages/medical-records/MedicalRecords";
 import MedicalRecordDetail from "./pages/medical-records/MedicalRecordsDetail";
+import MakeMedicalRecord from "./pages/medical-records/MakeMedicalRecord";
 import Graph from "./pages/report/Graph";
 import StatisticsPage from "./pages/report/Statistics";
 import MyPage from "./pages/mypage/Mypage";
@@ -87,6 +88,7 @@ const App: React.FC = () => {
             <Route path="/reservation" element={<Reservation />} />
             <Route path="/medical-records" element={<MedicalRecords />} />
             <Route path="/medical-records/:id" element={<MedicalRecordDetail />} />
+            <Route path="/make-medical-record" element={<MakeMedicalRecord />} />
             <Route path="/graph" element={<Graph />} />
             <Route path="/statistics" element={<StatisticsPage />} />
 

@@ -45,7 +45,7 @@ const EditPersonal = () => {
     <>
       <Header title="마이 페이지" onBack={() => navigate(-1)} />
       <ExceptTopContentSection>
-        <div className="max-w-md mx-auto bg-white pb-6">
+        <div className="max-w-md mx-auto bg-white pb-2">
           {/* 이름 */}
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-400 mb-2">이름</label>
@@ -114,7 +114,7 @@ const EditPersonal = () => {
       </ExceptTopContentSection>
 
       {/* 저장 버튼 */}
-      <footer className="fixed bottom-2 left-0 w-full p-4">
+      <footer className="w-full p-4 mb-2">
         <WideButton
           text="저장하기"
           onClick={handleSave}

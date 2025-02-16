@@ -20,7 +20,9 @@ const TopBar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const selectedCatId = useSelector((state: RootState) => state.cat.selectedCatId)
+  const selectedCatId = useSelector(
+    (state: RootState) => state.cat.selectedCatId
+  );
 
   // API 요청으로 고양이 데이터 가져오기
   useEffect(() => {
@@ -34,7 +36,9 @@ const TopBar: React.FC = () => {
         setCats(response.data);
 
         if (response.data.length > 0) {
-          const currentCat = response.data.find((cat: Cat) => cat.id === selectedCatId);
+          const currentCat = response.data.find(
+            (cat: Cat) => cat.id === selectedCatId
+          );
           if (currentCat) {
             setSelectedCat(currentCat); // Redux와 일치하는 고양이를 선택
           } else {
@@ -89,7 +93,10 @@ const TopBar: React.FC = () => {
         {/* 오른쪽: 알림 및 챗봇 아이콘 */}
         <div className="flex items-center space-x-4">
           <Notifications className="text-gray-700" style={{ fontSize: 24 }} />
-          <ChatBubbleOutline className="text-gray-700" style={{ fontSize: 24 }} />
+          <ChatBubbleOutline
+            className="text-gray-700"
+            style={{ fontSize: 24 }}
+          />
         </div>
       </div>
 
@@ -123,14 +130,16 @@ const TopBar: React.FC = () => {
                   handleCatDetail(cat.id); // 상세 페이지로 이동
                 }}
               >
-               <FaChevronRight/>
+                <FaChevronRight />
               </span>
             </div>
           ))}
 
           {/* 새로운 기기 등록 */}
           <div className="flex items-center justify-center p-3 mt-6 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
-            <span className="text-gray-600 font-medium">새로운 기기 등록하기</span>
+            <span className="text-gray-600 font-medium">
+              새로운 기기 등록하기
+            </span>
           </div>
         </div>
       </div>
