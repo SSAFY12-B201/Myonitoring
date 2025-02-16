@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 interface Reservation {
   id: string;
@@ -22,27 +22,46 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
   onClose,
   onSave,
 }) => {
-  const [scheduledTime, setScheduledTime] = React.useState<string>(
-    reservationData?.scheduledTime || ""
-  );
-  const [scheduledAmount, setScheduledAmount] = React.useState<number>(
-    reservationData?.scheduledAmount || 0
-  );
+  const [scheduledTime, setScheduledTime] = React.useState<string>("");
+  const [scheduledAmount, setScheduledAmount] = React.useState<string>("");
+
+  // 모달 열릴 때 입력값 초기화
+  useEffect(() => {
+    if (isOpen) {
+      if (mode === "edit" && reservationData) {
+        // 수정 모드일 경우 기존 예약 데이터를 입력값으로 설정
+        setScheduledTime(reservationData.scheduledTime);
+        setScheduledAmount(reservationData.scheduledAmount.toString());
+      } else if (mode === "add") {
+        // 추가 모드일 경우 입력값 초기화
+        setScheduledTime("");
+        setScheduledAmount("");
+      }
+    }
+  }, [isOpen, mode, reservationData]);
 
   const handleSave = () => {
-    if (!scheduledTime || scheduledAmount <= 0) {
-      console.error("유효하지 않은 예약 데이터:", { scheduledTime, scheduledAmount });
+    const amount = Number(scheduledAmount);
+
+    if (!scheduledTime || amount <= 0) {
+      console.error("유효하지 않은 예약 데이터:", { scheduledTime, amount });
       return;
     }
-  
+
     const updatedReservation = {
       scheduledTime,
-      scheduledAmount,
-      isActive: true, // 기본 활성 상태
+      scheduledAmount: amount,
+      isActive: reservationData?.isActive ?? true, // 기본 활성 상태 유지 (수정 모드) 또는 기본 활성화 (추가 모드)
     };
-  
+
     onSave(updatedReservation);
     onClose();
+  };
+
+  // 입력값 유효성 검사
+  const isFormValid = (): boolean => {
+    const amount = Number(scheduledAmount);
+    return !!scheduledTime && amount > 0 && !isNaN(amount);
   };
 
   if (!isOpen) return null;
@@ -77,7 +96,7 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
             id="modal-amount"
             type="number"
             value={scheduledAmount}
-            onChange={(e) => setScheduledAmount(Number(e.target.value))}
+            onChange={(e) => setScheduledAmount(e.target.value)} // 문자열로 처리
             min={1}
             max={100}
             className="w-full border border-gray-300 rounded-lg p-2"
@@ -94,7 +113,10 @@ const ReservationModal: React.FC<ReservationModalProps> = ({
           </button>
           <button
             onClick={handleSave}
-            className="py-2 px-4 bg-yellow text-black rounded-lg hover:bg-yellow-500"
+            disabled={!isFormValid()} // 유효하지 않으면 버튼 비활성화
+            className={`py-2 px-4 rounded-lg ${
+              isFormValid() ? "bg-yellow text-black hover:bg-yellow-500" : "bg-gray-300 text-gray-500 cursor-not-allowed"
+            }`}
           >
             {mode === "add" ? "추가하기" : "저장하기"}
           </button>

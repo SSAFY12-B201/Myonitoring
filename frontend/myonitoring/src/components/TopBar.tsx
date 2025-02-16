@@ -49,12 +49,12 @@ const TopBar: React.FC = () => {
           const currentCat = response.data.find(
             (cat: Cat) => cat.id === selectedCatId
           );
-          console.log(`selectedid 기준으로 찾은 고양이: ${currentCat}`)
+          // console.log(`selectedid 기준으로 찾은 고양이: ${currentCat}`)
           if (currentCat) {
             setSelectedCat(currentCat); // Redux와 일치하는 고양이를 선택
           } else {
             // selectedCatId가 없거나 유효하지 않을 경우 첫 번째 고양이 선택
-            console.log("selectedCatId가 없거나 유효하지 않습니다")
+            // console.log("selectedCatId가 없거나 유효하지 않습니다")
             setSelectedCat(response.data[0]);
             dispatch(setSelectedCatId(response.data[0].id)); // Redux에 저장
           }

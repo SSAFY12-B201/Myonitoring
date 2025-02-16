@@ -1,89 +1,174 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api/axios"; // Axios 인스턴스 임포트
 import Header from "../../components/Header";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
 import Input from "../../components/Input";
-import { useAppDispatch } from "../../redux/hooks"; // Redux 디스패치 훅
+import { toast, ToastContainer } from "react-toastify"; // Toastify 추가
+import "react-toastify/dist/ReactToastify.css"; // Toastify 스타일 추가
+import { useAppDispatch, useAppSelector } from "../../redux/hooks"; // Redux 디스패치 훅
+import { updateUserInfo } from "../../redux/slices/userSlice";
 
 const EditPersonal = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const [terms, setTerms] = useState({
-    termsOfService: true,
-    privacyPolicy: true,
-  });
+  // Redux 상태에서 초기값 가져오기
+  const { nickname: initialNickname, phoneNumber: initialPhoneNumber, address: initialAddress } =
+    useAppSelector((state) => state.user);
 
-  const [error, setError] = useState(false); // 에러 상태 관리
+  // 로컬 상태 관리
+  const [nickname, setNickname] = useState(initialNickname);
+  const [phoneNumber, setPhoneNumber] = useState(initialPhoneNumber);
+  const [address, setAddress] = useState(initialAddress);
+  const [email, setEmail] = useState(""); // 이메일 상태 추가
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState(false); // 필드가 수정되었는지 여부
 
-  const handleLogout = async () => {
+  // 회원 정보 조회 함수
+  const fetchUserInfo = async () => {
+    setLoading(true);
+    setError(null);
+
     try {
-      const token = localStorage.getItem("jwt_access_token"); // 로컬 스토리지에서 토큰 가져오기
+      const token = localStorage.getItem("jwt_access_token");
       if (!token) throw new Error("No access token found");
 
-      // 로그아웃 API 호출
+      // API 호출
+      const response = await api.get("/api/users/me", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Redux 상태 업데이트
+      dispatch(updateUserInfo(response.data));
+
+      // 이메일 및 초기값 설정
+      setEmail(response.data.email);
+      setNickname(response.data.nickname);
+      setPhoneNumber(response.data.phoneNumber);
+      setAddress(response.data.address);
+    } catch (err: any) {
+      console.error("회원 정보 조회 실패:", err);
+      setError(err.response?.data?.message || "회원 정보를 불러오지 못했습니다.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 회원 정보 수정 함수
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("jwt_access_token");
+      if (!token) throw new Error("No access token found");
+
+      // 수정할 데이터 준비
+      const requestBody = {
+        nickname,
+        phoneNumber,
+        address,
+      };
+
+      // API 호출
+      const response = await api.put("/api/users/me", requestBody, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      // Redux 상태 업데이트
+      dispatch(updateUserInfo(response.data));
+
+      // 성공 메시지 표시 (Toast)
+      toast.success("회원정보가 성공적으로 수정되었습니다!");
+
+      // 수정 모드 종료
+      setIsEditing(false);
+    } catch (err: any) {
+      console.error("회원정보 수정 실패:", err);
+
+      // 실패 메시지 표시 (Toast)
+      toast.error("회원정보 수정에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  // 로그아웃 함수
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("jwt_access_token");
+      if (!token) throw new Error("No access token found");
+
       await api.post("/api/auth/signout", {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // Redux 상태 초기화
       dispatch({ type: "resetAllState" });
-
-      // 로컬 스토리지 정리
       localStorage.removeItem("kakao_access_token");
       localStorage.removeItem("jwt_access_token");
 
+    
       navigate("/");
     } catch (error) {
       console.error("로그아웃 실패:", error);
-      setError(true);
+      
+      toast.error("로그아웃에 실패했습니다.");
     }
   };
 
+  // 회원탈퇴 함수
   const handleWithdraw = async () => {
     try {
       const token = localStorage.getItem("jwt_access_token");
       if (!token) throw new Error("No access token found");
 
-      // 회원탈퇴 API 호출
       await api.delete("/api/users/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      // Redux 상태 초기화
       dispatch({ type: "resetAllState" });
-
-      // 로컬 스토리지 정리
       localStorage.removeItem("kakao_access_token");
       localStorage.removeItem("jwt_access_token");
 
-      alert("회원탈퇴가 완료되었습니다.");
+      toast.success("회원탈퇴가 완료되었습니다.");
+      
       navigate("/");
     } catch (error) {
       console.error("회원탈퇴 실패:", error);
-      alert("회원탈퇴에 실패했습니다. 다시 시도해주세요.");
+
+      toast.error("회원탈퇴에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
+  useEffect(() => {
+    fetchUserInfo();
+  }, []);
+
+  const hasChanges =
+    nickname !== initialNickname ||
+    phoneNumber !== initialPhoneNumber ||
+    address !== initialAddress;
+
+  const hasEmptyFields =
+    !nickname.trim() || !phoneNumber.trim() || !address.trim();
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+
   return (
     <>
-      <Header title="마이 페이지" onBack={() => navigate(-1)} />
+      <Header title="회원정보 수정" onBack={() => navigate(-1)} />
+      
       <ExceptTopContentSection>
         <div className="max-w-md mx-auto bg-white pb-6">
-          {/* 이름 */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-400 mb-2">
-              이름
-            </label>
-            <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed">
-              김철수
-            </div>
-          </div>
-
           {/* 닉네임 */}
-          <Input label="닉네임" type="text" value="냥집사 도라에몽" onChange={(value) => console.log("닉네임 변경:", value)} />
+          <Input
+            label="닉네임"
+            type="text"
+            value={nickname}
+            onChange={(value) => {
+              setNickname(value);
+              setIsEditing(true); 
+            }}
+          />
 
           {/* 이메일 */}
           <div className="mb-4">
@@ -91,15 +176,31 @@ const EditPersonal = () => {
               이메일
             </label>
             <div className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed">
-              example@google.com
+              {email}
             </div>
           </div>
 
           {/* 휴대폰 번호 */}
-          <Input label="휴대폰 번호" type="tel" value="010-1234-5678" onChange={(value) => console.log("휴대폰 번호 변경:", value)} />
+          <Input
+            label="휴대폰 번호"
+            type="tel"
+            value={phoneNumber}
+            onChange={(value) => {
+              setPhoneNumber(value);
+              setIsEditing(true); 
+            }}
+          />
 
           {/* 주소 */}
-          <Input label="주소" type="text" value="대전광역시 유성구 동서대로 98-39" onChange={(value) => console.log("주소 변경:", value)} />
+          <Input
+            label="주소"
+            type="text"
+            value={address}
+            onChange={(value) => {
+              setAddress(value);
+              setIsEditing(true); 
+            }}
+          />
 
           {/* 연동 계정 */}
           <div className="mb-4">
@@ -117,26 +218,25 @@ const EditPersonal = () => {
             <span>|</span>
             <span onClick={handleWithdraw} className="cursor-pointer hover:text-orange transition-colors duration-[200ms]">회원탈퇴</span>
           </div>
-
-          {/* 에러 메시지 */}
-          {error && (
-            <p className="text-red-500 text-xs mt-2">로그아웃에 실패했습니다. 다시 시도해주세요.</p>
-          )}
         </div>
-      </ExceptTopContentSection>
+        
+        {/* 저장 버튼 */}
+        <footer className="fixed bottom-2 left-0 w-full p-4">
+          {isEditing && hasChanges && !hasEmptyFields && (
+            <WideButton
+              text="저장하기"
+              onClick={handleSave}
+              bgColor={"bg-orange"}
+              textColor={"text-white"}
+            />
+          )}
+        </footer>
 
-      {/* 저장 버튼 */}
-      <footer className="fixed bottom-2 left-0 w-full p-4">
-        <WideButton
-          text="저장하기"
-          onClick={() =>
-            terms.termsOfService && terms.privacyPolicy ? console.log("저장되었습니다.") : console.log("필수 항목에 동의해주세요.")
-          }
-          disabled={!terms.termsOfService || !terms.privacyPolicy}
-          bgColor={terms.termsOfService && terms.privacyPolicy ? "bg-orange" : "bg-lightGray cursor-not-allowed"}
-          textColor={terms.termsOfService && terms.privacyPolicy ? "text-white" : "text-gray-400"}
-        />
-      </footer>
+        {/* ToastContainer */}
+        <ToastContainer position="bottom-center" autoClose={3000} />
+        
+        </ExceptTopContentSection>
+      
     </>
   );
 };

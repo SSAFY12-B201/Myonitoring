@@ -121,6 +121,8 @@ const App: React.FC = () => {
       </Routes>
     </AnimatePresence>
   );
+
+  
 };
 
 export default App;

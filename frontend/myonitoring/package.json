@@ -26,6 +26,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.1.5",
     "react-switch": "^7.1.0",
+    "react-toastify": "^11.0.3",
     "recharts": "^2.15.1",
     "vite-plugin-pwa": "^0.21.1"
   },
@@ -45,6 +46,5 @@
     "typescript-eslint": "^8.18.2",
     "vite": "^6.0.5"
   },
-
   "proxy": "https://myonitoring.site"
 }
