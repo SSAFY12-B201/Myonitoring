@@ -32,18 +32,25 @@ public class NotificationController {
         @AuthenticationPrincipal UserDetails userDetails
     ) {
         try {
+            // 먼저 인증 체크
+            if (userDetails == null) {
+                log.error("Authentication required - userDetails is null");
+                return ResponseEntity.status(401).body("Authentication required");
+
+            log.info("User: {}", userDetails.getUsername());
+
+            // 그 다음 토큰 체크
             String token = body.get("token");
             if (token == null || token.isEmpty()) {
+                log.error("Token is required but was null or empty");
                 return ResponseEntity.badRequest().body("Token is required");
             }
-
-            if (userDetails == null) {
-                return ResponseEntity.status(401).body("Authentication required");
-            }
+            log.info("Subscribing to {}", token);
 
             // SecurityUtil을 사용하여 현재 사용자의 ID를 가져옴
             Long userId = securityUtil.getCurrentUserId();
-            
+            log.info("User ID from SecurityUtil: {}", userId);
+
             // 토큰 저장 및 구독 처리
             fcmTokenService.saveToken(token, userId);
             
