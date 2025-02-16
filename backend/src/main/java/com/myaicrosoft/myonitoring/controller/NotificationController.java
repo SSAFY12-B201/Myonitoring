@@ -36,7 +36,7 @@ public class NotificationController {
             if (userDetails == null) {
                 log.error("Authentication required - userDetails is null");
                 return ResponseEntity.status(401).body("Authentication required");
-
+            }
             log.info("User: {}", userDetails.getUsername());
 
             // 그 다음 토큰 체크
@@ -47,7 +47,6 @@ public class NotificationController {
             }
             log.info("Subscribing to {}", token);
 
-            // SecurityUtil을 사용하여 현재 사용자의 ID를 가져옴
             Long userId = securityUtil.getCurrentUserId();
             log.info("User ID from SecurityUtil: {}", userId);
 
