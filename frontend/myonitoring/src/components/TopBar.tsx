@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCatId } from "../redux/slices/catSlice";
 import { api } from "../api/axios"; // Axios 인스턴스 사용
-import { Notifications, ChatBubbleOutline, CollectionsBookmark } from "@mui/icons-material";
+import {
+  Notifications,
+  ChatBubbleOutline,
+  CollectionsBookmark,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
 import { FaChevronRight } from "react-icons/fa"; // react-icons에서 아이콘 가져오기
@@ -105,7 +109,11 @@ const TopBar: React.FC = () => {
 
         {/* 오른쪽: 알림 및 챗봇 아이콘 */}
         <div className="flex items-center space-x-4">
-          <Notifications className="text-gray-700" style={{ fontSize: 24 }} />
+          <Notifications
+            className="text-gray-700"
+            style={{ fontSize: 24 }}
+            onClick={() => navigate("/notification")} // 알림 페이지로 이동
+          />
           <ChatBubbleOutline
             className="text-gray-700"
             style={{ fontSize: 24 }}
