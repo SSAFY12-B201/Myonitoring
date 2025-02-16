@@ -4,17 +4,55 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.myaicrosoft.myonitoring.model.dto.AlertRequest;
+import com.myaicrosoft.myonitoring.service.FcmTokenService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.access.prepost.PreAuthorize;
+import com.myaicrosoft.myonitoring.util.SecurityUtil;
+
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
 @RequestMapping("/notifications")
+@RequiredArgsConstructor
 public class NotificationController {
+
+    private final FcmTokenService fcmTokenService;
+    private final SecurityUtil securityUtil;
+
+    @PostMapping("/subscribe")
+    public ResponseEntity<String> subscribeToTopic(
+        @RequestBody Map<String, String> body,
+        @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        try {
+            String token = body.get("token");
+            if (token == null || token.isEmpty()) {
+                return ResponseEntity.badRequest().body("Token is required");
+            }
+
+            if (userDetails == null) {
+                return ResponseEntity.status(401).body("Authentication required");
+            }
+
+            // SecurityUtil을 사용하여 현재 사용자의 ID를 가져옴
+            Long userId = securityUtil.getCurrentUserId();
+            
+            // 토큰 저장 및 구독 처리
+            fcmTokenService.saveToken(token, userId);
+            
+            return ResponseEntity.ok("Successfully subscribed to alerts topic");
+        } catch (Exception e) {
+            log.error("Failed to subscribe to topic", e);
+            return ResponseEntity.status(500).body("Failed to subscribe: " + e.getMessage());
+        }
+    }
 
     @PostMapping("/alert")
     public ResponseEntity<String> sendAlert(@RequestBody AlertRequest alertRequest) {
@@ -22,7 +60,6 @@ public class NotificationController {
             String title;
             String body;
 
-            // 알림 타입에 따른 메시지 설정
             if ("FOOD".equals(alertRequest.getType())) {
                 title = "사료 배급량 이상 감지";
                 body = String.format("사료 배급량이 비정상적입니다: %.2f", alertRequest.getValue());
@@ -33,23 +70,30 @@ public class NotificationController {
                 return ResponseEntity.badRequest().body("Invalid alert type");
             }
 
-            // Firebase 메시지 구성
-            Message message = Message.builder()
-                .setNotification(Notification.builder()
-                    .setTitle(title)
-                    .setBody(body)
-                    .build())
-                .setTopic("alerts") // 모든 구독된 클라이언트에게 전송
-                .build();
+            // 활성화된 토큰들 가져오기
+            List<String> tokens = fcmTokenService.getActiveTokens();
+            if (tokens.isEmpty()) {
+                return ResponseEntity.ok("No active tokens found");
+            }
 
-            // 메시지 전송
-            String response = FirebaseMessaging.getInstance().send(message);
-            log.info("Successfully sent notification: {}", response);
+            // 각 토큰에 대해 메시지 전송
+            for (String token : tokens) {
+                Message message = Message.builder()
+                    .setNotification(Notification.builder()
+                        .setTitle(title)
+                        .setBody(body)
+                        .build())
+                    .setToken(token)  // 토픽 대신 특정 토큰으로 전송
+                    .build();
+
+                String response = FirebaseMessaging.getInstance().send(message);
+                log.info("Successfully sent notification to token {}: {}", token, response);
+            }
             
-            return ResponseEntity.ok("Notification sent successfully");
+            return ResponseEntity.ok("Notifications sent successfully");
         } catch (Exception e) {
-            log.error("Error sending notification", e);
-            return ResponseEntity.internalServerError().body("Error sending notification: " + e.getMessage());
+            log.error("Error sending notifications", e);
+            return ResponseEntity.internalServerError().body("Error sending notifications: " + e.getMessage());
         }
     }
 }
