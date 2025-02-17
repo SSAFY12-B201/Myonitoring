@@ -1,14 +1,20 @@
 package com.myaicrosoft.myonitoring.scheduler;
 
+import com.myaicrosoft.myonitoring.model.entity.Cat;
 import com.myaicrosoft.myonitoring.model.entity.Statistics;
+import com.myaicrosoft.myonitoring.model.entity.NotificationLog;
+import com.myaicrosoft.myonitoring.model.entity.NotificationCategory;
 import com.myaicrosoft.myonitoring.repository.StatisticsRepository;
+import com.myaicrosoft.myonitoring.repository.NotificationLogRepository;
 import com.myaicrosoft.myonitoring.service.ScheduleNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -21,12 +27,14 @@ import java.util.List;
 public class ScheduleNotification {
 
     private final StatisticsRepository statisticsRepository; // Statistics 데이터를 조회하는 Repository
+    private final NotificationLogRepository notificationLogRepository; // 알림 로그 저장 Repository
     private final ScheduleNotificationService scheduleNotificationService; // Firebase 알림 전송 서비스
 
     /**
      * 매일 오전 10시에 실행되는 스케줄링 작업
      */
-    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul") // 매일 오전 10시 (KST)
+    @Transactional
+    @Scheduled(cron = "0 03 16 * * *", zone = "Asia/Seoul") // 매일 오전 10시 (KST)
     public void sendIntakeAlertsToFirebase() {
         LocalDate yesterday = LocalDate.now().minusDays(1); // 어제 날짜 계산
 
@@ -42,13 +50,32 @@ public class ScheduleNotification {
                 double change30d = statistics.getChange30d().doubleValue();
 
                 if (changeDays > 1) { // changeDays가 2 이상인 경우만 알림 전송
+                    Cat cat = statistics.getCat();
                     String title = "섭취량 이상 감지";
-                    String body = String.format("고양이 '%s'의 섭취량 이상 감지됨! 상태: %d, 연속 일수: %d, 변화율: %.2f%%",
-                            catName, changeStatus, changeDays, change30d * 100);
+                    String changeDirection = (changeStatus == -1) ? "감소" : "증가";
+                    String body = String.format("고양이 %s의 섭취량 이상이 감지되었습니다!\n" +
+                                    "%d일 연속 섭취량이 %s하였으니, %s의 건강 상태를 확인해주세요.",
+                            catName, changeDays, changeDirection, catName);
+
+                    // 파이어베이스로 보내는 데이터 로그 출력
+                    log.info("파이어베이스로 전송되는 데이터:");
+                    log.info("제목: {}", title);
+                    log.info("내용: {}", body);
 
                     // Firebase로 알림 전송 (인스턴스를 통해 호출)
                     scheduleNotificationService.sendNotification(statistics.getCat().getDevice().getUser().getId(), title, body);
-                    log.info("Firebase로 섭취량 이상 알림 전송 완료 (고양이: {}, 유저 ID: {})", catName, statistics.getCat().getDevice().getUser().getId());
+
+                    // NotificationLog 엔티티에 데이터 저장
+                    NotificationLog notificationLog = NotificationLog.builder()
+                            .cat(cat)
+                            .notificationDateTime(LocalDateTime.now())
+                            .category(NotificationCategory.INTAKE)
+                            .message(body)
+                            .build();
+                    notificationLogRepository.save(notificationLog);
+
+                    log.info("Firebase로 섭취량 이상 알림 전송 및 로그 저장 완료 (고양이: {}, 유저 ID: {})",
+                            catName, cat.getDevice().getUser().getId());
                 } else {
                     log.info("섭취량 이상 데이터가 없어 알림이 전송되지 않았습니다 (고양이: {}).", catName);
                 }

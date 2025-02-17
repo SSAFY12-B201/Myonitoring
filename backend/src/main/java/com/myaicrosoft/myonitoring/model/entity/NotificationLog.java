@@ -3,7 +3,7 @@ package com.myaicrosoft.myonitoring.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "notification_records") // 테이블 이름 지정
@@ -23,7 +23,7 @@ public class NotificationLog {
     private Cat cat;
 
     @Column(nullable = false)
-    private LocalDate notificationDate;
+    private LocalDateTime notificationDateTime;
 
     // device(배급 이상), intake(섭취량 이상), eye(눈 건강 이상)
     @Enumerated(EnumType.STRING)
