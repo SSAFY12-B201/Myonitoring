@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // axios 임포트
+import { api } from "../../api/axios";
 import Header from "../../components/Header";
-import WideButton from "../../components/WideButton"
+import WideButton from "../../components/WideButton";
 import { addDevice } from "../../redux/slices/deviceSlice";
 import { useAppDispatch } from "../../redux/hooks";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
@@ -10,7 +10,7 @@ import { log } from "console";
 
 const SerialNumberInput = () => {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
 
   // 시리얼 넘버 상태 관리
   const [serialNumber, setSerialNumber] = useState("");
@@ -24,25 +24,35 @@ const SerialNumberInput = () => {
     }
 
     try {
+      const token = localStorage.getItem("jwt_access_token"); // 로컬 스토리지에서 토큰 가져오기
+      console.log(token);
+
       // axios로 백엔드에 시리얼 넘버 전송
-      const response = await axios.post(
-        "http://localhost:8080/api/devices",
+      const response = await api.post(
+        "/api/devices",
         { serialNumber }, // 본문에 시리얼 넘버 포함
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNjI4NTYsImV4cCI6MTc3MDc5ODg1Nn0.fTu6cCHtFgrH1qlsX_CCI7T5WdwcBJVSfiuo1kEcaZCvqwfY1rEsuEr7qOIHHsBFGVKAH-rgg5QPLQhEwOwEFw`, // 실제 토큰 값 입력
+            Authorization: token ? `Bearer ${token}` : "",
           },
         }
       );
 
-      console.log(response)
-      
-      // if (response.status !== 200) {
-      //   throw new Error("Failed to register device");
-      // }
+      console.log(response.data);
+
+      // 응답 데이터에서 필요한 정보를 추출
+      const deviceData = {
+        id: response.data.id,
+        serialNumber: response.data.serialNumber,
+        userId: response.data.users[0]?.id || null, // 첫 번째 사용자 ID
+        catId: response.data.cat || null, // 연결된 고양이 ID (없으면 null)
+      };
+
+      // Redux 상태에 기기 정보를 추가
+      dispatch(addDevice(deviceData));
 
       // 성공 시 다음 단계로 이동
-      navigate("/connection-success"); 
+      navigate("/connection-success");
     } catch (error) {
       console.error("Error registering device:", error);
       alert("기기 등록에 실패했습니다. 다시 시도해주세요.");

@@ -10,6 +10,7 @@ interface InputProps {
   error?: boolean; // 에러 여부
   errorMessage?: string; // 에러 메시지
   className?: string; // 추가적인 클래스명 (선택 사항)
+  disabled?: boolean; // disabled 속성 추가
 }
 
 const Input: React.FC<InputProps> = ({

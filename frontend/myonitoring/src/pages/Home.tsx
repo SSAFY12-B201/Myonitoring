@@ -12,7 +12,7 @@ import TopBar from "../components/TopBar";
 import BottomBar from "../components/BottomBar";
 import HomeComponentBar from "../components/HomeComponents/HomeComponentBar";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api } from "../api/axios"; // Axios 인스턴스 사용
 import { setSelectedCatId } from "../redux/slices/catSlice";
 
 const Home: React.FC = () => {
@@ -26,6 +26,7 @@ const Home: React.FC = () => {
   // 현재 날짜를 ISO 형식으로 변환 (YYYY-MM-DD)
   const today = new Date().toISOString().split("T")[0];
 
+  // Redux에서 selectedCatId 가져오기
   const selectedCatId = useSelector(
     (state: RootState) => state.cat.selectedCatId
   );
@@ -43,23 +44,37 @@ const Home: React.FC = () => {
     treatment: "bg-orange text-white", // 치료 -> 주황
     other: "bg-blue text-white", // 기타 -> 파랑
   };
+  console.log(`현재 선택된 고양이: ${selectedCatId}`);
 
   // API 데이터 가져오기
   useEffect(() => {
     const fetchData = async () => {
       if (!selectedCatId) {
-        console.warn("selectedCatId가 null입니다. 기본값으로 설정합니다.");
-        dispatch(setSelectedCatId(1)); // 기본값으로 ID 1 설정
+        console.warn("selectedCatId가 null입니다.");
         return;
       }
 
       try {
         setLoading(true); // 로딩 시작
-        const response = await axios.get(
-          `/api/main/${selectedCatId}?day=2025-02-22`,
+
+        const token = localStorage.getItem("jwt_access_token"); // 로컬 스토리지에서 토큰 가져오기
+
+        if (token) {
+          console.log("로그인 상태: true"); // 로그인 상태 콘솔 출력
+        } else {
+          console.log("로그인 상태: false"); // 로그인 상태 콘솔 출력
+        }
+        
+        if (!token) {
+          throw new Error("토큰이 없습니다.");
+        }
+
+        // Axios 요청 보내기
+        const response = await api.get(
+          `/api/main/${selectedCatId}?day=${today}`,
           {
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+              Authorization: `Bearer ${token}`,
               Accept: "application/json",
             },
           }
@@ -74,8 +89,10 @@ const Home: React.FC = () => {
       }
     };
 
-    fetchData();
-  }, [selectedCatId, today, dispatch]);
+    if (selectedCatId !== null) {
+      fetchData(); // selectedCatId가 유효할 때만 호출
+    }
+  }, [selectedCatId, today]); // selectedCatId 또는 오늘 날짜가 변경되면 다시 fetch
 
   // barsData 동적 생성
   const barsData = data
@@ -140,7 +157,7 @@ const Home: React.FC = () => {
     : [];
 
   return (
-    <div className="">
+    <div>
       <div
         className="min-h-screen flex flex-col bg-cover bg-center"
         style={{ backgroundImage: "url('/gradient_background.png')" }}
