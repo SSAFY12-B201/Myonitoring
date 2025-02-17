@@ -58,4 +58,8 @@ public class Eye {
 
     @Column(nullable = false)
     private Boolean isEyeDiseased;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"))
+    private User user;
 }

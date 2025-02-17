@@ -46,9 +46,12 @@ public class JwtProvider {
     public TokenDto generateTokenDto(User user) {
         long now = (new Date()).getTime();
         // 관리자인 경우 1년, 아닌 경우 기본 유효기간 적용
-        long tokenValidity = user.getRole() == User.Role.ADMIN ?
-                adminAccessTokenValidityInMilliseconds : accessTokenValidityInMilliseconds;
-        Date accessTokenExpiresIn = new Date(now + tokenValidity);
+        // long tokenValidity = user.getRole() == User.Role.ADMIN ?
+        //         adminAccessTokenValidityInMilliseconds : accessTokenValidityInMilliseconds;
+        // Date accessTokenExpiresIn = new Date(now + tokenValidity);
+        
+        // 임시로 1년 유효기간 적용
+        Date accessTokenExpiresIn = new Date(now + adminAccessTokenValidityInMilliseconds);
         Date refreshTokenExpiresIn = new Date(now + refreshTokenValidityInMilliseconds);
 
         log.info("Generating token for user: {} with role: {}", user.getEmail(), user.getRole());
