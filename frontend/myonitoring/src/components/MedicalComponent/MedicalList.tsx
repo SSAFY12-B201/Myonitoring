@@ -61,12 +61,12 @@ const MedicalList: React.FC<MedicalListProps> = ({ records, isLoading, onDelete 
     return (
       <div className="flex flex-col items-center justify-center mt-24 h-full">
         <img
-          src="/sleeping_cat.png"
+          src="/Cat.png"
           alt="로고 이미지"
           className="w-35 h-32 animate-fade-in"
         />
-        <h1 className="text-xs font-Gidugu text-gray-900 mt-4">
-          의료기록이 없습니다...
+        <h1 className="text-sm text-gray-600 mt-6">
+          등록된 의료 기록이 없습니다.
         </h1>
       </div>
     );

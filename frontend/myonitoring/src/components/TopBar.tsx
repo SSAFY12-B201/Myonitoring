@@ -5,7 +5,6 @@ import { api } from "../api/axios"; // Axios 인스턴스 사용
 import {
   Notifications,
   ChatBubbleOutline,
-  CollectionsBookmark,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
@@ -53,12 +52,10 @@ const TopBar: React.FC = () => {
           const currentCat = response.data.find(
             (cat: Cat) => cat.id === selectedCatId
           );
-          // console.log(`selectedid 기준으로 찾은 고양이: ${currentCat}`)
           if (currentCat) {
             setSelectedCat(currentCat); // Redux와 일치하는 고양이를 선택
           } else {
             // selectedCatId가 없거나 유효하지 않을 경우 첫 번째 고양이 선택
-            // console.log("selectedCatId가 없거나 유효하지 않습니다")
             setSelectedCat(response.data[0]);
             dispatch(setSelectedCatId(response.data[0].id)); // Redux에 저장
           }
@@ -92,7 +89,7 @@ const TopBar: React.FC = () => {
           {selectedCat && (
             <>
               <img
-                src={selectedCat.profileImageUrl}
+                src={selectedCat.profileImageUrl || "/Cat_bg.png"} // 프로필 사진이 없으면 기본 이미지 사용
                 alt="고양이"
                 className="w-10 h-10 rounded-full mr-3"
               />
@@ -137,7 +134,7 @@ const TopBar: React.FC = () => {
             >
               <div className="flex items-center">
                 <img
-                  src={cat.profileImageUrl}
+                  src={cat.profileImageUrl || "/Cat_bg.png"} // 프로필 사진이 없으면 기본 이미지 사용
                   alt={cat.name}
                   className="w-8 h-8 rounded-full mr-3"
                 />

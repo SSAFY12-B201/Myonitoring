@@ -117,6 +117,7 @@ const App: React.FC = () => {
             <Route path="/notification" element={<Notification />} />
             <Route path="/cateyeinfo" element={<CatEyeInfo />} />
             <Route path="/catinfoedit/:id" element={<CatInfoEdit />} />
+         
           </>
         )}
       </Routes>
