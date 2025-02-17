@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAppSelector, useAppDispatch } from "../../redux/hooks"; // Redux 훅
-import { removeDevice } from "../../redux/slices/deviceSlice"; // Redux 액션
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { setSelectedCatId } from "../../redux/slices/catSlice"; // Redux 액션
 import Header from "../../components/Header";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
@@ -9,16 +9,16 @@ import WideButton from "../../components/WideButton";
 const DeviceDetailedSettings: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { id } = useParams<{ id: string }>(); // URL 파라미터에서 기기 ID 가져오기
-  const deviceId = parseInt(id || "", 10); // 문자열 ID를 숫자로 변환
-
-  console.log(id);
-  console.log(deviceId);
+  const { id } = useParams<{ id: string }>();
+  const deviceId = parseInt(id || "", 10);
 
   // Redux 상태에서 기기 데이터 가져오기
   const device = useAppSelector((state) =>
     state.device.find((device) => device.id === deviceId)
   );
+
+  // Redux 상태에서 선택된 고양이 ID 가져오기
+  const selectedCatId = useAppSelector((state) => state.cat.selectedCatId);
 
   if (!device) {
     return (
@@ -34,42 +34,31 @@ const DeviceDetailedSettings: React.FC = () => {
     );
   }
 
-  // 고양이 등록/수정 페이지로 이동 처리
+  // 연동된 고양이 버튼 클릭 핸들러
   const handleCatAction = () => {
     if (device.catName) {
-      navigate(`/catinfoedit/${deviceId}`); // 고양이 정보 수정 페이지로 이동
+      // Redux에서 catName으로 고양이 ID 찾기
+      const catIdFromName = selectedCatId; // 이미 외부에서 설정된 selectedCatId 사용
+      if (catIdFromName) {
+        dispatch(setSelectedCatId(catIdFromName)); // 선택된 고양이 ID 설정
+        navigate(`/catinfoedit/${catIdFromName}`); // 고양이 상세 페이지로 이동
+      } else {
+        alert("연동된 고양이를 찾을 수 없습니다.");
+      }
     } else {
-      navigate(`/register-cat`); // 새 고양이 등록 페이지로 이동
+      navigate("/register-cat"); // 새 고양이 등록 페이지로 이동
     }
   };
 
-  // 디바이스 삭제 처리
-  const handleDeleteDevice = async () => {
-    try {
-      await axios.delete(`/api/devices/${deviceId}`, {
-        headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
-        },
-      }); // DELETE 요청
-      navigate("/device-settings"); // DeviceSettings 페이지로 이동
-    } catch (err) {
-      console.error("디바이스 삭제 실패:", err);
-      alert("디바이스 삭제 중 오류가 발생했습니다."); // 사용자 알림
-    }
-  };
   return (
     <>
-      {/* 상단 헤더 */}
       <Header title="연동 기기 설정" onBack={() => navigate(-1)} />
-
-      {/* 콘텐츠 섹션 */}
       <ExceptTopContentSection>
-        {/* 기기 이미지 */}
         <div className="flex justify-center mb-6">
           <img
             src="/src/assets/images/device.png"
             alt="Device"
-            className="w-32 h-auto object-contain" // 이미지 크기 조정
+            className="w-32 h-auto object-contain"
           />
         </div>
 
@@ -84,7 +73,7 @@ const DeviceDetailedSettings: React.FC = () => {
                 {device.catName || "등록된 고양이가 없습니다."}
               </span>
               <button
-                onClick={handleCatAction} // 고양이 등록/수정 함수 호출
+                onClick={handleCatAction} // 수정된 핸들러 호출
                 className="text-gray-400 text-lg"
               >
                 &#x276F;
@@ -114,9 +103,9 @@ const DeviceDetailedSettings: React.FC = () => {
       <footer className="fixed bottom-2 left-0 w-full p-4">
         <WideButton
           text="기기 삭제"
-          onClick={handleDeleteDevice} // 삭제 처리 함수 연결
-          bgColor="bg-[#595959]" // 주황색 배경
-          textColor="text-white" // 흰색 텍스트
+          onClick={() => {}}
+          bgColor="bg-[#595959]"
+          textColor="text-white"
         />
       </footer>
     </>
