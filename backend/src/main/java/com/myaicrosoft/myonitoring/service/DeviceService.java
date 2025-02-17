@@ -119,7 +119,6 @@ public class DeviceService {
 
     /**
      * Device 엔티티를 DeviceDetailResponseDto로 변환하는 메서드
-     *
      * @param device 변환할 기기 객체
      * @return 기기 정보를 담은 DeviceDetailResponseDto 객체
      */
@@ -132,14 +131,12 @@ public class DeviceService {
                 new DeviceDetailResponseDto.UserInfo(device.getUser().getId(), device.getUser().getEmail())
         );
 
-
         return new DeviceDetailResponseDto(
                 device.getId(),
                 device.getRegistrationDate(),
                 device.getSerialNumber(),
                 catInfo,
-                Collections.singletonList(userInfo)
+                users
         );
     }
-
 }

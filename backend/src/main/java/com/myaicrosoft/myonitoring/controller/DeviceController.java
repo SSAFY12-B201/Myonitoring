@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import com.myaicrosoft.myonitoring.model.dto.DeviceDetailResponseDto;
 import com.myaicrosoft.myonitoring.model.dto.DeviceResponseDto;
 import com.myaicrosoft.myonitoring.model.dto.DeviceCreateRequest;
+import com.myaicrosoft.myonitoring.model.dto.DeviceCreateResponse;
 import com.myaicrosoft.myonitoring.model.entity.Cat;
 import com.myaicrosoft.myonitoring.model.entity.Device;
 import com.myaicrosoft.myonitoring.service.DeviceService;
@@ -31,13 +32,24 @@ public class DeviceController {
      * 기기 생성 API
      *
      * @param request 기기 생성 요청 데이터 (DTO)
-     * @return 생성된 기기 엔티티
+     * @return 생성된 기기 응답 데이터 (DTO)
      */
     @PostMapping
-    public ResponseEntity<Device> createDevice(@RequestBody DeviceCreateRequest request) {
+    public ResponseEntity<DeviceCreateResponse> createDevice(@RequestBody DeviceCreateRequest request) {
         Long userId = securityUtil.getCurrentUserId();
         Device device = deviceService.createDevice(request, userId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(device);
+
+        Long catId = (device.getCat() != null) ? device.getCat().getId() : null;
+
+        // Device 엔티티를 DTO로 변환하여 반환
+        DeviceCreateResponse response = new DeviceCreateResponse(
+                device.getId(),
+                device.getSerialNumber(),
+                device.getUser().getId(),
+                catId
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     /**
