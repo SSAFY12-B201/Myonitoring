@@ -1,71 +1,104 @@
-import React, { useState, useEffect } from "react";
-import { useAppSelector } from "../../redux/hooks";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { AiOutlinePlus, AiOutlineCalendar } from "react-icons/ai";
-import { BsClock } from "react-icons/bs";
+import axios from "axios";
+import { useAppSelector } from "../../redux/hooks";
 import TopBar from "../../components/TopBar";
 import ContentSection from "../../components/ContentSection";
 import BottomBar from "../../components/BottomBar";
+import MedicalList from "../../components/MedicalComponent/MedicalList";
 
-const MedicalRecords = ({ catId }: { catId?: string }) => {
+const MedicalRecords = () => {
   const navigate = useNavigate();
-
-  // Redux에서 의료 기록 데이터 가져오기
-  const medicalRecords = useAppSelector((state) =>
-    state.medicalRecords.records.filter((record) => record.catId === "cat1")
-  );
-
-  // 로컬 상태로 필터링 조건 관리
+  const selectedCatId = useAppSelector((state) => state.cat.selectedCatId);
   const [filterType, setFilterType] = useState<"전체" | "정기검진" | "치료" | "기타">("전체");
-  const [startDate, setStartDate] = useState<string>(""); // 시작 날짜
-  const [endDate, setEndDate] = useState<string>(""); // 종료 날짜
+  const [startDate, setStartDate] = useState<string>("");
+  const [endDate, setEndDate] = useState<string>("");
+  const [fetchedRecords, setFetchedRecords] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // 컴포넌트가 마운트될 때 기본 날짜 설정
+  // 날짜 초기화
   useEffect(() => {
     const today = new Date();
-
-    // 현재 달의 시작일 계산
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
-
-    // 현재 달의 마지막 날 계산
-    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-    // 상태 업데이트 (YYYY-MM-DD 형식으로 변환)
+    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth() - 6, 1);
+    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 11, 0);
     setStartDate(firstDayOfMonth.toISOString().split("T")[0]);
     setEndDate(lastDayOfMonth.toISOString().split("T")[0]);
   }, []);
 
+  // 데이터 가져오기
+  const fetchMedicalRecords = async () => {
+    if (!selectedCatId || !startDate || !endDate) return;
+
+    try {
+      setIsLoading(true);
+      const response = await axios.get(
+        `/api/medical/${selectedCatId}?start_date=${startDate}&end_date=${endDate}`,
+        {
+          headers: {
+            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+          },
+        }
+      );
+      setFetchedRecords(response.data);
+    } catch (error) {
+      console.error("Error fetching medical records:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 삭제 함수 정의
+  const handleDelete = async (id: string) => {
+    try {
+      // 서버에 DELETE 요청
+      await axios.delete(`/api/medical/detail/${id}`, {
+        headers: {
+          Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+        },
+      });
+
+      // 성공적으로 삭제되었으면 상태 업데이트
+      setFetchedRecords((prevRecords) => prevRecords.filter((record) => record.id !== id));
+    } catch (error) {
+      console.error("Error deleting medical record:", error);
+      alert("삭제에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
   // 필터링된 데이터 계산
-  const filteredRecords = medicalRecords.filter((record) => {
-    const recordDate = new Date(record.date).getTime();
-    const start = startDate ? new Date(startDate).getTime() : null;
-    const end = endDate ? new Date(endDate).getTime() : null;
+  const filteredRecords = fetchedRecords
+    .filter((record) => {
+      const recordDate = new Date(record.visitDate).getTime();
+      const start = startDate ? new Date(startDate).getTime() : null;
+      const end = endDate ? new Date(endDate).getTime() : null;
 
-    const isWithinDateRange =
-      (!start || recordDate >= start) && (!end || recordDate <= end);
+      return (
+        (!start || recordDate >= start) &&
+        (!end || recordDate <= end) &&
+        (filterType === "전체" ||
+          (filterType === "정기검진" && record.category === "CHECKUP") ||
+          (filterType === "치료" && record.category === "TREATMENT") ||
+          (filterType === "기타" && record.category === "OTHER"))
+      );
+    })
+    .sort((a, b) => new Date(a.visitDate).getTime() - new Date(b.visitDate).getTime());
 
-    const isTypeMatch =
-      filterType === "전체" || record.type === filterType;
-
-    return isWithinDateRange && isTypeMatch;
-  });
+  // 데이터 가져오기 트리거
+  useEffect(() => {
+    if (startDate && endDate) fetchMedicalRecords();
+  }, [selectedCatId, startDate, endDate]);
 
   return (
     <div
       className="min-h-screen flex flex-col pb-[60px] bg-cover bg-center"
       style={{ backgroundImage: "url('/gradient_background.png')" }}
     >
-      {/* 상단 바 */}
       <TopBar />
-
-      {/* 본문 */}
       <ContentSection>
         {/* 의료기록 조회 제목 */}
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-bold">의료기록 조회</h1>
-          <button className="bg-yellow-400 text-white rounded-full w-8 h-8 flex items-center justify-center">
-            <AiOutlinePlus size={16} />
-          </button>
+          <button className="custom-button fixed bottom-24 z-50 right-6 w-10 h-10" onClick={() => navigate("/make-medical-record")}>+</button>
         </div>
 
         {/* 날짜 필터 */}
@@ -103,55 +136,8 @@ const MedicalRecords = ({ catId }: { catId?: string }) => {
         </div>
 
         {/* 의료 기록 리스트 */}
-        <div className="space-y-4">
-          {filteredRecords.length > 0 ? (
-            filteredRecords.map((record) => (
-              <div
-                key={record.id}
-                onClick={() => navigate(`/medical-records/${record.id}`)}
-                className="border border-gray-200 rounded-lg p-4 shadow-sm bg-white flex justify-between items-start"
-              >
-                {/* 왼쪽 정보 */}
-                <div>
-                  {/* 분류 태그와 제목을 가로로 나란히 배치 */}
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`inline-block px-3 py-[2px] text-xs font-bold rounded ${
-                        record.type === "정기검진"
-                          ? "bg-yellow text-white"
-                          : record.type === "치료"
-                          ? "bg-orange text-white"
-                          : "bg-blue text-white"
-                      }`}
-                    >
-                      {record.type}
-                    </span>
-                    <h3 className="font-semibold text-base">{record.title}</h3>
-                  </div>
-                  {/* 날짜 및 시간 */}
-                  <p className="text-sm text-gray-500 mt-2 flex items-center gap-2">
-                    <AiOutlineCalendar size={14} /> {record.date}{" "}
-                    <BsClock size={14} /> {record.time}
-                  </p>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="flex flex-col items-center justify-center mt-24 h-full">
-              <img
-                src="/sleeping_cat.png"
-                alt="로고 이미지"
-                className="w-35 h-32 animate-fade-in"
-              />
-              <h1 className="text-xs font-Gidugu text-gray-900 mt-4">
-                의료기록이 없습니다...
-              </h1>
-            </div>
-          )}
-        </div>
+        <MedicalList records={filteredRecords} isLoading={isLoading} onDelete={handleDelete} />
       </ContentSection>
-
-      {/* 하단 바 */}
       <BottomBar />
     </div>
   );

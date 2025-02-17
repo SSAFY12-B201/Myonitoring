@@ -184,7 +184,7 @@ const Graph: React.FC = () => {
               selectedDate={selectedDate}
             />
           ) : (
-            <p className="text-center text-gray-600 bg-gray-100 py-4 px-6 rounded-lg border border-gray-300 m-2 mt-6">
+            <p className="text-center text-gray-600 bg-gray-50 py-4 px-6 rounded-lg border border-gray-200 m-2 mt-6">
               데이터가 없습니다.
             </p>
           )}
