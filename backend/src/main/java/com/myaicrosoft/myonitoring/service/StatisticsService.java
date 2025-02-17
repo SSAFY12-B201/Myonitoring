@@ -31,7 +31,7 @@ public class StatisticsService {
     /**
      * 매일 자정에 실행되는 스케줄링 작업
      */
-    @Scheduled(cron = "0 0 0 * * *")
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     public void calculateDailyStatistics() {
         LocalDate today = LocalDate.now();
         LocalDate yesterday = today.minusDays(1); // 전날 날짜 계산
