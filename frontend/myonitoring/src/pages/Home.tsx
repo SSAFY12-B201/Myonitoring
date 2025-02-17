@@ -19,7 +19,12 @@ const Home: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [data, setData] = useState<any>(null); // API 데이터 상태
+  const [data, setData] = useState<any>({
+    total_intake: 0,
+    intake_alert: { flag: 0 },
+    eye_alert: { flag: 0 },
+    medical: { data: [] },
+  });
   const [loading, setLoading] = useState<boolean>(true); // 로딩 상태
   const [error, setError] = useState<string | null>(null); // 에러 상태
 
@@ -64,7 +69,7 @@ const Home: React.FC = () => {
         } else {
           console.log("로그인 상태: false"); // 로그인 상태 콘솔 출력
         }
-        
+
         if (!token) {
           throw new Error("토큰이 없습니다.");
         }
@@ -79,8 +84,18 @@ const Home: React.FC = () => {
             },
           }
         );
-        setData(response.data); // 데이터 설정
+
+        const fetchedData = response.data || {};
+
+        setData({
+          total_intake: fetchedData.total_intake || 0,
+          intake_alert: fetchedData.intake_alert || { flag: 0 },
+          eye_alert: fetchedData.eye_alert || { flag: 0 },
+          medical: fetchedData.medical || { data: [] }, // 기본값 설정
+        });
+
         setError(null); // 에러 초기화
+        
       } catch (err) {
         console.error("데이터 로드 실패:", err);
         setError("데이터를 불러오는 중 오류가 발생했습니다."); // 에러 메시지 설정
@@ -143,12 +158,14 @@ const Home: React.FC = () => {
         {
           icon: <DocumentTextIcon className="h-6 w-6" />,
           title: "의료 기록",
-          badges: data.medical.data.map((category: string) => ({
-            text: categoryMapping[category] || category, // 카테고리 이름 변환
-            color: badgeColorMapping[category] || "", // 색상 매핑
-          })),
+          badges:
+            data?.medical?.data?.map((category: string) => ({
+              text: categoryMapping[category] || category,
+              color: badgeColorMapping[category] || "",
+            })) || [],
+
           description:
-            data.medical.data.length > 0
+            data?.medical?.data?.length > 0
               ? "오늘의 의료 기록"
               : "의료 기록이 없습니다.",
           onClick: () => navigate("/medical-records"),

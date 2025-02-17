@@ -6,14 +6,35 @@ import Input from "../../components/Input";
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
+import {
+  slideInVariants,
+  slideOutVariants,
+  defaultTransition,
+} from "../../animations";
 
 const UserInfo = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 뒤로 가기 여부 확인
+  const isBackFromDeviceGuide = location.state?.fromDeviceGuide || false;
+  const isBackFromAgreement = location.state?.fromAgreement || false;
+
+  // 동적 애니메이션 설정
+  const animationVariants = isBackFromDeviceGuide || isBackFromAgreement
+    ? slideOutVariants // 뒤로 가기 애니메이션
+    : slideInVariants; // 앞으로 가기 애니메이션
+
+  // 상태 초기화 (뒤로 가기 여부를 한 번만 사용)
+  useEffect(() => {
+    if (isBackFromDeviceGuide || isBackFromAgreement) {
+      navigate(location.pathname, { replace: true }); // state 초기화
+    }
+  }, [isBackFromDeviceGuide, isBackFromAgreement, navigate, location.pathname]);
 
   // 로컬 상태 관리: 입력 중인 데이터를 관리
   const [formData, setFormData] = useState({
@@ -85,10 +106,16 @@ const UserInfo = () => {
   };
 
   return (
-    <motion.div>
+    <motion.div
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={animationVariants}
+      transition={defaultTransition}
+    >
       <div className="min-h-screen bg-white flex flex-col">
         {/* 상단 헤더 */}
-        <Header title="개인 정보 입력" onBack={() => navigate(-1)} />
+        <Header title="개인 정보 입력" onBack={() => navigate("/agreements", { state: { fromUserInfo: true } })} />
 
         <ExceptTopContentSection>
           <div>
