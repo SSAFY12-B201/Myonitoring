@@ -2,7 +2,6 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 import path from "path";
-import fs from 'fs';
 export default defineConfig({
   plugins: [
     react(),
@@ -54,10 +53,6 @@ export default defineConfig({
   ],
   //API 수정한 곳임임
   server: {
-    https: {
-      key: fs.readFileSync('localhost-key.pem'),
-      cert: fs.readFileSync('localhost.pem'),
-    },
     proxy: {
       "/api": {
         target: "http://localhost:8080",
