@@ -2,29 +2,32 @@ package com.myaicrosoft.myonitoring.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
+
 import com.google.firebase.FirebaseOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 @Configuration
 public class FirebaseConfig {
-    
+    @Value("${FIREBASE_CONFIG_PATH}")
+    private String firebaseConfigPath;
+
     @Bean
-    public FirebaseApp firebaseApp() throws IOException {
-        if (FirebaseApp.getApps().isEmpty()) {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(
-                new ClassPathResource("myonitoring-firebase-adminsdk-fbsvc-78c9791370.json").getInputStream()
-            );
-            
-            FirebaseOptions options = FirebaseOptions.builder()
-                .setCredentials(credentials)
+    public FirebaseApp initializeFirebaseApp() throws IOException {
+        File configFile = new File(firebaseConfigPath);
+        FileInputStream serviceAccount = new FileInputStream(configFile);
+
+        FirebaseOptions options = FirebaseOptions.builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                 .build();
-            
-            return FirebaseApp.initializeApp(options);
-        }
-        return FirebaseApp.getInstance();
+
+
+        return FirebaseApp.initializeApp(options);
     }
+
 }
