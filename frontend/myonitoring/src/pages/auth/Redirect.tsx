@@ -18,11 +18,21 @@ const Redirect: React.FC = () => {
         .then((response) => {
           console.log("Response:", response.data);
 
-          // 액세스 토큰 저장
-          localStorage.setItem("kakao_access_token", response.data.access_token);
+          const token = response.data.access_token;
 
-          // 약관 동의 페이지로 이동
-          navigate("/agreements");
+          // const token = response.data.accessToken;
+          // const token = response.data.token;
+          // const token = response.data;  // 토큰이 직접 오는 경우
+
+          console.log("Token value: ",token);
+          if(token) {
+            localStorage.setItem("accessToken", token);
+            // 약관 동의 페이지로 이동
+            navigate("/agreements");
+          } else {
+            console.error("Token not found in response");
+          }
+
         })
         .catch((error) => {
           console.error("로그인 실패:", error);

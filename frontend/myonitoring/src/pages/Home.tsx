@@ -11,7 +11,7 @@ import TopBar from "../components/TopBar";
 import BottomBar from "../components/BottomBar";
 import HomeComponentBar from "../components/HomeComponents/HomeComponentBar";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api } from "../api/axios";
 import { setSelectedCatId } from "../redux/slices/catSlice";
 
 const Home: React.FC = () => {
@@ -46,7 +46,7 @@ const Home: React.FC = () => {
   
       try {
         setLoading(true); // 로딩 시작
-        const response = await axios.get(`/api/main/${selectedCatId}?day=${today}`, {
+        const response = await api.get(`/api/main/${selectedCatId}?day=${today}`, {
           headers: {
             Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
             Accept: "application/json",

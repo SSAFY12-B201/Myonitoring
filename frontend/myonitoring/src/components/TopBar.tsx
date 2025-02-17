@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCatId } from "../redux/slices/catSlice";
-import axios from "axios";
+import { api } from "../api/axios";
 import { Notifications, ChatBubbleOutline } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
@@ -26,7 +26,7 @@ const TopBar: React.FC = () => {
   useEffect(() => {
     const fetchCats = async () => {
       try {
-        const response = await axios.get("/api/cats", {
+        const response = await api.get("/api/cats", {
           headers: {
             Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
           },

@@ -1,20 +1,14 @@
 import { initializeApp } from 'firebase/app';
-import { getMessaging } from 'firebase/messaging';
+import { getMessaging, onMessage } from 'firebase/messaging';
 import { api } from '../api/axios';
-
-let app: any = null;
-let messaging: any = null;
 
 export const initializeFirebase = async () => {
   try {
-    // 서비스 워커 등록 확인
-    if (!('serviceWorker' in navigator)) {
-      throw new Error('서비스 워커가 지원되지 않는 브라우저입니다.');
-    }
+    console.log('Firebase 초기화 시작...');
 
     // Firebase 설정 가져오기
     const { data: config } = await api.get('/api/env/firebase-config');
-    
+
     const firebaseConfig = {
       apiKey: config.apiKey,
       authDomain: config.authDomain,
@@ -24,27 +18,17 @@ export const initializeFirebase = async () => {
       appId: config.appId,
       measurementId: config.measurementId
     };
-    
-    app = initializeApp(firebaseConfig);
-    messaging = getMessaging(app);
 
-    // 서비스 워커 등록
-    const registration = await navigator.serviceWorker.register('/firebase-messaging-sw.js', {
-      scope: '/'
-    });
-    console.log('Service Worker 등록 성공:', registration);
-    
-    // 서비스 워커에 설정 전달
-    const sw = await navigator.serviceWorker.ready;
-    sw.active?.postMessage({
-      type: 'FIREBASE_CONFIG',
-      config: firebaseConfig
-    });
-    
-    return { 
-      app, 
-      messaging, 
-      vapidKey: config.vapidKey 
+    console.log('Firebase 구성:', firebaseConfig);
+    const app = initializeApp(firebaseConfig);
+    const messaging = getMessaging(app);
+
+    console.log('Firebase 메시징 인스턴스:', messaging);
+
+    return {
+      app,
+      messaging,
+      vapidKey: config.vapidKey
     };
   } catch (error) {
     console.error('Firebase 초기화 실패:', error);
@@ -52,8 +36,33 @@ export const initializeFirebase = async () => {
   }
 };
 
-// 알림 관련 타입
-export interface NotificationMessage {
-  title: string;
-  body: string;
-} 
+export const setupForegroundMessageListener = async (
+    onMessageReceived: (message: any) => void
+) => {
+  try {
+    console.log('포그라운드 메시지 리스너 설정 시작');
+
+    const { messaging } = await initializeFirebase();
+
+    console.log('메시징 인스턴스:', messaging);
+
+    // 명시적으로 onMessage 리스너 설정
+    const unsubscribe = onMessage(messaging, (payload) => {
+      console.log('포그라운드 메시지 수신:', payload);
+
+      // 메시지 처리 로직
+      if (payload.notification) {
+        onMessageReceived(payload);
+      } else {
+        console.warn('유효하지 않은 페이로드:', payload);
+      }
+    });
+
+    console.log('포그라운드 메시지 리스너 설정 완료');
+
+    return unsubscribe;
+  } catch (error) {
+    console.error('포그라운드 메시지 리스너 설정 중 오류:', error);
+    throw error;
+  }
+};

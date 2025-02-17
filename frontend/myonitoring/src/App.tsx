@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
-
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // 페이지 컴포넌트 임포트
 import Splash from "./pages/onboarding/Splash";
 import Redirect from "./pages/auth/Redirect";
@@ -29,7 +30,7 @@ import DeviceDetailedSettings from "./pages/mypage/DeviceDetailedSettings";
 import Notification from "./pages/Notification";
 import CatEyeInfo from "./pages/report/CatEyeInfo";
 import CatInfoEdit from "./pages/CatInfoEdit";
-import NotificationComponent from './components/FirebaseComponents/Notification';
+import NotificationComponent from './components/FirebaseComponents/FBNotification.tsx';
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -64,6 +65,7 @@ const App: React.FC = () => {
 
   return (
     <div>
+      <ToastContainer />
       {isLoggedIn && <NotificationComponent />}
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
