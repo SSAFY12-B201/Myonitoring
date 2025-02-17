@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -67,7 +68,7 @@ public class ScheduleNotification {
                     // NotificationLog 엔티티에 데이터 저장
                     NotificationLog notificationLog = NotificationLog.builder()
                             .cat(cat)
-                            .notificationDate(LocalDate.now())
+                            .notificationDateTime(LocalDateTime.now())
                             .category(NotificationCategory.INTAKE)
                             .message(body)
                             .build();
