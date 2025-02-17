@@ -19,7 +19,7 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
      * @param userId 유저 ID
      * @return 해당 유저와 연결된 모든 기기 목록
      */
-    @Query("SELECT d FROM Device d JOIN d.users u WHERE u.id = :userId")
+    @Query("SELECT d FROM Device d LEFT JOIN FETCH d.cat WHERE d.user.id = :userId")
     List<Device> findAllByUserId(@Param("userId") Long userId);
 
     /**

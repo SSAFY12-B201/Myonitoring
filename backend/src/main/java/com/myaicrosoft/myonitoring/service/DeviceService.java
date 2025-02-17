@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Collections;
 
 /**
  * 기기(Device) 관련 비즈니스 로직을 처리하는 서비스 클래스
@@ -44,7 +45,7 @@ public class DeviceService {
                 .build();
 
         // 유저와의 연관 관계 설정
-        device.getUsers().add(user);
+        device.setUser(user);
 
         return deviceRepository.save(device);
     }
@@ -61,10 +62,12 @@ public class DeviceService {
                 .map(device -> new DeviceResponseDto(
                         device.getId(),
                         device.getSerialNumber(),
-                        device.getRegistrationDate()
+                        device.getRegistrationDate(),
+                        device.getCat() != null ? device.getCat().getName() : null
                 ))
                 .collect(Collectors.toList());
     }
+
 
     /**
      * 특정 기기를 조회하고 DTO로 변환하여 반환하는 로직
@@ -94,8 +97,7 @@ public class DeviceService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 고양이 ID에 연결된 기기를 찾을 수 없습니다. ID: " + catId));
 
         // 기기의 소유자 확인
-        boolean isOwner = device.getUsers().stream()
-                .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
+        boolean isOwner = device.getUser().getId().equals(securityUtil.getCurrentUserId());
         if (!isOwner) {
             throw new IllegalArgumentException("해당 기기의 삭제 권한이 없습니다.");
         }
@@ -110,8 +112,7 @@ public class DeviceService {
      * @return 현재 로그인한 사용자가 해당 기기의 소유자인 경우 true, 그렇지 않으면 false
      */
     private boolean isDeviceOwner(Device device) {
-        return device.getUsers().stream()
-                .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
+        return device.getUser().getId().equals(securityUtil.getCurrentUserId());
     }
 
     /**
@@ -125,16 +126,15 @@ public class DeviceService {
         DeviceDetailResponseDto.CatInfo catInfo = (cat != null) ?
                 new DeviceDetailResponseDto.CatInfo(cat.getId(), cat.getName()) : null;
 
-        List<DeviceDetailResponseDto.UserInfo> users = device.getUsers().stream()
-                .map(user -> new DeviceDetailResponseDto.UserInfo(user.getId(), user.getEmail()))
-                .collect(Collectors.toList());
+        DeviceDetailResponseDto.UserInfo userInfo = new DeviceDetailResponseDto.UserInfo(
+                device.getUser().getId(), device.getUser().getEmail());
 
         return new DeviceDetailResponseDto(
                 device.getId(),
                 device.getRegistrationDate(),
                 device.getSerialNumber(),
                 catInfo,
-                users
+                Collections.singletonList(userInfo)
         );
     }
 

@@ -41,8 +41,8 @@ public class CatService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 기기를 찾을 수 없습니다. ID: " + request.getDeviceId()));
 
         // 기기의 소유자 확인
-        boolean isOwner = device.getUsers().stream()
-                .anyMatch(user -> user.getId().equals(userId));
+        boolean isOwner = device.getUser().getId().equals(securityUtil.getCurrentUserId());
+
         if (!isOwner) {
             throw new IllegalArgumentException("해당 기기의 소유자가 아닙니다.");
         }
@@ -89,8 +89,7 @@ public class CatService {
         // 고양이의 소유자 확인
         Device device = cat.getDevice();
         if (device != null) {
-            boolean isOwner = device.getUsers().stream()
-                    .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
+            boolean isOwner = device.getUser().getId().equals(securityUtil.getCurrentUserId());
             if (!isOwner) {
                 throw new IllegalArgumentException("해당 고양이의 조회 권한이 없습니다.");
             }
@@ -172,8 +171,7 @@ public class CatService {
         // 고양이의 소유자 확인
         Device device = cat.getDevice();
         if (device != null) {
-            boolean isOwner = device.getUsers().stream()
-                    .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
+            boolean isOwner = device.getUser().getId().equals(securityUtil.getCurrentUserId());
             if (!isOwner) {
                 throw new IllegalArgumentException("해당 고양이의 삭제 권한이 없습니다.");
             }
