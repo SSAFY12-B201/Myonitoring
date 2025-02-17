@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Collections;
 
+
+
 /**
  * 기기(Device) 관련 비즈니스 로직을 처리하는 서비스 클래스
  */
@@ -42,13 +44,12 @@ public class DeviceService {
 
         Device device = Device.builder()
                 .serialNumber(request.getSerialNumber())
+                .user(user)  // 여기서 user를 설정합니다.
                 .build();
-
-        // 유저와의 연관 관계 설정
-        device.setUser(user);
 
         return deviceRepository.save(device);
     }
+
 
     /**
      * 특정 유저의 모든 기기를 조회하고 DTO로 변환하여 반환하는 로직
@@ -113,6 +114,7 @@ public class DeviceService {
      */
     private boolean isDeviceOwner(Device device) {
         return device.getUser().getId().equals(securityUtil.getCurrentUserId());
+
     }
 
     /**
@@ -126,8 +128,10 @@ public class DeviceService {
         DeviceDetailResponseDto.CatInfo catInfo = (cat != null) ?
                 new DeviceDetailResponseDto.CatInfo(cat.getId(), cat.getName()) : null;
 
-        DeviceDetailResponseDto.UserInfo userInfo = new DeviceDetailResponseDto.UserInfo(
-                device.getUser().getId(), device.getUser().getEmail());
+        List<DeviceDetailResponseDto.UserInfo> users = Collections.singletonList(
+                new DeviceDetailResponseDto.UserInfo(device.getUser().getId(), device.getUser().getEmail())
+        );
+
 
         return new DeviceDetailResponseDto(
                 device.getId(),

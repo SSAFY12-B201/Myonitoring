@@ -42,7 +42,6 @@ public class CatService {
 
         // 기기의 소유자 확인
         boolean isOwner = device.getUser().getId().equals(securityUtil.getCurrentUserId());
-
         if (!isOwner) {
             throw new IllegalArgumentException("해당 기기의 소유자가 아닙니다.");
         }

@@ -49,4 +49,13 @@ public interface StatisticsRepository extends JpaRepository<Statistics, Long> {
     List<Statistics> findByCatIdAndStatDateRangeForAverage(@Param("catId") Long catId,
                                                            @Param("startDate") LocalDate startDate,
                                                            @Param("endDate") LocalDate endDate);
+
+    /**
+     * 특정 날짜의 모든 통계 데이터를 조회합니다.
+     *
+     * @param statDate 통계 날짜
+     * @return 통계 데이터 리스트
+     */
+    List<Statistics> findAllByStatDate(LocalDate statDate);
+
 }
