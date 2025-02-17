@@ -1,14 +1,12 @@
 package com.myaicrosoft.myonitoring.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import com.myaicrosoft.myonitoring.model.entity.User;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "fcm_tokens")
 public class FcmToken {
@@ -24,6 +22,7 @@ public class FcmToken {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "is_active")
     private boolean isActive = true;
 
     @Builder
@@ -35,4 +34,4 @@ public class FcmToken {
     public void deactivate() {
         this.isActive = false;
     }
-} 
+}

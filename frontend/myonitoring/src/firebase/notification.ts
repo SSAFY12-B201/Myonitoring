@@ -61,19 +61,27 @@ export const onMessageListener = async () => {
   try {
     const { messaging } = await initializeFirebase();
 
-    // Promise를 반환하지 않고 Observable 형태로 변경
-    onMessage(messaging, (payload) => {
-      // 상세 로깅 추가
-      console.log('수신된 FCM 메시지 전체:', payload);
-      console.log('notification 데이터:', payload.notification);
-      console.log('data 필드:', payload.data);
-      console.log('collapse_key:', payload.collapseKey);
+    return new Promise<NotificationMessage>((resolve) => {
+      onMessage(messaging, (payload) => {
+        // 상세 로깅 추가
+        console.log('수신된 FCM 메시지 전체:', payload);
+        console.log('notification 데이터:', payload.notification);
+        console.log('data 필드:', payload.data);
+        console.log('collapse_key:', payload.collapseKey);
 
-      // 반환 값 제거
-      return {
-        title: payload.notification?.title || '',
-        body: payload.notification?.body || ''
-      };
+        const message = {
+          title: payload.notification?.title || '알림',
+          body: payload.notification?.body || '새로운 알림'
+        };
+
+        // Toast 알림
+        toast.info(message.body, {
+          position: "top-right",
+          autoClose: 5000,
+        });
+
+        resolve(message);
+      });
     });
   } catch (error) {
     console.error('메시지 리스너 설정 실패:', error);

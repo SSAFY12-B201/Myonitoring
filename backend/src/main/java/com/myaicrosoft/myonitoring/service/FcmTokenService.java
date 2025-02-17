@@ -8,6 +8,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.myaicrosoft.myonitoring.model.entity.FcmToken;
@@ -31,6 +32,24 @@ public class FcmTokenService {
             User user = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
 
+            // 토큰 중복 확인
+            Optional<FcmToken> existingTokenOptional = fcmTokenRepository.findByToken(token);
+
+            if(existingTokenOptional.isPresent()) {
+                FcmToken existingToken = existingTokenOptional.get();
+
+                // 이미 같은 사용자의 토큰이면 활성화
+                if(existingToken.getUser().getId().equals(userId)) {
+                    existingToken.setActive(true);
+                    fcmTokenRepository.save(existingToken);
+                    return;
+                }
+
+                // 다른 사용자의 토큰이면 기존 토큰 비활성화
+                existingToken.setActive(false);
+                fcmTokenRepository.save(existingToken);
+            }
+
             // 기존 토큰이 있다면 비활성화
             fcmTokenRepository.findByUserAndIsActiveTrue(user)
                 .ifPresent(FcmToken::deactivate);
@@ -42,19 +61,22 @@ public class FcmTokenService {
                 .build();
             
             fcmTokenRepository.save(fcmToken);
-            
+
             // Firebase 토픽 구독
-            try {
-                List<String> tokens = Arrays.asList(token);
-                FirebaseMessaging.getInstance().subscribeToTopic(tokens, "alerts");
-                log.info("Token subscribed to alerts topic: {}", token);
-            } catch (FirebaseMessagingException e) {
-                log.error("Failed to subscribe token to topic", e);
-                throw new RuntimeException("Failed to subscribe to FCM topic", e);
-            }
+            subscribeToAlertsTopic(token);
+
         } catch (Exception e) {
             log.error("Failed to save FCM token", e);
             throw new RuntimeException("Failed to save FCM token: " + e.getMessage(), e);
+        }
+    }
+
+    private void subscribeToAlertsTopic(String token) {
+        try {
+            FirebaseMessaging.getInstance().subscribeToTopic(Arrays.asList(token), "alerts");
+            log.info("Token subscribed to alerts topic: {}", token);
+        } catch (FirebaseMessagingException e) {
+            log.error("Failed to subscribe token to topic", e);
         }
     }
 
