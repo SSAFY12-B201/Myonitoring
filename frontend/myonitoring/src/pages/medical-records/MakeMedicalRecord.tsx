@@ -1,17 +1,15 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import axios from "axios";
+import { useAppSelector } from "../../redux/hooks"; // 고양이 ID 가져오기
 import Input from "../../components/Input";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
 import Header from "../../components/Header";
 
-const MedicalRecordDetail = () => {
-  const { id } = useParams<{ id: string }>(); // URL 파라미터에서 ID 가져오기
+const MakeMedicalRecord = () => {
   const navigate = useNavigate();
-
-  const [record, setRecord] = useState<any>(null); // 의료 기록 상태
-  const [isLoading, setIsLoading] = useState<boolean>(true); // 로딩 상태
+  const selectedCatId = useAppSelector((state) => state.cat.selectedCatId); // 고양이 ID 가져오기
 
   // UI와 서버 간 매핑 객체
   const categoryMapping: Record<string, string> = {
@@ -26,54 +24,51 @@ const MedicalRecordDetail = () => {
     OTHER: "기타",
   };
 
-  // 데이터 가져오기
-  useEffect(() => {
-    const fetchRecord = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`/api/medical/detail/${id}`, {
-          headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
-          },
-        });
-        setRecord(response.data); // 데이터 설정
-      } catch (error) {
-        console.error("Error fetching medical record:", error);
-        alert("의료 기록을 불러오지 못했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (id) fetchRecord();
-  }, [id]);
+  // 초기 상태 (빈 값)
+  const [record, setRecord] = useState({
+    category: "",
+    title: "",
+    description: "",
+    hospitalName: "",
+    visitDate: "",
+    visitTime: "",
+  });
 
   // 입력값 변경 핸들러
   const handleChange = (field: string, value: string) => {
-    setRecord((prev: any) => ({ ...prev, [field]: value }));
+    setRecord((prev) => ({ ...prev, [field]: value }));
   };
 
   // 저장 핸들러
   const handleSave = async () => {
+    if (!selectedCatId) {
+      alert("고양이를 선택해주세요.");
+      return;
+    }
+
     try {
-      await axios.put(`/api/medical/detail/${id}`, record, {
+      const newRecord = {
+        ...record,
+        category: categoryMapping[record.category], // UI 값 -> 서버 값 변환
+      };
+
+      await axios.post(`/api/medical/${selectedCatId}`, newRecord, {
         headers: {
           Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+          "Content-Type": "application/json", // JSON 형식 명시
         },
       });
-      navigate(-1);
+
+      navigate(-1); // 이전 페이지로 이동
     } catch (error) {
-      console.error("Error saving medical record:", error)
+      console.error("Error creating medical record:", error);
     }
   };
-
-  if (isLoading) return <p>로딩 중...</p>;
-  if (!record) return <p>존재하지 않는 기록입니다.</p>;
 
   return (
     <div>
       {/* 상단 헤더 */}
-      <Header title="의료기록 수정" onBack={() => navigate(-1)} />
+      <Header title="의료기록 생성" onBack={() => navigate(-1)} />
 
       {/* 상세 정보 입력 폼 */}
       <ExceptTopContentSection>
@@ -85,8 +80,8 @@ const MedicalRecordDetail = () => {
             </>
           }
           type="select"
-          value={reverseCategoryMapping[record.category]} // 서버 데이터 -> UI 표시 데이터 변환
-          onChange={(value) => handleChange("category", categoryMapping[value])} // UI 데이터 -> 서버 데이터 변환
+          value={record.category}
+          onChange={(value) => handleChange("category", value)} // UI 데이터 반영
           options={Object.keys(categoryMapping)} // ["정기검진", "치료", "기타"]
         />
 
@@ -155,4 +150,4 @@ const MedicalRecordDetail = () => {
   );
 };
 
-export default MedicalRecordDetail;
+export default MakeMedicalRecord;

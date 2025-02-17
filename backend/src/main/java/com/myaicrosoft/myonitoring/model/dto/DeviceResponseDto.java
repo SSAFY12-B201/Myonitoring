@@ -11,4 +11,5 @@ public class DeviceResponseDto {
     private Long id;
     private String serialNumber;
     private LocalDate registrationDate;
+    private String catName;
 }

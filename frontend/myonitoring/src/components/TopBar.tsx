@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCatId } from "../redux/slices/catSlice";
-import axios from "axios";
-import { Notifications, ChatBubbleOutline } from "@mui/icons-material";
+import { api } from "../api/axios"; // Axios 인스턴스 사용
+import {
+  Notifications,
+  ChatBubbleOutline,
+  CollectionsBookmark,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
 import { FaChevronRight } from "react-icons/fa"; // react-icons에서 아이콘 가져오기
@@ -20,25 +24,42 @@ const TopBar: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const selectedCatId = useSelector((state: RootState) => state.cat.selectedCatId)
+  // Redux에서 selectedCatId 가져오기
+  const selectedCatId = useSelector(
+    (state: RootState) => state.cat.selectedCatId
+  );
 
   // API 요청으로 고양이 데이터 가져오기
   useEffect(() => {
     const fetchCats = async () => {
       try {
-        const response = await axios.get("/api/cats", {
+        const token = localStorage.getItem("jwt_access_token"); // 로컬 스토리지에서 토큰 가져오기
+
+        if (!token) {
+          throw new Error("No access token found");
+        }
+
+        // API 호출
+        const response = await api.get("/api/cats", {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+            Authorization: `Bearer ${token}`,
           },
         });
+
         setCats(response.data);
 
         if (response.data.length > 0) {
-          const currentCat = response.data.find((cat: Cat) => cat.id === selectedCatId);
+          // selectedCatId를 기준으로 선택된 고양이 설정
+          const currentCat = response.data.find(
+            (cat: Cat) => cat.id === selectedCatId
+          );
+          // console.log(`selectedid 기준으로 찾은 고양이: ${currentCat}`)
           if (currentCat) {
             setSelectedCat(currentCat); // Redux와 일치하는 고양이를 선택
           } else {
-            setSelectedCat(response.data[0]); // 기본값으로 첫 번째 고양이 선택
+            // selectedCatId가 없거나 유효하지 않을 경우 첫 번째 고양이 선택
+            // console.log("selectedCatId가 없거나 유효하지 않습니다")
+            setSelectedCat(response.data[0]);
             dispatch(setSelectedCatId(response.data[0].id)); // Redux에 저장
           }
         }
@@ -48,7 +69,7 @@ const TopBar: React.FC = () => {
     };
 
     fetchCats();
-  }, [dispatch]);
+  }, [dispatch, selectedCatId]);
 
   // 고양이 선택 처리
   const handleCatSelect = (cat: Cat) => {
@@ -88,8 +109,15 @@ const TopBar: React.FC = () => {
 
         {/* 오른쪽: 알림 및 챗봇 아이콘 */}
         <div className="flex items-center space-x-4">
-          <Notifications className="text-gray-700" style={{ fontSize: 24 }} />
-          <ChatBubbleOutline className="text-gray-700" style={{ fontSize: 24 }} />
+          <Notifications
+            className="text-gray-700"
+            style={{ fontSize: 24 }}
+            onClick={() => navigate("/notification")} // 알림 페이지로 이동
+          />
+          <ChatBubbleOutline
+            className="text-gray-700"
+            style={{ fontSize: 24 }}
+          />
         </div>
       </div>
 
@@ -123,14 +151,16 @@ const TopBar: React.FC = () => {
                   handleCatDetail(cat.id); // 상세 페이지로 이동
                 }}
               >
-               <FaChevronRight/>
+                <FaChevronRight />
               </span>
             </div>
           ))}
 
           {/* 새로운 기기 등록 */}
           <div className="flex items-center justify-center p-3 mt-6 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
-            <span className="text-gray-600 font-medium">새로운 기기 등록하기</span>
+            <span className="text-gray-600 font-medium">
+              새로운 기기 등록하기
+            </span>
           </div>
         </div>
       </div>

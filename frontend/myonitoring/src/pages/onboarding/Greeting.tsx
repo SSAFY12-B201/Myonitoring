@@ -7,7 +7,7 @@ const Greeting: React.FC = () => {
   const navigate = useNavigate();
 
   const handleNext = () => {
-    navigate("/");
+    navigate("/home");
   };
 
   return (
@@ -39,7 +39,7 @@ const Greeting: React.FC = () => {
         <WideButton
           text="다음"
           onClick={handleNext}
-          bgColor="bg-darkGray"
+          bgColor="bg-orange"
           textColor="text-white"
         />
       </footer>

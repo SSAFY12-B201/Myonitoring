@@ -18,7 +18,6 @@ public class CatUpdateRequest {
     private LocalDate birthDate; // 필수 필드: 생년월일
     private Integer age; // 필수 필드: 나이
     private BigDecimal weight; // 필수 필드: 체중
-    private BigDecimal targetDailyIntake; // 선택 필드: 권장 섭취량
     private String characteristics; // 선택 필드: 특징
     private String profileImageUrl; // 선택 필드: 프로필 이미지 URL
 }

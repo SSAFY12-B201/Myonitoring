@@ -63,10 +63,12 @@ public class DeviceService {
                 .map(device -> new DeviceResponseDto(
                         device.getId(),
                         device.getSerialNumber(),
-                        device.getRegistrationDate()
+                        device.getRegistrationDate(),
+                        device.getCat() != null ? device.getCat().getName() : null
                 ))
                 .collect(Collectors.toList());
     }
+
 
     /**
      * 특정 기기를 조회하고 DTO로 변환하여 반환하는 로직
@@ -136,7 +138,7 @@ public class DeviceService {
                 device.getRegistrationDate(),
                 device.getSerialNumber(),
                 catInfo,
-                users
+                Collections.singletonList(userInfo)
         );
     }
 

@@ -1,5 +1,7 @@
-import { useAppDispatch, useAppSelector } from "../../redux/hooks"; // 커스텀 훅 가져오기
+import { useAppDispatch } from "../../redux/hooks"; // 커스텀 훅 가져오기
+import { api } from '../../api/axios';
 import { updateUserInfo } from "../../redux/slices/userSlice";
+import { login } from "../../redux/slices/authSlice";
 import Input from "../../components/Input";
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
@@ -7,28 +9,32 @@ import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { slideInVariants, defaultTransition } from "../../animations";
+
 
 const UserInfo = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // Redux 상태 가져오기
-  const userInfo = useAppSelector((state) => state.user);
+  // 로컬 상태 관리: 입력 중인 데이터를 관리
+  const [formData, setFormData] = useState({
+    nickname: "",
+    phoneNumber: "",
+    address: "",
+  });
 
-  // 상태 관리: 각 필드의 오류 여부
+  // 각 필드의 오류 여부 관리
   const [errors, setErrors] = useState({
     nickname: false,
     phoneNumber: false,
     address: false,
   });
 
-  const handleNext = () => {
+  const handleNext = async () => {
     // 각 필드의 오류 상태 업데이트
     const newErrors = {
-      nickname: !userInfo.nickname,
-      phoneNumber: !userInfo.phoneNumber || userInfo.phoneNumber.length !== 13, // 전화번호 길이 검증 추가
-      address: !userInfo.address,
+      nickname: !formData.nickname,
+      phoneNumber: !formData.phoneNumber || formData.phoneNumber.length !== 13, // 전화번호 길이 검증 추가
+      address: !formData.address,
     };
     setErrors(newErrors);
 
@@ -37,18 +43,49 @@ const UserInfo = () => {
       return;
     }
 
-    // 모든 필드가 채워졌다면 다음 단계로 이동
-    navigate("/device-guide");
+    try {
+      const authToken = localStorage.getItem("kakao_access_token"); // 로컬 스토리지에서 토큰 가져오기
+
+      // axios로 백엔드에 토큰과 함께 추가 개인정보 전달
+      const response = await api.post(
+        "api/auth/kakao/register",
+        {
+          nickname: formData.nickname,
+          phoneNumber: formData.phoneNumber,
+          address: formData.address,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json", // Content-Type 헤더 유지
+          },
+          params: {
+            authToken, // 토큰을 쿼리 파라미터로 전달
+          },
+        }
+      );
+
+      console.log(response.data);
+
+      // Redux 유저 정보 업데이트 (입력 완료된 데이터 저장)
+      dispatch(updateUserInfo(formData));
+
+      // Redux 인증 상태 업데이트 (isLoggedIn: true, accessToken을 jwt 토큰으로 저장)
+      const accessToken = response.data.accessToken;
+      dispatch(login({ accessToken }));
+
+      // 로컬 스토리지에 jwt 토큰 저장 (선택 사항)
+      localStorage.setItem("jwt_access_token", accessToken);
+
+      // 모든 필드가 채워졌다면 다음 단계로 이동
+      navigate("/device-guide");
+    } catch (error) {
+      console.error("Error registering userinfo:", error);
+      alert("유저 추가 정보 입력에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
-    <motion.div
-      // initial="initial"
-      // animate="animate"
-      // exit="exit"
-      // variants={slideInVariants}
-      // transition={defaultTransition}
-    >
+    <motion.div>
       <div className="min-h-screen bg-white flex flex-col">
         {/* 상단 헤더 */}
         <Header title="개인 정보 입력" onBack={() => navigate(-1)} />
@@ -67,39 +104,36 @@ const UserInfo = () => {
               <Input
                 label="닉네임"
                 type="text"
-                value={userInfo.nickname || ""}
-                onChange={(value) => {
-                  dispatch(updateUserInfo({ nickname: value }));
-                  setErrors({ ...errors, nickname: false }); // 수정 시 오류 해제
-                }}
+                value={formData.nickname}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, nickname: value }))
+                }
                 placeholder="닉네임을 입력하세요"
                 error={errors.nickname}
                 errorMessage="닉네임을 입력해주세요."
               />
 
-            {/* 핸드폰 번호 입력 */}
-            <Input
-              label="핸드폰 번호"
-              type="tel"
-              value={userInfo.phoneNumber || ""}
-              onChange={(value) => {
-                dispatch(updateUserInfo({ phoneNumber: value }));
-                setErrors({ ...errors, phoneNumber: false }); // 수정 시 오류 해제
-              }}
-              placeholder="010-0000-0000"
-              error={errors.phoneNumber}
-              errorMessage="올바른 핸드폰 번호를 입력해주세요."
-            />
+              {/* 핸드폰 번호 입력 */}
+              <Input
+                label="핸드폰 번호"
+                type="tel"
+                value={formData.phoneNumber}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, phoneNumber: value }))
+                }
+                placeholder="010-0000-0000"
+                error={errors.phoneNumber}
+                errorMessage="올바른 핸드폰 번호를 입력해주세요."
+              />
 
               {/* 주소 입력 */}
               <Input
                 label="주소"
                 type="text"
-                value={userInfo.address || ""}
-                onChange={(value) => {
-                  dispatch(updateUserInfo({ address: value }));
-                  setErrors({ ...errors, address: false }); // 수정 시 오류 해제
-                }}
+                value={formData.address}
+                onChange={(value) =>
+                  setFormData((prev) => ({ ...prev, address: value }))
+                }
                 placeholder="주소를 입력하세요"
                 error={errors.address}
                 errorMessage="주소를 입력해주세요."
@@ -115,7 +149,7 @@ const UserInfo = () => {
             text="다음"
             textColor="text-white"
             bgColor={
-              userInfo.nickname && userInfo.phoneNumber && userInfo.address
+              formData.nickname && formData.phoneNumber && formData.address
                 ? "bg-darkGray"
                 : "bg-gray-300 cursor-not-allowed"
             }

@@ -47,7 +47,7 @@ const Statistics: React.FC = () => {
   let warningMessage = "섭취량 이상이 없습니다.";
   let warningContent = "섭취량 특이사항이 발견되지 않았습니다.";
   let warningStyle = {
-    bgColor: "bg-gray-100 border border-gray-300",
+    bgColor: "bg-gray-50 border border-gray-300",
     titleColor: "text-black",
     contentColor: "text-gray-600",
     highlightColor: "",

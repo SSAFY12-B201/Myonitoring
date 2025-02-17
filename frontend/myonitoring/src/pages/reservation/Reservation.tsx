@@ -1,91 +1,264 @@
-import React, { useState } from "react";
-import Switch from "react-switch";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import React, { useState, useEffect } from "react";
+import { api } from "../../api/axios";
 import TopBar from "../../components/TopBar";
 import ContentSection from "../../components/ContentSection";
-import {
-  toggleReservation,
-  addReservation,
-  deleteReservation,
-  updateReservation,
-} from "../../redux/slices/reservationsSlice";
 import BottomBar from "../../components/BottomBar";
-import { PlusIcon } from "@heroicons/react/outline";
+import ReservationItem from "./ReservationItem";
+import ReservationModal from "./ReservationModal";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import {
+  addReservation,
+  toggleReservation,
+  updateReservationDetails,
+  deleteReservation,
+} from "../../redux/slices/reservationsSlice";
+import { log } from "console";
 
-// 시간 형식 변환 함수
-const formatTimeTo12Hour = (
-  time: string
-): { period: string; formattedTime: string } => {
-  const [hour, minute] = time.split(":").map(Number);
-  const period = hour >= 12 ? "오후" : "오전";
-  const formattedHour = hour % 12 === 0 ? 12 : hour % 12;
-  return {
-    period,
-    formattedTime: `${formattedHour}:${minute.toString().padStart(2, "0")}`,
-  };
-};
-
+// Reservation 인터페이스 정의
 interface Reservation {
   id: string;
-  time: string;
-  amount: number;
-  isActive: boolean;
+  scheduledTime: string; // 예약 시간 (24시간 형식)
+  scheduledAmount: number; // 급식량
+  isActive: boolean; // 활성화 여부
 }
 
 const Reservation: React.FC = () => {
   const dispatch = useAppDispatch();
   const reservations = useAppSelector(
-    (state) => state.reservation.reservations
+    (state) => state.reservation.reservations as Reservation[]
   );
+  const selectedCatId = useAppSelector((state) => state.cat.selectedCatId); // Redux에서 selectedCatId 가져오기
 
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 수정 모달 상태
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false); // 추가 모달 상태
-  const [editingReservation, setEditingReservation] =
-    useState<Reservation | null>(null); // 수정 중인 예약 상태
-  const [newReservation, setNewReservation] = useState({
-    time: "",
-    amount: "",
-    isActive: true,
-  }); // 새 예약 데이터
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [modalMode, setModalMode] = useState<"add" | "edit">("add");
+  const [currentReservation, setCurrentReservation] =
+    useState<Reservation | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
+  // 총 예약량 계산
   const totalAmount = reservations.reduce(
-    (sum, r) => (r.isActive ? sum + r.amount : sum),
+    (sum, r) => (r.isActive ? sum + r.scheduledAmount : sum),
     0
   );
 
-  const handleToggle = (id: string) => {
-    dispatch(toggleReservation(id));
-  };
-
-  const handleEdit = (reservation: Reservation) => {
-    setEditingReservation(reservation);
-    setIsEditModalOpen(true);
-  };
-
-  const handleSaveEdit = () => {
-    if (editingReservation) {
-      dispatch(updateReservation(editingReservation));
+  // 시간 형식을 "HH:mm:ss"로 변환하는 함수
+  const formatTimeWithSeconds = (time: string): string => {
+    if (time.length === 5) {
+      return `${time}:00`; // "HH:mm" -> "HH:mm:ss"
     }
-    setIsEditModalOpen(false);
-    setEditingReservation(null);
+    return time; // 이미 초 단위가 포함된 경우 그대로 반환
   };
 
-  const handleAdd = () => {
-    if (newReservation.time && newReservation.amount) {
-      dispatch(
-        addReservation({
-          time: newReservation.time,
-          amount: Number(newReservation.amount),
-          isActive: true,
+  // 예약 조회 API 호출 함수
+  const fetchReservations = async () => {
+    try {
+      if (!selectedCatId) {
+        setError("선택된 고양이가 없습니다. 고양이를 선택해주세요.");
+        return;
+      }
+
+      const token = localStorage.getItem("jwt_access_token");
+      const response = await api.get(`/api/schedule/${selectedCatId}`, {
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
+      });
+
+      // 콘솔에 JSON.stringify로 출력
+      console.log(
+        `조회된 예약 내역: ${JSON.stringify(response.data, null, 2)}`
+      );
+
+      // 응답 데이터 변환 및 Redux 상태 업데이트
+      const fetchedReservations: Reservation[] = response.data.map(
+        (item: any) => ({
+          id: item.id.toString(),
+          scheduledTime: item.time,
+          scheduledAmount: item.amount,
+          isActive: item.isActive,
         })
       );
-      setNewReservation({ time: "", amount: "", isActive: true });
-      setIsAddModalOpen(false);
+
+      // Redux 상태와 비교하여 중복되지 않은 데이터만 추가
+      fetchedReservations.forEach((reservation) => {
+        if (!reservations.some((r) => r.id === reservation.id)) {
+          dispatch(addReservation(reservation));
+        }
+      });
+
+      setError(null); // 에러 초기화
+    } catch (err) {
+      console.error("Failed to fetch reservations:", err);
+      setError("예약 조회에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
-  const handleDelete = (id: string) => {
-    dispatch(deleteReservation(id));
+  // 컴포넌트 마운트 시 예약 조회 호출
+  useEffect(() => {
+    fetchReservations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCatId]);
+
+  // API 요청 함수 - 예약 추가
+const handleAddReservation = async (reservation: Omit<Reservation, "id">) => {
+  try {
+    console.log(`선택된 고양이 id: ${selectedCatId}`);
+    if (!selectedCatId) {
+      setError("선택된 고양이가 없습니다. 고양이를 선택해주세요.");
+      return;
+    }
+
+    const token = localStorage.getItem("jwt_access_token");
+    console.log(token);
+
+    const scheduledTime = formatTimeWithSeconds(reservation.scheduledTime);
+    if (!scheduledTime) {
+      throw new Error("예약 시간이 유효하지 않습니다.");
+    }
+
+    // API 요청 데이터 변환
+    const requestData = {
+      scheduledTime,
+      scheduledAmount: reservation.scheduledAmount,
+    };
+    console.log(requestData);
+
+    await api.post(
+      `/api/schedule/${selectedCatId}`,
+      requestData,
+      {
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
+      }
+    );
+
+    // 예약 조회를 통해 Redux 상태 동기화
+    await fetchReservations();
+
+    setError(null); // 에러 초기화
+  } catch (err) {
+    console.error("Failed to add reservation:", err);
+    setError("예약 추가에 실패했습니다. 다시 시도해주세요.");
+  }
+};
+
+
+  const handleToggleReservation = async (
+    id: string,
+    isActive: boolean
+  ): Promise<void> => {
+    try {
+      if (!selectedCatId) {
+        setError("선택된 고양이가 없습니다. 고양이를 선택해주세요.");
+        return;
+      }
+
+      const token = localStorage.getItem("jwt_access_token");
+      await api.put(
+        `/api/schedule/detail/${id}/active`, // API 엔드포인트
+        { isActive }, // 활성화 여부 데이터
+        { headers: { Authorization: token ? `Bearer ${token}` : "" } }
+      );
+
+      dispatch(toggleReservation({ id, isActive })); // Redux 상태 업데이트
+
+      // 활성화 여부 확인 로그 추가
+      console.log(
+        `예약 ID ${id}의 활성화 여부가 ${
+          isActive ? "활성화" : "비활성화"
+        }로 변경되었습니다.`
+      );
+    } catch (err) {
+      console.error("Failed to toggle reservation:", err);
+      setError("예약 활성화 상태 변경에 실패했습니다.");
+    }
+  };
+
+  // API 요청 함수 - 예약 수정
+  const handleUpdateReservation = async (
+    id: string,
+    updates: { scheduledTime?: string; scheduledAmount?: number }
+  ): Promise<void> => {
+    try {
+      if (!selectedCatId) {
+        setError("선택된 고양이가 없습니다. 고양이를 선택해주세요.");
+        return;
+      }
+
+      const token = localStorage.getItem("jwt_access_token");
+
+      // API 요청 데이터 변환
+      const requestData = {
+        ...(updates.scheduledTime && {
+          scheduledTime: formatTimeWithSeconds(updates.scheduledTime), // 초 단위 추가
+        }),
+        ...(updates.scheduledAmount && {
+          scheduledAmount: updates.scheduledAmount,
+        }),
+      };
+
+      await api.put(`/api/schedule/detail/${id}`, requestData, {
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
+      });
+
+      // Redux 상태 업데이트 (id 유지)
+      dispatch(updateReservationDetails({ id, ...updates }));
+      console.log(`예약 ID ${id}가 성공적으로 수정되었습니다.`);
+    } catch (err) {
+      console.error("Failed to update reservation:", err);
+      setError("예약 수정에 실패했습니다.");
+    }
+  };
+
+  // 예약 저장 핸들러
+  const handleSave = async (
+    reservation: Omit<Reservation, "id">
+  ): Promise<void> => {
+    if (modalMode === "edit" && currentReservation) {
+      await handleUpdateReservation(currentReservation.id, reservation); // 수정 API 호출
+    } else if (modalMode === "add") {
+      await handleAddReservation(reservation); // 생성 API 호출
+    }
+    setIsModalOpen(false);
+    setCurrentReservation(null);
+  };
+
+  // 활성화 여부 토글 핸들러 (UI 이벤트 처리)
+  const handleToggle = (id: string): void => {
+    const reservation = reservations.find((r) => r.id === id);
+    if (reservation) {
+      handleToggleReservation(id, !reservation.isActive); // API 호출 및 Redux 상태 업데이트
+    }
+  };
+  // 예약 수정 핸들러
+  const handleEdit = (reservation: Reservation): void => {
+    setCurrentReservation(reservation);
+    setModalMode("edit");
+    setIsModalOpen(true);
+  };
+
+  // 예약 추가 핸들러
+  const handleAdd = (): void => {
+    setCurrentReservation(null);
+    setModalMode("add");
+    setIsModalOpen(true);
+  };
+
+  // 예약 삭제 핸들러
+  const handleDelete = async (id: string): Promise<void> => {
+    try {
+      if (!selectedCatId) {
+        setError("선택된 고양이가 없습니다. 고양이를 선택해주세요.");
+        return;
+      }
+
+      const token = localStorage.getItem("jwt_access_token");
+      await api.delete(`/api/schedule/detail/${id}`, {
+        headers: { Authorization: token ? `Bearer ${token}` : "" },
+      });
+
+      dispatch(deleteReservation(id)); // Redux 상태 업데이트
+    } catch (err) {
+      console.error("Failed to delete reservation:", err);
+      setError("예약 삭제에 실패했습니다.");
+    }
   };
 
   return (
@@ -93,19 +266,16 @@ const Reservation: React.FC = () => {
       className="min-h-screen flex flex-col pb-[60px] bg-cover bg-center"
       style={{ backgroundImage: "url('/gradient_background.png')" }}
     >
-      {/* 상단 바 */}
       <TopBar />
-
       <ContentSection>
         {/* 총 예약 정보 */}
-        <div className="bg-white w-60 mx-auto rounded-lg border border-gray-200 p-6 mb-12 text-center">
+        <div className="bg-white w-60 mx-auto rounded-lg border border-gray-200 p-6 mb-10 text-center">
           <h1 className="text-xl font-bold mb-4">총 {totalAmount}g 예약</h1>
           <button
-            onClick={() => setIsAddModalOpen(true)} // 추가 모달 열기
+            onClick={handleAdd}
             className="inline-flex items-center px-5 py-2 bg-yellow text-black rounded-full"
           >
-            <PlusIcon className="h-5 w-5 text-black mr-2" />
-            일정 추가
+            일정 추가하기
           </button>
         </div>
 
@@ -125,242 +295,21 @@ const Reservation: React.FC = () => {
 
       <BottomBar />
 
-      {/* 수정 모달 */}
-      {isEditModalOpen && editingReservation && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-700 bg-opacity-50">
-          <div className="relative bg-white rounded-lg shadow-lg p-6 w-[85%] max-w-lg mx-auto border border-gray-300">
-            <h2 className="text-xl font-bold mb-4 text-center">예약 수정</h2>
+      {/* 모달 */}
+      <ReservationModal
+        isOpen={isModalOpen}
+        mode={modalMode}
+        reservationData={currentReservation}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
+      />
 
-            {/* 시간 설정 */}
-            <div className="mb-6">
-              <label htmlFor="edit-time" className="block text-gray-700 font-bold mb-2">
-                시간
-              </label>
-              <input
-                id="edit-time"
-                type="time"
-                value={editingReservation.time}
-                onChange={(e) =>
-                  setEditingReservation({
-                    ...editingReservation,
-                    time: e.target.value,
-                  })
-                }
-                className="w-full border border-gray-300 rounded-lg p-2"
-              />
-            </div>
-
-            {/* 급식량 설정 */}
-            <div className="mb-6">
-              <label htmlFor="edit-amount" className="block text-gray-700 font-bold mb-2">
-                급식량 (g)
-              </label>
-              <input
-                id="edit-amount"
-                type="number"
-                value={editingReservation.amount}
-                onChange={(e) =>
-                  setEditingReservation({
-                    ...editingReservation,
-                    amount: Number(e.target.value),
-                  })
-                }
-                min={1}
-                max={100}
-                className="w-full border border-gray-300 rounded-lg p-2"
-              />
-            </div>
-
-            {/* 버튼 섹션 */}
-            <div className="flex justify-between">
-              <button
-                onClick={() => setIsEditModalOpen(false)}
-                className="py-2 px-4 bg-gray-300 text-black rounded-lg hover:bg-gray-400"
-              >
-                취소하기
-              </button>
-              <button
-                onClick={handleSaveEdit}
-                className="py-2 px-4 bg-yellow text-black rounded-lg hover:bg-yellow-500"
-              >
-                저장하기
-              </button>
-            </div>
-          </div>
+      {/* 에러 메시지 */}
+      {error && (
+        <div className="fixed bottom-0 left-0 w-full bg-red-500 text-white text-center py-2">
+          {error}
         </div>
       )}
-
-      {/* 추가 모달 */}
-      {isAddModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-700 bg-opacity-50">
-          <div className="relative bg-white rounded-lg shadow-lg p-6 w-[85%] max-w-lg mx-auto border border-gray-300">
-            <h2 className="text-xl font-bold mb-4 text-center">일정 추가</h2>
-
-            {/* 시간 설정 */}
-            <div className="mb-6">
-              <label htmlFor="add-time" className="block text-gray-700 font-bold mb-2">
-                시간
-              </label>
-              <input
-                id="add-time"
-                type="time"
-                value={newReservation.time}
-                onChange={(e) =>
-                  setNewReservation({ ...newReservation, time: e.target.value })
-                }
-                className="w-full border border-gray-300 rounded-lg p-2"
-              />
-            </div>
-
-            {/* 급식량 설정 */}
-            <div className="mb-6">
-              <label htmlFor="add-amount" className="block text-gray-700 font-bold mb-2">
-                급식량 (g)
-              </label>
-              <input
-                id="add-amount"
-                type="number"
-                value={newReservation.amount}
-                onChange={(e) =>
-                  setNewReservation({
-                    ...newReservation,
-                    amount: e.target.value,
-                  })
-                }
-                min={1}
-                max={100}
-                className="w-full border border-gray-300 rounded-lg p-2"
-              />
-            </div>
-
-            {/* 버튼 섹션 */}
-            <div className="flex justify-between">
-              <button
-                onClick={() => setIsAddModalOpen(false)}
-                className="py-2 px-4 bg-gray-300 text-black rounded-lg hover:bg-gray-400"
-              >
-                취소하기
-              </button>
-              <button
-                onClick={handleAdd}
-                className="py-2 px-4 bg-yellow text-black rounded-lg hover:bg-yellow-500"
-              >
-                추가하기
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-interface ReservationItemProps {
-  reservation: Reservation;
-  onToggle: (id: string) => void;
-  onEdit: (reservation: Reservation) => void;
-  onDelete: (id: string) => void;
-}
-
-const ReservationItem: React.FC<ReservationItemProps> = ({
-  reservation,
-  onToggle,
-  onEdit,
-  onDelete,
-}) => {
-  const [translateX, setTranslateX] = useState(0);
-
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    e.currentTarget.dataset.startX = e.touches[0].clientX.toString();
-    setTranslateX(0);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
-    const startX = parseFloat(e.currentTarget.dataset.startX || "0");
-    const currentX = e.touches[0].clientX;
-    const deltaX = currentX - startX;
-
-    if (deltaX < -30) {
-      setTranslateX(deltaX);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    if (translateX <= -100) {
-      setTranslateX(-100);
-    } else {
-      setTranslateX(0);
-    }
-  };
-
-  // 시간 변환 처리
-  const { period, formattedTime } = formatTimeTo12Hour(reservation.time);
-
-  return (
-    <div className="relative w-full overflow-hidden">
-      {/* 삭제 버튼 */}
-      {translateX <= -100 && (
-        <button
-          onClick={() => onDelete(reservation.id)}
-          className="absolute right-[4px] top-[4px] bottom-[4px] w-[100px] mb-4 bg-red-500 text-white font-bold rounded-lg flex items-center justify-center"
-        >
-          삭제하기
-        </button>
-      )}
-
-      {/* 예약 정보 */}
-      <div
-        className={`flex items-center justify-between p-4 mb-4 bg-white rounded-lg border border-gray-200 shadow-sm transform transition-transform`}
-        style={{ transform: `translateX(${translateX}px)` }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onClick={() => onEdit(reservation)}
-      >
-        {/* 시간 정보 */}
-        <div className="flex items-center space-x-2">
-          {/* 오전/오후 정보 */}
-          <span
-            className={`text-xs mt-1 ${
-              reservation.isActive ? "text-gray-500" : "text-gray-300"
-            }`}
-          >
-            {period}
-          </span>
-          {/* 시각 숫자 */}
-          <span
-            className={`text-xl font-bold ${
-              reservation.isActive ? "text-black" : "text-gray-300"
-            }`}
-          >
-            {formattedTime}
-          </span>
-        </div>
-
-        {/* 급식량과 토글 버튼 */}
-        <div className="flex items-center space-x-2">
-          {/* 급식량 정보 */}
-          <p
-            className={`text-lg me-3 ${
-              reservation.isActive ? "text-black" : "text-gray-300"
-            }`}
-          >
-            {reservation.amount}g
-          </p>
-
-          {/* 토글 버튼 */}
-          <Switch
-            checked={reservation.isActive}
-            onChange={() => onToggle(reservation.id)}
-            offColor="#E5E5E5"
-            onColor="#FFE76B"
-            uncheckedIcon={false}
-            checkedIcon={false}
-            height={28}
-            width={48}
-          />
-        </div>
-      </div>
     </div>
   );
 };
