@@ -12,7 +12,6 @@ import {
   updateReservationDetails,
   deleteReservation,
 } from "../../redux/slices/reservationsSlice";
-import { log } from "console";
 
 // Reservation 인터페이스 정의
 interface Reservation {
