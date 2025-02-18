@@ -49,11 +49,11 @@ public class SecurityConfig {
                         .requestMatchers(
                                 apiPrefix + "/auth/**",
                                 apiPrefix + "/env/**",
-                                apiPrefix + "/notifications/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
                         .requestMatchers(apiPrefix + "/admin/**").hasRole("ADMIN")
+                        .requestMatchers(apiPrefix + "/notifications/subscribe").authenticated()
                         .requestMatchers(apiPrefix + "/**").authenticated()
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtProvider),

@@ -21,24 +21,27 @@ public class EnvironmentController {
 
     @Value("${firebase.config.apiKey}")
     private String firebaseApiKey;
-    
+
     @Value("${firebase.config.authDomain}")
     private String firebaseAuthDomain;
-    
+
     @Value("${firebase.config.projectId}")
     private String firebaseProjectId;
-    
+
     @Value("${firebase.config.storageBucket}")
     private String firebaseStorageBucket;
-    
+
     @Value("${firebase.config.messagingSenderId}")
     private String firebaseMessagingSenderId;
-    
+
     @Value("${firebase.config.appId}")
     private String firebaseAppId;
-    
+
     @Value("${firebase.config.vapidKey}")
     private String firebaseVapidKey;
+
+    @Value("${firebase.config.measurementId}")
+    private String firebaseMeasurementId;
 
     @GetMapping("/oauth/kakao")
     public Map<String, String> getKakaoOAuthConfig() {
@@ -59,7 +62,8 @@ public class EnvironmentController {
         config.put("messagingSenderId", firebaseMessagingSenderId);
         config.put("appId", firebaseAppId);
         config.put("vapidKey", firebaseVapidKey);
-        
+        config.put("measurementId", firebaseMeasurementId);
+
         return ResponseEntity.ok(config);
     }
 } 

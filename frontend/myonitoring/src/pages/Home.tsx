@@ -171,7 +171,7 @@ const Home: React.FC = () => {
               <img
                 src={
                   loading || error
-                    ? "/Cat_bg.png" 
+                    ? "/Cat_bg.png"
                     : data.cat_image || "/Cat_bg.png"
                 }
                 alt="고양이"
@@ -187,8 +187,8 @@ const Home: React.FC = () => {
           >
             {/* 버튼 */}
             <button
-              className="col-span-2 md:col-span-1 flex items-center 
-  justify-center py-3 px-8 border border-gray-200 rounded-lg 
+              className="col-span-2 md:col-span-1 flex items-center
+  justify-center py-3 px-8 border border-gray-200 rounded-lg
   font-bold text-gray-600 shadow-sm mb-2"
               onClick={() => console.log("CCTV 버튼 클릭!")}
             >
