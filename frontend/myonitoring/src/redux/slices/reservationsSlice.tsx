@@ -8,11 +8,13 @@ interface Reservation {
 }
 
 interface ReservationState {
-  reservations: Reservation[];
+  reservationsByCat: {
+    [catId: number]: Reservation[];
+  };
 }
 
 const initialState: ReservationState = {
-  reservations: [],
+  reservationsByCat: {},
 };
 
 // 예약 데이터를 시간 기준으로 정렬하는 함수
@@ -28,38 +30,84 @@ const reservationsSlice = createSlice({
   name: "reservation",
   initialState,
   reducers: {
-    addReservation(state, action: PayloadAction<Reservation>) {
-      state.reservations.push(action.payload);
-      state.reservations = sortReservations(state.reservations); // 시간 기준 정렬
+    setReservations(
+      state,
+      action: PayloadAction<{ catId: number; reservations: Reservation[] }>
+    ) {
+      state.reservationsByCat[action.payload.catId] = sortReservations(
+        action.payload.reservations
+      );
     },
-    toggleReservation(state, action: PayloadAction<{ id: string; isActive: boolean }>) {
-      const reservation = state.reservations.find((res) => res.id === action.payload.id);
+    addReservation(
+      state,
+      action: PayloadAction<{ catId: number; reservation: Reservation }>
+    ) {
+      const { catId, reservation } = action.payload;
+      if (!state.reservationsByCat[catId]) {
+        state.reservationsByCat[catId] = [];
+      }
+      state.reservationsByCat[catId].push(reservation);
+      state.reservationsByCat[catId] = sortReservations(
+        state.reservationsByCat[catId]
+      );
+    },
+    toggleReservation(
+      state,
+      action: PayloadAction<{ catId: number; id: string; isActive: boolean }>
+    ) {
+      const { catId, id, isActive } = action.payload;
+      const reservation = state.reservationsByCat[catId]?.find(
+        (res) => res.id === id
+      );
       if (reservation) {
-        reservation.isActive = action.payload.isActive;
+        reservation.isActive = isActive;
       }
     },
     updateReservationDetails(
       state,
-      action: PayloadAction<{ id: string; scheduledTime?: string; scheduledAmount?: number }>
+      action: PayloadAction<{
+        catId: number;
+        id: string;
+        scheduledTime?: string;
+        scheduledAmount?: number;
+      }>
     ) {
-      const reservation = state.reservations.find((res) => res.id === action.payload.id);
+      const { catId, id, scheduledTime, scheduledAmount } = action.payload;
+      const reservation = state.reservationsByCat[catId]?.find(
+        (res) => res.id === id
+      );
       if (reservation) {
-        if (action.payload.scheduledTime !== undefined) {
-          reservation.scheduledTime = action.payload.scheduledTime;
+        if (scheduledTime !== undefined) {
+          reservation.scheduledTime = scheduledTime;
         }
-        if (action.payload.scheduledAmount !== undefined) {
-          reservation.scheduledAmount = action.payload.scheduledAmount;
+        if (scheduledAmount !== undefined) {
+          reservation.scheduledAmount = scheduledAmount;
         }
+        state.reservationsByCat[catId] = sortReservations(
+          state.reservationsByCat[catId]
+        );
       }
-      state.reservations = sortReservations(state.reservations); // 시간 기준 정렬
     },
-    deleteReservation(state, action: PayloadAction<string>) {
-      state.reservations = state.reservations.filter((res) => res.id !== action.payload);
+    deleteReservation(
+      state,
+      action: PayloadAction<{ catId: number; id: string }>
+    ) {
+      const { catId, id } = action.payload;
+      if (state.reservationsByCat[catId]) {
+        state.reservationsByCat[catId] = state.reservationsByCat[
+          catId
+        ].filter((res) => res.id !== id);
+      }
     },
   },
 });
 
-export const { addReservation, toggleReservation, updateReservationDetails, deleteReservation } =
-  reservationsSlice.actions;
+export const {
+  setReservations,
+  addReservation,
+  toggleReservation,
+  updateReservationDetails,
+  deleteReservation,
+} = reservationsSlice.actions;
 
 export default reservationsSlice.reducer;

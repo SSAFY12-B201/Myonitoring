@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { useAppSelector, useAppDispatch } from "./redux/hooks";
 import { login } from "./redux/slices/authSlice";
+import { ToastContainer } from "react-toastify"; // Toastify 추가
 
 // 페이지 컴포넌트 임포트
 import Splash from "./pages/onboarding/Splash";
@@ -72,59 +73,70 @@ const App: React.FC = () => {
   }
 
   return (
-    <AnimatePresence mode="wait">
-      <Routes location={location} key={location.pathname}>
-        {/* 공통 라우트 */}
-        <Route path="/kakao-redirect/*" element={<Redirect />} />
+    <>
+      <ToastContainer position="bottom-center" autoClose={2000} />{" "}
+      {/* ToastContainer 추가 */}
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          {/* 공통 라우트 */}
+          <Route path="/kakao-redirect/*" element={<Redirect />} />
 
-        {/* 조건부 라우팅 */}
-        {!isLoggedIn ? (
-          <>
-            <Route path="/" element={<LoginSignUp />} />
-            <Route path="/agreements" element={<Agreement />} />
-            <Route path="/agreement-detail" element={<AgreementDetail />} />
-            <Route path="/user-info" element={<UserInfo />} />
-          </>
-        ) : (
-          <>
-            {/* 메인 페이지 */}
-            <Route path="/user-info" element={<UserInfo />} />
-            <Route path="/edit-personal" element={<EditPersonal />} />
-            <Route path="/device-guide" element={<DeviceGuide />} />
-            <Route
-              path="/serial-number-input"
-              element={<SerialNumberInput />}
-            />
-            <Route path="/connection-success" element={<ConnectionSuccess />} />
-            <Route path="/cat-info" element={<CatInfo />} />
-            <Route path="/greeting" element={<Greeting />} />
-            <Route path="/" element={<Home />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/reservation" element={<Reservation />} />
-            <Route path="/medical-records" element={<MedicalRecords />} />
-            <Route path="/make-medical-record" element={<MakeMedicalRecord />} />
-            <Route
-              path="/medical-records/:id"
-              element={<MedicalRecordDetail />}
-            />
-            <Route path="/graph" element={<Graph />} />
-            <Route path="/statistics" element={<StatisticsPage />} />
-            {/* 마이페이지 */}
-            <Route path="/my-page" element={<MyPage />} />
-            <Route path="/edit-personal" element={<EditPersonal />} />
-            <Route path="/device-settings" element={<DeviceSettings />} />
-            <Route
-              path="/device-detail/:id"
-              element={<DeviceDetailedSettings />}
-            />
-            {/* 기타 */}
-            <Route path="/notification" element={<Notification />} />
-            <Route path="/cateyeinfo" element={<CatEyeInfo />} />
-            <Route path="/catinfoedit/:id" element={<CatInfoEdit />} />
-          </>
-        )}
-      </Routes>
-    </AnimatePresence>
+          {/* 조건부 라우팅 */}
+          {!isLoggedIn ? (
+            <>
+              <Route path="/" element={<LoginSignUp />} />
+              <Route path="/agreements" element={<Agreement />} />
+              <Route path="/agreement-detail" element={<AgreementDetail />} />
+              <Route path="/user-info" element={<UserInfo />} />
+              <Route path="/edit-personal" element={<EditPersonal />} />
+            </>
+          ) : (
+            <>
+              {/* 메인 페이지 */}
+              <Route path="/user-info" element={<UserInfo />} />
+              <Route path="/edit-personal" element={<EditPersonal />} />
+              <Route path="/device-guide" element={<DeviceGuide />} />
+              <Route
+                path="/serial-number-input"
+                element={<SerialNumberInput />}
+              />
+              <Route
+                path="/connection-success"
+                element={<ConnectionSuccess />}
+              />
+              <Route path="/cat-info" element={<CatInfo />} />
+              <Route path="/greeting" element={<Greeting />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/reservation" element={<Reservation />} />
+              <Route path="/medical-records" element={<MedicalRecords />} />
+              <Route
+                path="/make-medical-record"
+                element={<MakeMedicalRecord />}
+              />
+              <Route
+                path="/medical-records/:id"
+                element={<MedicalRecordDetail />}
+              />
+              <Route path="/graph" element={<Graph />} />
+              <Route path="/statistics" element={<StatisticsPage />} />
+              {/* 마이페이지 */}
+              <Route path="/my-page" element={<MyPage />} />
+              <Route path="/edit-personal" element={<EditPersonal />} />
+              <Route path="/device-settings" element={<DeviceSettings />} />
+              <Route
+                path="/device-detail/:id"
+                element={<DeviceDetailedSettings />}
+              />
+              {/* 기타 */}
+              <Route path="/notification" element={<Notification />} />
+              <Route path="/cateyeinfo" element={<CatEyeInfo />} />
+              <Route path="/catinfoedit/:id" element={<CatInfoEdit />} />
+            </>
+          )}
+        </Routes>
+      </AnimatePresence>
+    </>
   );
 };
 
