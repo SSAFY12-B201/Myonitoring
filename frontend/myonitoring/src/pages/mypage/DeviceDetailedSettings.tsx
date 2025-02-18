@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api } from "../../api/axios"; // Axios 인스턴스 임포트
 import { useDispatch } from "react-redux"; // Redux dispatch 사용
 import { setSelectedCatId } from "../../redux/slices/catSlice"; // Redux 액션 가져오기
 import Header from "../../components/Header";
@@ -21,11 +21,14 @@ const DeviceDetailedSettings: React.FC = () => {
   // 디바이스 상세 정보 가져오기
   useEffect(() => {
     const fetchDeviceDetails = async () => {
+      const token = localStorage.getItem("jwt_access_token");
+      if (!token) throw new Error("No access token found");
+
       try {
         setLoading(true); // 로딩 시작
-        const response = await axios.get(`/api/devices/${deviceId}`, {
+        const response = await api.get(`/api/devices/${deviceId}`, {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+            Authorization: `Bearer ${token}`,
           },
         }); // GET 요청
         setCatName(response.data.cat ? response.data.cat.name : null); // 고양이 이름 설정
@@ -46,10 +49,13 @@ const DeviceDetailedSettings: React.FC = () => {
 
   // 디바이스 삭제 처리
   const handleDeleteDevice = async () => {
+    const token = localStorage.getItem("jwt_access_token");
+    if (!token) throw new Error("No access token found");
+    
     try {
-      await axios.delete(`/api/devices/${deviceId}`, {
+      await api.delete(`/api/devices/${deviceId}`, {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+          Authorization: `Bearer ${token}`,
         },
       }); // DELETE 요청
       navigate("/device-settings"); // DeviceSettings 페이지로 이동
@@ -62,8 +68,8 @@ const DeviceDetailedSettings: React.FC = () => {
   // 고양이 등록/수정 페이지로 이동 처리
   const handleCatAction = () => {
     if (catId) {
-      dispatch(setSelectedCatId(catId)); 
-      navigate(`/catinfoedit/:id`); 
+      dispatch(setSelectedCatId(catId));
+      navigate(`/catinfoedit/:id`);
     } else {
       navigate(`/register-cat`); // 새 고양이 등록 페이지로 이동
     }

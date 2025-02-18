@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api/axios";
 import Header from "../../components/Header";
@@ -6,7 +6,6 @@ import WideButton from "../../components/WideButton";
 import { addDevice } from "../../redux/slices/deviceSlice";
 import { useAppDispatch } from "../../redux/hooks";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
-import { log } from "console";
 
 const SerialNumberInput = () => {
   const navigate = useNavigate();

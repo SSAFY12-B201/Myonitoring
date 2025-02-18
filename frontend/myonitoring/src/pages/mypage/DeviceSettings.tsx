@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api } from "../../api/axios"; // Axios 인스턴스 임포트 
 import Header from "../../components/Header";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
@@ -15,12 +15,15 @@ const DeviceSettings = () => {
   useEffect(() => {
     const fetchDeviceData = async () => {
       try {
+        const token = localStorage.getItem("jwt_access_token");
+        if (!token) throw new Error("No access token found");
+
         setLoading(true); // 로딩 시작
-        const response = await axios.get("/api/devices" , {
+        const response = await api.get("/api/devices", {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+            Authorization: `Bearer ${token}`,
           },
-        }) 
+        });
         setDeviceData(response.data); // 데이터 설정
         setError(null); // 에러 초기화
       } catch (err) {
@@ -67,7 +70,9 @@ const DeviceSettings = () => {
                     </p>
                     <p className="text-xs text-gray-700 mt-1">
                       <span className="text-gray-700">고양이 :</span>{" "}
-                      {device.cat ? device.cat.name : "등록된 고양이가 없습니다."}
+                      {device.cat
+                        ? device.cat.name
+                        : "등록된 고양이가 없습니다."}
                     </p>
                   </div>
                   {/* 화살표 아이콘 */}

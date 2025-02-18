@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import { api } from "../../api/axios"; // Axios 인스턴스 임포트
 import Input from "../../components/Input";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
@@ -29,11 +29,14 @@ const MedicalRecordDetail = () => {
   // 데이터 가져오기
   useEffect(() => {
     const fetchRecord = async () => {
+      const token = localStorage.getItem("jwt_access_token");
+      if (!token) throw new Error("No access token found");
+
       try {
         setIsLoading(true);
-        const response = await axios.get(`/api/medical/detail/${id}`, {
+        const response = await api.get(`/api/medical/detail/${id}`, {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+            Authorization: `Bearer ${token}`,
           },
         });
         setRecord(response.data); // 데이터 설정
@@ -55,15 +58,18 @@ const MedicalRecordDetail = () => {
 
   // 저장 핸들러
   const handleSave = async () => {
+    const token = localStorage.getItem("jwt_access_token");
+    if (!token) throw new Error("No access token found");
+
     try {
-      await axios.put(`/api/medical/detail/${id}`, record, {
+      await api.put(`/api/medical/detail/${id}`, record, {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+          Authorization: `Bearer ${token}`,
         },
       });
       navigate(-1);
     } catch (error) {
-      console.error("Error saving medical record:", error)
+      console.error("Error saving medical record:", error);
     }
   };
 
