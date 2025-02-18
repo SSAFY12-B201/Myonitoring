@@ -123,8 +123,7 @@ public class CatService {
 
         // 2. 필수 필드 업데이트 (요청 데이터로 덮어쓰기)
         if (request.getName() == null || request.getBreed() == null || request.getGender() == null ||
-                request.getIsNeutered() == null || request.getBirthDate() == null || request.getAge() == null ||
-                request.getWeight() == null) {
+                request.getIsNeutered() == null || request.getBirthDate() == null || request.getAge() == null) {
             throw new IllegalArgumentException("필수 데이터가 누락되었습니다.");
         }
 
@@ -134,7 +133,6 @@ public class CatService {
         existingCat.setIsNeutered(request.getIsNeutered());
         existingCat.setBirthDate(request.getBirthDate());
         existingCat.setAge(request.getAge());
-        existingCat.setWeight(request.getWeight());
 
         // 3. 선택 필드 업데이트 (null 허용)
         existingCat.setCharacteristics(request.getCharacteristics());     // null 가능

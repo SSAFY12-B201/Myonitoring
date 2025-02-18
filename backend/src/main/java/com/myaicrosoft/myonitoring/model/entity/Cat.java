@@ -42,7 +42,7 @@ public class Cat {
     @Column(nullable = false)
     private Integer age;
 
-    @Column(precision = 5, scale = 2, nullable = false)
+    @Column(precision = 5, scale = 2)
     private BigDecimal weight;
 
     @Column(columnDefinition = "TEXT")

@@ -19,8 +19,15 @@ public class Eye {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "cat_id", nullable = false) // 외래 키 이름 지정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "cat_id",
+        nullable = false,
+        foreignKey = @ForeignKey(
+            name = "fk_eye_cat",
+            foreignKeyDefinition = "FOREIGN KEY (cat_id) REFERENCES cats(id) ON DELETE CASCADE"
+        )
+    )
     private Cat cat;
 
     @Column(nullable = false)
