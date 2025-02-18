@@ -28,11 +28,16 @@ const CatInfo = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  // Redux 상태에서 deviceId 가져오기
+
+  // Redux 상태에서 device 배열 가져오기
   const deviceId = useAppSelector((state) => {
-    return state.device[0]?.id || null; // device 배열에서 첫 번째 기기의 ID 가져오기
+    const devices = state.device; // Redux의 device 배열
+    return devices.length > 0 ? devices[devices.length - 1].id : null; // 마지막 디바이스의 ID 가져오기
   });
 
+  console.log("선택된 디바이스 ID:", deviceId);
+
+  
   // 로컬 상태 관리
   const [formData, setFormData] = useState<CatInfoState>({
     image: null,
