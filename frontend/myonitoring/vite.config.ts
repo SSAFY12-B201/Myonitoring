@@ -14,6 +14,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         navigateFallback: "index.html",
+        navigateFallbackAllowlist: [/^\/kakao-redirect(\?.*)?$/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/firebasestorage\.googleapis\.com\/.*/i,
@@ -55,7 +56,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:8080",
+        target: "https://myonitoring.site",
         changeOrigin: true,
         secure: false, // HTTPS 인증서 검증 비활성화 (개발 환경용)
       },
