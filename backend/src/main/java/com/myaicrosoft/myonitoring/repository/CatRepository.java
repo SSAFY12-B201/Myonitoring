@@ -19,7 +19,7 @@ public interface CatRepository extends JpaRepository<Cat, Long> {
      * @param userId 유저 ID
      * @return 해당 유저와 연결된 모든 고양이 목록
      */
-    @Query("SELECT c FROM Cat c JOIN c.device d JOIN d.users u WHERE u.id = :userId")
+    @Query("SELECT c FROM Cat c JOIN c.device d WHERE d.user.id = :userId")
     List<Cat> findAllByUserId(@Param("userId") Long userId);
 
     /**

@@ -6,8 +6,6 @@ import BottomBar from "../components/BottomBar";
 import HomeComponentBar from "../components/HomeComponents/HomeComponentBar";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/axios"; // Axios 인스턴스 사용
-import { CameraIcon } from "@heroicons/react/outline";
-import { ConstructionIcon } from "lucide-react";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -171,7 +169,11 @@ const Home: React.FC = () => {
           <div className="flex flex-col items-center mt-4">
             <div className="relative">
               <img
-                src="/Cat_bg.png"
+                src={
+                  loading || error
+                    ? "/Cat_bg.png" 
+                    : data.cat_image || "/Cat_bg.png"
+                }
                 alt="고양이"
                 className="w-32 h-32 md:w-24 md:h-24 rounded-full "
               />
