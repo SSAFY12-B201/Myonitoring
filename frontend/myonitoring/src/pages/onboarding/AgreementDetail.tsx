@@ -3,6 +3,7 @@ import Header from "../../components/Header";
 import termsDetails from "../../data/TermsDetails";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import { motion } from "framer-motion";
+import { fadeVariants, fadeTransition } from "../../animations";
 
 const slideVariants = {
   initial: { x: "100%", opacity: 0 },
@@ -27,13 +28,7 @@ const AgreementDetail = () => {
   };
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={slideVariants}
-      transition={slideTransition}
-    >
+    <motion.div>
       <div>
         {/* 상단 헤더 */}
         <Header

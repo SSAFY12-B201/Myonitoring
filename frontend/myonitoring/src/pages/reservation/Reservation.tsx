@@ -62,10 +62,7 @@ const Reservation: React.FC = () => {
         headers: { Authorization: token ? `Bearer ${token}` : "" },
       });
 
-      // 콘솔에 JSON.stringify로 출력
-      console.log(
-        `조회된 예약 내역: ${JSON.stringify(response.data, null, 2)}`
-      );
+      
 
       // 응답 데이터 변환 및 Redux 상태 업데이트
       const fetchedReservations: Reservation[] = response.data.map(

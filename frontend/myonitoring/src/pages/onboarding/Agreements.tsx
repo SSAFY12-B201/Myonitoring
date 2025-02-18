@@ -1,11 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
-import {
-  slideInVariants,
-  slideOutVariants,
-  defaultTransition,
-} from "../../animations";
+import { fadeVariants, fadeTransition } from "../../animations";
 import WideButton from "../../components/WideButton";
 import Header from "../../components/Header";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
@@ -23,13 +19,12 @@ const Agreement = () => {
 
   // 뒤로 가기 여부 확인 (상세 페이지에서 돌아온 경우)
   const isBackNavigation = location.state?.fromDetail || false;
-  console.log(isBackNavigation)
-
+  console.log(isBackNavigation);
 
   // 동적 애니메이션 설정
-  const animationVariants = isBackNavigation
-    ? slideOutVariants // 뒤로 가기 애니메이션
-    : slideInVariants; // 앞으로 가기 애니메이션
+  // const animationVariants = isBackNavigation
+  //   ? slideOutVariants // 뒤로 가기 애니메이션
+  //   : slideInVariants; // 앞으로 가기 애니메이션
 
   const handleAllCheck = () => {
     const newValue = !allChecked;
@@ -63,13 +58,7 @@ const Agreement = () => {
   };
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={animationVariants}
-      transition={defaultTransition}
-    >
+    <motion.div>
       <div className="min-h-screen bg-white flex flex-col">
         {/* 상단 헤더 */}
         <Header title="약관 동의" onBack={handleBack} />
@@ -80,7 +69,8 @@ const Agreement = () => {
               서비스 이용을 위해 아래 약관에 동의해주세요.
             </h2>
             <p className="text-xs text-gray-400 mb-6">
-              묘니터링 서비스 이용을 위해서는 아래의 약관 내용 동의가 필요합니다.
+              묘니터링 서비스 이용을 위해서는 아래의 약관 내용 동의가
+              필요합니다.
             </p>
 
             {/* 약관 리스트 */}
@@ -124,7 +114,9 @@ const Agreement = () => {
                     onChange={() => handleIndividualCheck("privacyPolicy")}
                     className="w-5 h-5 accent-yellow mr-3"
                   />
-                  <span className="text-sm">개인정보 수집 이용 동의 (필수)</span>
+                  <span className="text-sm">
+                    개인정보 수집 이용 동의 (필수)
+                  </span>
                 </div>
                 <button
                   onClick={() => navigateToDetail("privacyPolicy")}

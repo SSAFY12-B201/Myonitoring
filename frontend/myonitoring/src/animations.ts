@@ -38,3 +38,15 @@ export const getAnimationVariants = (location: Location): Variants => {
 
   return slideInVariants; // 앞으로 가기 애니메이션
 };
+
+
+export const fadeVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+};
+
+export const fadeTransition = {
+  duration: 0.3,
+  ease: "easeInOut",
+};
