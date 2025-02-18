@@ -64,6 +64,7 @@ public class DeviceService {
                         device.getId(),
                         device.getSerialNumber(),
                         device.getRegistrationDate(),
+                        device.getCat() != null ? device.getCat().getId() : null,
                         device.getCat() != null ? device.getCat().getName() : null
                 ))
                 .collect(Collectors.toList());
