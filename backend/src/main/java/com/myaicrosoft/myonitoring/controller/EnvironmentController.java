@@ -19,28 +19,28 @@ public class EnvironmentController {
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String kakaoClientId;
 
-    @Value("${firebase.config.api-key}")
+    @Value("${firebase.config.apiKey}")
     private String firebaseApiKey;
 
-    @Value("${firebase.config.auth-domain}")
+    @Value("${firebase.config.authDomain}")
     private String firebaseAuthDomain;
 
-    @Value("${firebase.config.project-id}")
+    @Value("${firebase.config.projectId}")
     private String firebaseProjectId;
 
-    @Value("${firebase.config.storage-bucket}")
+    @Value("${firebase.config.storageBucket}")
     private String firebaseStorageBucket;
 
-    @Value("${firebase.config.messaging-sender-id}")
+    @Value("${firebase.config.messagingSenderId}")
     private String firebaseMessagingSenderId;
 
-    @Value("${firebase.config.app-id}")
+    @Value("${firebase.config.appId}")
     private String firebaseAppId;
 
-    @Value("${firebase.config.vapid-key}")
+    @Value("${firebase.config.vapidKey}")
     private String firebaseVapidKey;
 
-    @Value("${firebase.config.measurement-id}")
+    @Value("${firebase.config.measurementId}")
     private String firebaseMeasurementId;
 
     @GetMapping("/oauth/kakao")
