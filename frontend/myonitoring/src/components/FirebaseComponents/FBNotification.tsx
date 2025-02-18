@@ -14,7 +14,7 @@ const NotificationComponent: React.FC = () => {
 
     // 로그인 상태 확인 함수 추가
     const checkLoginStatus = () => {
-        const accessToken = localStorage.getItem('accessToken');
+        const accessToken = localStorage.getItem('jwt_access_token');
         const isLoggedIn = !!accessToken;
 
         console.log('알림 컴포넌트 - 로그인 상태 확인:', isLoggedIn);
