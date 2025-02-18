@@ -18,30 +18,6 @@ const LoginSignUp: React.FC = () => {
       ? "고양이 급식과 건강을 한 번에!\n묘니터링에 오신 것을 환영합니다."
       : "고양이 급식과 건강을 한 번에!\n묘니터링에 오신 것을 환영합니다.";
 
-  // 하단 텍스트 (로그인/회원가입 전환 링크)
-  const footerText =
-    activeTab === "login" ? (
-      <p className="mt-6 text-sm text-gray-500">
-        계정이 없으신가요?{" "}
-        <span
-          onClick={() => setActiveTab("signup")}
-          className="text-blue-500 cursor-pointer hover:underline"
-        >
-          회원가입 하러 가기
-        </span>
-      </p>
-    ) : (
-      <p className="mt-6 text-sm text-gray-500">
-        이미 계정이 있으신가요?{" "}
-        <span
-          onClick={() => setActiveTab("login")}
-          className="text-blue-500 cursor-pointer hover:underline"
-        >
-          로그인 하러 가기
-        </span>
-      </p>
-    );
-
   const handleKakaoLogin = async () => {
     try {
       // axios를 사용하여 환경변수를 API에서 가져옴
@@ -84,11 +60,11 @@ const LoginSignUp: React.FC = () => {
   ];
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center justify-center h-screen px-4 sm:px-8">
       {/* 상단 탭 */}
       <div className="flex w-full max-w-md justify-around border-b border-gray-300">
         <button
-          className={`w-1/2 py-2 text-center text-lg ${
+          className={`w-1/2 py-2 text-center text-lg mt-3 mb-3 ${
             activeTab === "login" ? "font-bold text-black" : "text-gray-400"
           }`}
           onClick={() => setActiveTab("login")}
@@ -96,7 +72,7 @@ const LoginSignUp: React.FC = () => {
           Log in
         </button>
         <button
-          className={`w-1/2 py-2 text-center text-lg ${
+          className={`w-1/2 py-2 text-center text-lg mt-3 mb-3 ${
             activeTab === "signup" ? "font-bold text-black" : "text-gray-400"
           }`}
           onClick={() => setActiveTab("signup")}
@@ -104,52 +80,49 @@ const LoginSignUp: React.FC = () => {
           Sign up
         </button>
       </div>
-
+  
       {/* 공통 레이아웃 */}
-      <div className="flex flex-col items-center mt-8 px-4 overflow-hidden">
+      <div className="flex flex-col items-center mt-8 overflow-hidden flex-grow">
         {/* 제목과 설명 */}
-        <h1 className="text-xl mb-3 font-bold">{title}</h1>
+        <h1 className="text-xl mb-3 font-bold text-center">{title}</h1>
         <p className="text-gray-500 text-center leading-relaxed whitespace-pre-line">
           {description}
         </p>
-
+  
         {/* 소셜 로그인 버튼 */}
-        <div className="flex flex-col gap-4 mt-6 w-full max-w-xs">
+        <div className="flex flex-col gap-4 mt-12 w-full max-w-xs">
           {socialButtons.map((button) => (
             <div key={button.id} className="w-full flex justify-center">
               <button
-                onClick={button.onClick} // 버튼 클릭 이벤트 추가
+                onClick={button.onClick}
                 className={`flex items-center justify-center gap-2 py-[12px] px-[16px] rounded-md shadow ${button.bgColor}`}
                 style={{
-                  width: "250px",
+                  width: "100%",
+                  maxWidth: "250px",
                   height: "48px",
-                  minWidth: "250px",
-                  backgroundColor: button.bgColor, // 인라인 스타일로 배경색 설정
+                  backgroundColor: button.bgColor,
                   color: button.textColor,
-                }} // 버튼 크기 고정
+                }}
               >
                 <img src={button.icon} alt={button.alt} className="w-5 h-5" />
-                <span className="truncate">{button.text}</span>{" "}
-                {/* 텍스트 생략 처리 */}
+                <span className="truncate">{button.text}</span>
               </button>
             </div>
           ))}
         </div>
-
-        {/* 하단 텍스트 */}
-        <div>{footerText}</div>
-
+  
         {/* 하단 이미지 */}
-        <div className="mt-auto">
+        <div className="mt-auto relative overflow-hidden">
           <img
-            src="/logo_cat.png"
+            src="/Cat.png"
             alt="로고 고양이"
-            className="w-full max-w-xs"
+            className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl relative translate-y-16"
           />
         </div>
       </div>
     </div>
   );
+  
 };
 
 export default LoginSignUp;

@@ -20,6 +20,7 @@ public class MainPageService {
     private final StatisticsRepository statisticsRepository;
     private final EyeRepository eyeRepository;
     private final MedicalRepository medicalRepository;
+    private final CatRepository catRepository;
 
     /**
      * 메인 페이지 데이터를 조회하는 메서드
@@ -30,6 +31,11 @@ public class MainPageService {
      */
     public Map<String, Object> getMainPageData(Long catId, LocalDate day) {
         Map<String, Object> response = new HashMap<>();
+
+        // 고양이 정보 조회 및 이미지 URL 추가
+        Cat cat = catRepository.findById(catId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 고양이를 찾을 수 없습니다. ID: " + catId));
+        response.put("cat_image", cat.getProfileImageUrl());
 
         // 1. 총 섭취량 데이터 조회
         int totalIntake = intakeRepository.findByCatIdAndIntakeDateTimeBetween(

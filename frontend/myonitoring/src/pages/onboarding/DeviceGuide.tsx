@@ -1,52 +1,55 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
+import { motion } from "framer-motion";
+import { fadeVariants, fadeTransition } from "../../animations";
 
 const DeviceGuide = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // 동적 애니메이션 설정
+  // const animationVariants = getAnimationVariants(location);
 
   const handleNext = () => {
-    // 다음 단계로 이동
-    navigate("/serial-number-input"); 
+    navigate("/serial-number-input");
   };
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      {/* 상단 헤더 */}
-      <Header title="기기 정보 등록" onBack={() => navigate(-1)} />
+    <motion.div>
+      <div className="min-h-screen bg-white flex flex-col">
+        {/* 상단 헤더 */}
+        <Header title="기기 정보 등록" onBack={() => navigate(-1)} />
 
-      {/* 본문 영역 */}
-      <ExceptTopContentSection>
-        <div>
-          {/* 제목과 설명 */}
-          <h2 className="text-lg font-semibold mb-2">기기 연결 시작</h2>
-          <p className="text-sm text-gray-400 mb-6">
-            연결 시작 전 기기 하단 전원을 켜주세요.
-          </p>
+        {/* 본문 영역 */}
+        <ExceptTopContentSection>
+          <div>
+            {/* 제목과 설명 */}
+            <h2 className="text-lg font-semibold mb-2">기기 연결 시작</h2>
+            <p className="text-sm text-gray-400 mb-6">
+              연결 시작 전 기기 하단 전원을 켜주세요.
+            </p>
 
-          {/* 기기 이미지 */}
-          <div className="flex justify-center pt-10">
-            <img
-              src="/device.png" // public 폴더에 저장된 이미지 경로
-              alt="기기 이미지"
-              className=" h-auto"
-            />
+            {/* 기기 이미지 */}
+            <div className="flex justify-center pt-10">
+              <img src="/device.png" alt="기기 이미지" className=" h-auto" />
+            </div>
           </div>
-        </div>
-      </ExceptTopContentSection>
+        </ExceptTopContentSection>
 
-      {/* 하단 버튼 */}
-      <footer className="fixed bottom-0 left-0 w-full p-4 bg-white">
-        <WideButton
-          text="다음"
-          textColor="text-white"
-          bgColor="bg-darkGray"
-          onClick={handleNext}
-        />
-      </footer>
-    </div>
+        {/* 하단 버튼 */}
+        <footer className="fixed bottom-0 left-0 w-full p-4 bg-white">
+          <WideButton
+            text="다음"
+            textColor="text-white"
+            bgColor="bg-darkGray"
+            onClick={handleNext}
+          />
+        </footer>
+      </div>
+    </motion.div>
   );
 };
 

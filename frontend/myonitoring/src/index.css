@@ -47,6 +47,32 @@ body {
   animation: fadeInScale 1s ease-in-out;
 }
 
+.custom-button {
+  background: linear-gradient(90deg, #ffbd8a, #FFE76B); /* 그라데이션 배경 */
+  color: white; /* 텍스트 색상 */
+  font-size: 20px; /* 텍스트 크기 */
+  font-weight: bold; /* 텍스트 굵기 */
+  border: none; /* 테두리 제거 */
+  border-radius: 50%; /* 동그란 버튼 */
+  display: flex; /* 가운데 정렬을 위한 Flexbox */
+  align-items: center; /* 수직 가운데 정렬 */
+  justify-content: center; /* 수평 가운데 정렬 */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08); /* 그림자 효과 */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* 애니메이션 효과 */
+  cursor: pointer; /* 마우스 커서 포인터로 변경 */
+}
+
+.custom-tap {
+  background: linear-gradient(90deg, #feb47b, #FFE76B); /* 그라데이션 배경 */
+  color: white; /* 텍스트 색상 */
+  font-weight: bold; /* 텍스트 굵기 */
+  border: none; /* 테두리 제거 */
+  display: flex; /* 가운데 정렬을 위한 Flexbox */
+  align-items: center; /* 수직 가운데 정렬 */
+  justify-content: center; /* 수평 가운데 정렬 */
+  cursor: pointer; /* 마우스 커서 포인터로 변경 */
+}
+
 
 /* 반응형 레이아웃 */
 .container {

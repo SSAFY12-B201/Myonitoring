@@ -22,7 +22,14 @@ public class Schedule {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "device_id", nullable = false) // 외래 키 이름 지정
+    @JoinColumn(
+        name = "device_id", 
+        nullable = false,
+        foreignKey = @ForeignKey(
+            name = "fk_schedule_device",
+            foreignKeyDefinition = "FOREIGN KEY (device_id) REFERENCES devices(id) ON DELETE CASCADE"
+        )
+    )
     private Device device;
 
     // 예약된 급여 시간 (반복적인 시간 설정)

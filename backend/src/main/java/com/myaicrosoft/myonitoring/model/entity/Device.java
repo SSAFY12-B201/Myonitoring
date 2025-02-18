@@ -20,14 +20,9 @@ public class Device {
     @GeneratedValue(strategy = GenerationType.IDENTITY) // IDENTITY 전략 사용
     private Long id;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "user_device",
-            joinColumns = @JoinColumn(name = "device_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    @Builder.Default // Lombok의 빌더 패턴에서 기본값 설정
-    private Set<User> users = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false) // 외래 키 이름 지정
+    private User user;
 
     @OneToOne(mappedBy = "device", cascade = CascadeType.ALL)
     private Cat cat;
