@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // React Router 사용
+import { useNavigate, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   slideInVariants,
@@ -18,16 +18,18 @@ const Agreement = () => {
     marketingInfo: false,
   });
 
-  const navigate = useNavigate(); // 화면 전환을 위한 useNavigate 훅
+  const navigate = useNavigate();
   const location = useLocation();
 
-  // 뒤로 가기 여부 확인
-  const isBackNavigation = location.state?.isBack;
+  // 뒤로 가기 여부 확인 (상세 페이지에서 돌아온 경우)
+  const isBackNavigation = location.state?.fromDetail || false;
+  console.log(isBackNavigation)
 
-  // 동적으로 애니메이션 설정
+
+  // 동적 애니메이션 설정
   const animationVariants = isBackNavigation
-    ? slideOutVariants
-    : slideInVariants;
+    ? slideOutVariants // 뒤로 가기 애니메이션
+    : slideInVariants; // 앞으로 가기 애니메이션
 
   const handleAllCheck = () => {
     const newValue = !allChecked;
@@ -47,12 +49,17 @@ const Agreement = () => {
 
   // 상세 화면으로 이동하는 함수
   const navigateToDetail = (type: string) => {
-    navigate(`/agreement-detail`, { state: { type } }); // type 정보를 전달
+    navigate(`/agreement-detail`, { state: { type, fromAgreement: true } }); // 출발 정보를 전달
   };
 
   // 다음 단계로 이동하는 함수
-  const HandleNext = () => {
-    navigate(`/user-info`); // UserInfo 페이지로 이동
+  const handleNext = () => {
+    navigate(`/user-info`);
+  };
+
+  // 뒤로가기 핸들러 (로그인 화면으로 이동)
+  const handleBack = () => {
+    navigate("/login", { replace: true }); // 로그인 화면으로 이동하며 히스토리를 대체
   };
 
   return (
@@ -65,8 +72,7 @@ const Agreement = () => {
     >
       <div className="min-h-screen bg-white flex flex-col">
         {/* 상단 헤더 */}
-        <Header title="약관 동의" onBack={() => navigate(-1)} />
-
+        <Header title="약관 동의" onBack={handleBack} />
         {/* 설명 */}
         <ExceptTopContentSection>
           <main className="flex-grow">
@@ -74,8 +80,7 @@ const Agreement = () => {
               서비스 이용을 위해 아래 약관에 동의해주세요.
             </h2>
             <p className="text-xs text-gray-400 mb-6">
-              묘니터링 서비스 이용을 위해서는 아래의 약관 내용 동의가
-              필요합니다.
+              묘니터링 서비스 이용을 위해서는 아래의 약관 내용 동의가 필요합니다.
             </p>
 
             {/* 약관 리스트 */}
@@ -119,9 +124,7 @@ const Agreement = () => {
                     onChange={() => handleIndividualCheck("privacyPolicy")}
                     className="w-5 h-5 accent-yellow mr-3"
                   />
-                  <span className="text-sm">
-                    개인정보 수집 이용 동의 (필수)
-                  </span>
+                  <span className="text-sm">개인정보 수집 이용 동의 (필수)</span>
                 </div>
                 <button
                   onClick={() => navigateToDetail("privacyPolicy")}
@@ -158,7 +161,7 @@ const Agreement = () => {
           {/* WideButton 컴포넌트 사용 */}
           <WideButton
             text="다음"
-            onClick={() => HandleNext()}
+            onClick={handleNext}
             disabled={!terms.termsOfService || !terms.privacyPolicy} // 필수 항목 체크 여부에 따라 활성화/비활성화
             bgColor={
               terms.termsOfService && terms.privacyPolicy

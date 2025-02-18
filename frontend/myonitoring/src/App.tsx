@@ -84,6 +84,8 @@ const App: React.FC = () => {
             <Route path="/agreements" element={<Agreement />} />
             <Route path="/agreement-detail" element={<AgreementDetail />} />
             <Route path="/user-info" element={<UserInfo />} />
+            <Route path="/edit-personal" element={<EditPersonal />} />
+
           </>
         ) : (
           <>
@@ -106,13 +108,11 @@ const App: React.FC = () => {
             />
             <Route path="/graph" element={<Graph />} />
             <Route path="/statistics" element={<StatisticsPage />} />
-
             {/* 마이페이지 */}
             <Route path="/my-page" element={<MyPage />} />
             <Route path="/edit-personal" element={<EditPersonal />} />
             <Route path="/device-settings" element={<DeviceSettings />} />
-            <Route path="/device-detail" element={<DeviceDetailedSettings />} />
-
+            <Route path="/device-detail/:id" element={<DeviceDetailedSettings />} />
             {/* 기타 */}
             <Route path="/notification" element={<Notification />} />
             <Route path="/cateyeinfo" element={<CatEyeInfo />} />
@@ -123,8 +123,6 @@ const App: React.FC = () => {
       </Routes>
     </AnimatePresence>
   );
-
-  
 };
 
 export default App;

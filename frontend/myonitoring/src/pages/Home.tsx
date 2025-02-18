@@ -72,6 +72,7 @@ const Home: React.FC = () => {
         });
 
         setError(null); // 에러 초기화
+        
       } catch (err) {
         console.error("데이터 로드 실패:", err);
         setError("데이터를 불러오는 중 오류가 발생했습니다."); // 에러 메시지 설정
