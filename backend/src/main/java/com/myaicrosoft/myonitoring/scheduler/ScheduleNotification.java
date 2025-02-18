@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * ScheduleNotification
- * - 매일 오전 10시에 섭취량 이상 알림 데이터를 Firebase로 전달합니다.
+ * - 이상 알림 데이터를 Firebase로 전달합니다.
  */
 @Component // Spring Bean으로 등록
 @RequiredArgsConstructor // final 필드에 대한 생성자를 자동으로 생성
@@ -31,10 +31,20 @@ public class ScheduleNotification {
     private final ScheduleNotificationService scheduleNotificationService; // Firebase 알림 전송 서비스
 
     /**
-     * 매일 오전 10시에 실행되는 스케줄링 작업
+     * 매일 자정에 실행되는 스케줄링 작업 (의료 일정 알림 예약)
+     */
+    @Scheduled(cron = "0 18 21 * * *", zone = "Asia/Seoul") // 매일 자정 (KST)
+    public void scheduleDailyMedicalAlerts() {
+        log.info("🔔 의료 일정 알림 예약 시작...");
+        scheduleNotificationService.scheduleMedicalAlerts();
+        log.info("✅ 의료 일정 알림 예약 완료.");
+    }
+
+    /**
+     * 매일 오전 10시에 실행되는 스케줄링 작업 (섭취량 이상 알림 전송)
      */
     @Transactional
-    @Scheduled(cron = "0 03 16 * * *", zone = "Asia/Seoul") // 매일 오전 10시 (KST)
+    @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Seoul") // 매일 오전 10시 (KST)
     public void sendIntakeAlertsToFirebase() {
         LocalDate yesterday = LocalDate.now().minusDays(1); // 어제 날짜 계산
 
@@ -47,23 +57,20 @@ public class ScheduleNotification {
                 String catName = statistics.getCat().getName(); // 고양이 이름 가져오기
                 int changeStatus = statistics.getChangeStatus();
                 int changeDays = statistics.getChangeDays();
-                double change30d = statistics.getChange30d().doubleValue();
 
                 if (changeDays > 1) { // changeDays가 2 이상인 경우만 알림 전송
                     Cat cat = statistics.getCat();
                     String title = "섭취량 이상 감지";
-                    String changeDirection = (changeStatus == -1) ? "감소" : "증가";
                     String body = String.format("고양이 %s의 섭취량 이상이 감지되었습니다!\n" +
                                     "%d일 연속 섭취량이 %s하였으니, %s의 건강 상태를 확인해주세요.",
-                            catName, changeDays, changeDirection, catName);
+                            catName, changeDays, (changeStatus == -1 ? "감소" : "증가"), catName);
 
-                    // 파이어베이스로 보내는 데이터 로그 출력
                     log.info("파이어베이스로 전송되는 데이터:");
                     log.info("제목: {}", title);
                     log.info("내용: {}", body);
 
-                    // Firebase로 알림 전송 (인스턴스를 통해 호출)
-                    scheduleNotificationService.sendNotification(statistics.getCat().getDevice().getUser().getId(), title, body);
+                    // Firebase로 알림 전송
+                    scheduleNotificationService.sendNotification(cat.getDevice().getUser().getId(), title, body);
 
                     // NotificationLog 엔티티에 데이터 저장
                     NotificationLog notificationLog = NotificationLog.builder()
