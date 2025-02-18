@@ -7,7 +7,7 @@ import Input from "../../components/Input";
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
-import infoCat from "../../assets/images/info_cat.png";
+import infoCat from "/Cat_bg.png";
 
 
 // CatInfoState와 동일한 타입 사용
@@ -173,7 +173,7 @@ const CatInfo = () => {
                 <img
                   src={infoCat}
                   alt="로고 고양이 옆 사진 아이콘"
-                  className="w-32 h-32 object-cover"
+                  className="w-32 h-32 md:w-24 md:h-24 rounded-full object-cover"
                 />
               )}
               <input

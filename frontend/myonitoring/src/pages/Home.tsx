@@ -7,6 +7,7 @@ import HomeComponentBar from "../components/HomeComponents/HomeComponentBar";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/axios"; // Axios 인스턴스 사용
 import { CameraIcon } from "@heroicons/react/outline";
+import { ConstructionIcon } from "lucide-react";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();

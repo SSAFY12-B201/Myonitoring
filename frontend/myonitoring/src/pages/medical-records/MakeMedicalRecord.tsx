@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios";
+import { api } from "../../api/axios"; // Axios 인스턴스 임포트 
 import { useAppSelector } from "../../redux/hooks"; // 고양이 ID 가져오기
 import Input from "../../components/Input";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
@@ -47,14 +47,17 @@ const MakeMedicalRecord = () => {
     }
 
     try {
+      const token = localStorage.getItem("jwt_access_token");
+      if (!token) throw new Error("No access token found");
+
       const newRecord = {
         ...record,
         category: categoryMapping[record.category], // UI 값 -> 서버 값 변환
       };
 
-      await axios.post(`/api/medical/${selectedCatId}`, newRecord, {
+      await api.post(`/api/medical/${selectedCatId}`, newRecord, {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json", // JSON 형식 명시
         },
       });
