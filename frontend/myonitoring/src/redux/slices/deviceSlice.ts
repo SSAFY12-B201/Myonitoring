@@ -7,6 +7,7 @@ interface Device {
   id: number;
   serialNumber: string;
   registrationDate: string; // 등록 날짜
+  catId: number | null; // 고양이 ID (없으면 null)
   catName: string | null; // 고양이 이름 (없으면 null)
 }
 
@@ -23,7 +24,6 @@ const devicesSlice = createSlice({
       return action.payload; // 기존 상태를 덮어씌움 (조회된 데이터로 갱신)
     },
 
-    // 기존 액션들 유지...
     addDevice(state, action: PayloadAction<Device>) {
       state.push(action.payload);
     },

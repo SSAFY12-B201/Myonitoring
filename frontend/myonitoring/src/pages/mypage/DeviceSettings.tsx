@@ -6,6 +6,7 @@ import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import WideButton from "../../components/WideButton";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"; // Redux 훅
 import { setDevices } from "../../redux/slices/deviceSlice"; // Redux 액션
+import { setSelectedCatId } from "../../redux/slices/catSlice"; // Redux 액션
 
 const DeviceSettings = () => {
   const navigate = useNavigate();
@@ -30,7 +31,7 @@ const DeviceSettings = () => {
         });
 
         // Redux 상태에 디바이스 데이터 설정
-        dispatch(setDevices(response.data));
+        dispatch(setDevices(response.data)); // catId 포함 데이터 저장
         setError(null); // 에러 초기화
       } catch (err) {
         console.error(err);
@@ -45,7 +46,14 @@ const DeviceSettings = () => {
 
   const handleAddDevice = () => {
     console.log("기기 추가 버튼이 클릭되었습니다.");
-    navigate("/add-device"); // 기기 추가 페이지로 이동
+    navigate("/device-guide"); // 기기 추가 페이지로 이동
+  };
+
+  const handleDeviceClick = (deviceId: number, catId: number | null) => {
+    if (catId !== null) {
+      dispatch(setSelectedCatId(catId)); // 선택된 고양이 ID를 Redux 상태에 저장
+    }
+    navigate(`/device-detail/${deviceId}`); // 상세 페이지로 이동
   };
 
   return (
@@ -83,7 +91,7 @@ const DeviceSettings = () => {
                   {/* 화살표 아이콘 */}
                   <button
                     onClick={() =>
-                      navigate(`/device-detail/${device.id}`) // URL에 ID 전달
+                      handleDeviceClick(device.id, device.catId)
                     }
                   >
                     <span className="text-gray-700 text-lg px-2">&#x276F;</span>

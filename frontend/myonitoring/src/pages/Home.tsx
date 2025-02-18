@@ -73,7 +73,6 @@ const Home: React.FC = () => {
         });
 
         setError(null); // 에러 초기화
-        
       } catch (err) {
         console.error("데이터 로드 실패:", err);
         setError("데이터를 불러오는 중 오류가 발생했습니다."); // 에러 메시지 설정
@@ -187,13 +186,18 @@ const Home: React.FC = () => {
             {/* 버튼 */}
             <button
               className="col-span-2 md:col-span-1 flex items-center 
-              justify-center py-3 px-8 border border-gray-200 rounded-lg 
-              font-bold text-gray-600 shadow-sm mb-2"
+  justify-center py-3 px-8 border border-gray-200 rounded-lg 
+  font-bold text-gray-600 shadow-sm mb-2"
               onClick={() => console.log("CCTV 버튼 클릭!")}
             >
               {/* 버튼 텍스트 */}
               <span className="text-md flex items-center space-x-2">
-                <CameraIcon className="h-8 w-8" />
+                {/* 이미지 추가 */}
+                <img
+                  src="/cam.png" // public 폴더의 cam.png 경로
+                  alt="캠 아이콘"
+                  className="h-7 w-7" // 아이콘 크기 조정
+                />
                 <span>묘니터링 캠 보러 가기</span>
               </span>
             </button>

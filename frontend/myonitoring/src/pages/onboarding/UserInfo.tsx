@@ -1,5 +1,5 @@
 import { useAppDispatch } from "../../redux/hooks"; // 커스텀 훅 가져오기
-import { api } from '../../api/axios';
+import { api } from "../../api/axios";
 import { updateUserInfo } from "../../redux/slices/userSlice";
 import { login } from "../../redux/slices/authSlice";
 import Input from "../../components/Input";
@@ -9,11 +9,7 @@ import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import {
-  slideInVariants,
-  slideOutVariants,
-  defaultTransition,
-} from "../../animations";
+import { fadeVariants, fadeTransition } from "../../animations";
 
 const UserInfo = () => {
   const dispatch = useAppDispatch();
@@ -25,9 +21,9 @@ const UserInfo = () => {
   const isBackFromAgreement = location.state?.fromAgreement || false;
 
   // 동적 애니메이션 설정
-  const animationVariants = isBackFromDeviceGuide || isBackFromAgreement
-    ? slideOutVariants // 뒤로 가기 애니메이션
-    : slideInVariants; // 앞으로 가기 애니메이션
+  // const animationVariants = isBackFromDeviceGuide || isBackFromAgreement
+  //   ? slideOutVariants // 뒤로 가기 애니메이션
+  //   : slideInVariants; // 앞으로 가기 애니메이션
 
   // 상태 초기화 (뒤로 가기 여부를 한 번만 사용)
   useEffect(() => {
@@ -106,16 +102,10 @@ const UserInfo = () => {
   };
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={animationVariants}
-      transition={defaultTransition}
-    >
+    <motion.div>
       <div className="min-h-screen bg-white flex flex-col">
         {/* 상단 헤더 */}
-        <Header title="개인 정보 입력" onBack={() => navigate("/agreements", { state: { fromUserInfo: true } })} />
+        <Header title="개인 정보 입력" onBack={() => navigate(-1)} />
 
         <ExceptTopContentSection>
           <div>

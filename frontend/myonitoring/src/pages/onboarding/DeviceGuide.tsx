@@ -4,35 +4,24 @@ import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import { motion } from "framer-motion";
-import { getAnimationVariants, defaultTransition } from "../../animations";
+import { fadeVariants, fadeTransition } from "../../animations";
 
 const DeviceGuide = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   // 동적 애니메이션 설정
-  const animationVariants = getAnimationVariants(location);
+  // const animationVariants = getAnimationVariants(location);
 
   const handleNext = () => {
     navigate("/serial-number-input");
   };
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={animationVariants}
-      transition={defaultTransition}
-    >
+    <motion.div>
       <div className="min-h-screen bg-white flex flex-col">
         {/* 상단 헤더 */}
-        <Header
-          title="기기 정보 등록"
-          onBack={() =>
-            navigate("/user-info", { state: { fromDeviceGuide: true } })
-          }
-        />
+        <Header title="기기 정보 등록" onBack={() => navigate(-1)} />
 
         {/* 본문 영역 */}
         <ExceptTopContentSection>
@@ -52,7 +41,12 @@ const DeviceGuide = () => {
 
         {/* 하단 버튼 */}
         <footer className="fixed bottom-0 left-0 w-full p-4 bg-white">
-          <WideButton text="다음" textColor="text-white" bgColor="bg-darkGray" onClick={handleNext} />
+          <WideButton
+            text="다음"
+            textColor="text-white"
+            bgColor="bg-darkGray"
+            onClick={handleNext}
+          />
         </footer>
       </div>
     </motion.div>

@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedCatId } from "../redux/slices/catSlice";
 import { api } from "../api/axios"; // Axios 인스턴스 사용
-import {
-  Notifications,
-  ChatBubbleOutline,
-} from "@mui/icons-material";
+import { Notifications, ChatBubbleOutline } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
 import { FaChevronRight } from "react-icons/fa"; // react-icons에서 아이콘 가져오기
@@ -154,7 +151,10 @@ const TopBar: React.FC = () => {
           ))}
 
           {/* 새로운 기기 등록 */}
-          <div className="flex items-center justify-center p-3 mt-6 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors">
+          <div
+            onClick={() => navigate("/device-guide")} // 새로운 기기 등록 페이지로 이동
+            className="flex items-center justify-center p-3 mt-6 bg-gray-100 rounded-lg cursor-pointer hover:bg-gray-200 transition-colors"
+          >
             <span className="text-gray-600 font-medium">
               새로운 기기 등록하기
             </span>
