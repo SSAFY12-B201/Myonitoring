@@ -241,6 +241,7 @@ const Reservation: React.FC = () => {
       style={{ backgroundImage: "url('/gradient_background.png')" }}
     >
       <TopBar />
+
       <ContentSection>
         <div className="bg-white w-60 mx-auto rounded-lg border border-gray-200 p-6 mb-10 text-center">
           <h1 className="text-xl font-bold mb-4">총 {totalAmount}g 예약</h1>
@@ -252,17 +253,31 @@ const Reservation: React.FC = () => {
           </button>
         </div>
 
-        <div>
-          {reservations.map((reservation) => (
-            <ReservationItem
-              key={reservation.id}
-              reservation={reservation}
-              onToggle={handleToggle}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
+        {/* 예약 내역이 없을 경우 */}
+        {reservations.length === 0 ? (
+          <div className="flex flex-col items-center justify-center mt-24 h-full">
+            <img
+              src="/Cat.png"
+              alt="로고 이미지"
+              className="w-35 h-32 animate-fade-in"
             />
-          ))}
-        </div>
+            <h1 className="text-sm text-gray-600 mt-6">
+              배급 예약이 없습니다.
+            </h1>
+          </div>
+        ) : (
+          <div>
+            {reservations.map((reservation) => (
+              <ReservationItem
+                key={reservation.id}
+                reservation={reservation}
+                onToggle={handleToggle}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
+            ))}
+          </div>
+        )}
       </ContentSection>
 
       <BottomBar />
