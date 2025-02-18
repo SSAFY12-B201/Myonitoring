@@ -88,6 +88,8 @@ const App: React.FC = () => {
         ) : (
           <>
             {/* 메인 페이지 */}
+            <Route path="/user-info" element={<UserInfo />} />
+            <Route path="/edit-personal" element={<EditPersonal />} />
             <Route path="/device-guide" element={<DeviceGuide />} />
             <Route
               path="/serial-number-input"
@@ -100,19 +102,21 @@ const App: React.FC = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/reservation" element={<Reservation />} />
             <Route path="/medical-records" element={<MedicalRecords />} />
+            <Route path="/make-medical-record" element={<MakeMedicalRecord />} />
             <Route
               path="/medical-records/:id"
               element={<MedicalRecordDetail />}
             />
             <Route path="/graph" element={<Graph />} />
             <Route path="/statistics" element={<StatisticsPage />} />
-
             {/* 마이페이지 */}
             <Route path="/my-page" element={<MyPage />} />
             <Route path="/edit-personal" element={<EditPersonal />} />
             <Route path="/device-settings" element={<DeviceSettings />} />
-            <Route path="/device-detail" element={<DeviceDetailedSettings />} />
-
+            <Route
+              path="/device-detail/:id"
+              element={<DeviceDetailedSettings />}
+            />
             {/* 기타 */}
             <Route path="/notification" element={<Notification />} />
             <Route path="/cateyeinfo" element={<CatEyeInfo />} />
@@ -122,8 +126,6 @@ const App: React.FC = () => {
       </Routes>
     </AnimatePresence>
   );
-
-  
 };
 
 export default App;

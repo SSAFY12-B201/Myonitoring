@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../redux/hooks"; // 커스텀 훅 가져오기
-import axios from "axios";
+import { useAppSelector } from "../redux/hooks"; // 커스텀 훅 가져오기
+import { api } from "../api/axios"; // Axios 인스턴스 임포트
 import { useNavigate } from "react-router-dom";
 import Input from "../components/Input";
 import Header from "../components/Header";
 import WideButton from "../components/WideButton";
 import ExceptTopContentSection from "../components/ExceptTopContentSection";
-import infoCat from "../assets/images/info_cat.png";
+import infoCat from "/Cat_bg.png";
 
 const CatInfoEdit: React.FC = () => {
   const selectedCatId = useAppSelector((state) => state.cat.selectedCatId);
@@ -44,13 +44,16 @@ const CatInfoEdit: React.FC = () => {
     weight: false,
   });
 
+  const token = localStorage.getItem("jwt_access_token");
+  if (!token) throw new Error("No access token found");
+
   // 고양이 상세 정보 가져오기
   useEffect(() => {
     const fetchCatDetails = async () => {
       try {
-        const response = await axios.get(`/api/cats/${selectedCatId}`, {
+        const response = await api.get(`/api/cats/${selectedCatId}`, {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -79,22 +82,26 @@ const CatInfoEdit: React.FC = () => {
 
   const handleSave = async () => {
     try {
-      await axios.put(`/api/cats/${selectedCatId}`, {
-        name: catDetails.name,
-        breed: catDetails.breed,
-        gender: catDetails.gender,
-        isNeutered: catDetails.neutered === "중성화 완료", // 서버에서 기대하는 형식으로 변환
-        birthDate: catDetails.birthdate,
-        age: catDetails.age,
-        weight: catDetails.weight,
-        characteristics: catDetails.characteristics,
-        profileImageUrl: catDetails.image,
-      }, {
-        headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 입력
+      await api.put(
+        `/api/cats/${selectedCatId}`,
+        {
+          name: catDetails.name,
+          breed: catDetails.breed,
+          gender: catDetails.gender,
+          isNeutered: catDetails.neutered === "중성화 완료", // 서버에서 기대하는 형식으로 변환
+          birthDate: catDetails.birthdate,
+          age: catDetails.age,
+          weight: catDetails.weight,
+          characteristics: catDetails.characteristics,
+          profileImageUrl: catDetails.image,
         },
-      });
-      alert("저장되었습니다.");
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // alert("저장되었습니다.");
     } catch (error) {
       console.error("Failed to save cat details", error);
       alert("저장 중 오류가 발생했습니다.");
@@ -104,12 +111,12 @@ const CatInfoEdit: React.FC = () => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`/api/cats/${selectedCatId}`, {
+      await api.delete(`/api/cats/${selectedCatId}`, {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 입력
+          Authorization: `Bearer ${token}`,
         },
-      })
-      alert("삭제되었습니다.");
+      });
+      // alert("삭제되었습니다.");
     } catch (error) {
       console.error("Failed to save cat details", error);
       alert("저장 중 오류가 발생했습니다.");
@@ -144,7 +151,7 @@ const CatInfoEdit: React.FC = () => {
                 <img
                   src={infoCat}
                   alt="로고 고양이 옆 사진 아이콘"
-                  className="w-32 h-32 object-cover"
+                  className="w-32 h-32 md:w-24 md:h-24 rounded-full object-cover"
                 />
               )}
               <input
@@ -282,21 +289,18 @@ const CatInfoEdit: React.FC = () => {
               }
             />
           </form>
-
-          
         </div>
       </ExceptTopContentSection>
 
       {/* 고양이 삭제 */}
       <div className="flex text-xs text-gray-500 justify-end mr-8 mb-2">
-            <span
-              onClick={() => handleDelete()}
-              className="cursor-pointer hover:text-orange transition-colors duration-[200ms]"
-            >
-              고양이 정보 삭제
-            </span>
-        </div>
-   
+        <span
+          onClick={() => handleDelete()}
+          className="cursor-pointer hover:text-orange transition-colors duration-[200ms]"
+        >
+          고양이 정보 삭제
+        </span>
+      </div>
 
       {/* 하단 버튼 */}
       <footer className="sticky bottom-0 left-0 w-full p-4 bg-white">

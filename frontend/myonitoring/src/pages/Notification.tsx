@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ContentSection from "../components/ContentSection";
 import { useAppSelector } from "../redux/hooks";
 import { CheckCircle, XCircle, Info, AlertTriangle } from "lucide-react";
+import ExceptTopContentSection from "../components/ExceptTopContentSection";
 
 const Notification: React.FC = () => {
   const navigate = useNavigate(); // 뒤로가기 네비게이션
@@ -48,7 +49,7 @@ const Notification: React.FC = () => {
       <Header title="알림" onBack={() => navigate(-1)} />
 
       {/* 본문 내용 */}
-      <ContentSection>
+      <ExceptTopContentSection>
         {Object.keys(groupedNotifications)
           .sort((a, b) => (a > b ? -1 : 1)) // 날짜 내림차순 정렬
           .map((date) => (
@@ -80,7 +81,7 @@ const Notification: React.FC = () => {
               </div>
             </div>
           ))}
-      </ContentSection>
+      </ExceptTopContentSection>
     </>
   );
 };

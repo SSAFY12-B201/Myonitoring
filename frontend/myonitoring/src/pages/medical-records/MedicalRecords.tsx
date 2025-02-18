@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { api } from "../../api/axios"; // Axios 인스턴스 임포트
 import { useAppSelector } from "../../redux/hooks";
 import TopBar from "../../components/TopBar";
 import ContentSection from "../../components/ContentSection";
@@ -10,7 +10,9 @@ import MedicalList from "../../components/MedicalComponent/MedicalList";
 const MedicalRecords = () => {
   const navigate = useNavigate();
   const selectedCatId = useAppSelector((state) => state.cat.selectedCatId);
-  const [filterType, setFilterType] = useState<"전체" | "정기검진" | "치료" | "기타">("전체");
+  const [filterType, setFilterType] = useState<
+    "전체" | "정기검진" | "치료" | "기타"
+  >("전체");
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [fetchedRecords, setFetchedRecords] = useState<any[]>([]);
@@ -19,23 +21,34 @@ const MedicalRecords = () => {
   // 날짜 초기화
   useEffect(() => {
     const today = new Date();
-    const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth() - 6, 1);
-    const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 11, 0);
+    const firstDayOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() - 6,
+      1
+    );
+    const lastDayOfMonth = new Date(
+      today.getFullYear(),
+      today.getMonth() + 11,
+      0
+    );
     setStartDate(firstDayOfMonth.toISOString().split("T")[0]);
     setEndDate(lastDayOfMonth.toISOString().split("T")[0]);
   }, []);
 
   // 데이터 가져오기
   const fetchMedicalRecords = async () => {
+    const token = localStorage.getItem("jwt_access_token");
+    if (!token) throw new Error("No access token found");
+
     if (!selectedCatId || !startDate || !endDate) return;
 
     try {
       setIsLoading(true);
-      const response = await axios.get(
+      const response = await api.get(
         `/api/medical/${selectedCatId}?start_date=${startDate}&end_date=${endDate}`,
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+            Authorization: `Bearer ${token}`,
           },
         }
       );
@@ -49,16 +62,21 @@ const MedicalRecords = () => {
 
   // 삭제 함수 정의
   const handleDelete = async (id: string) => {
+    const token = localStorage.getItem("jwt_access_token");
+    if (!token) throw new Error("No access token found");
+
     try {
       // 서버에 DELETE 요청
-      await axios.delete(`/api/medical/detail/${id}`, {
+      await api.delete(`/api/medical/detail/${id}`, {
         headers: {
-          Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+          Authorization: `Bearer ${token}`
         },
       });
 
       // 성공적으로 삭제되었으면 상태 업데이트
-      setFetchedRecords((prevRecords) => prevRecords.filter((record) => record.id !== id));
+      setFetchedRecords((prevRecords) =>
+        prevRecords.filter((record) => record.id !== id)
+      );
     } catch (error) {
       console.error("Error deleting medical record:", error);
       alert("삭제에 실패했습니다. 다시 시도해주세요.");
@@ -81,7 +99,10 @@ const MedicalRecords = () => {
           (filterType === "기타" && record.category === "OTHER"))
       );
     })
-    .sort((a, b) => new Date(a.visitDate).getTime() - new Date(b.visitDate).getTime());
+    .sort(
+      (a, b) =>
+        new Date(a.visitDate).getTime() - new Date(b.visitDate).getTime()
+    );
 
   // 데이터 가져오기 트리거
   useEffect(() => {
@@ -98,7 +119,12 @@ const MedicalRecords = () => {
         {/* 의료기록 조회 제목 */}
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-bold">의료기록 조회</h1>
-          <button className="custom-button fixed bottom-24 z-50 right-6 w-10 h-10" onClick={() => navigate("/make-medical-record")}>+</button>
+          <button
+            className="custom-button fixed bottom-24 z-50 right-6 w-10 h-10"
+            onClick={() => navigate("/make-medical-record")}
+          >
+            +
+          </button>
         </div>
 
         {/* 날짜 필터 */}
@@ -136,7 +162,11 @@ const MedicalRecords = () => {
         </div>
 
         {/* 의료 기록 리스트 */}
-        <MedicalList records={filteredRecords} isLoading={isLoading} onDelete={handleDelete} />
+        <MedicalList
+          records={filteredRecords}
+          isLoading={isLoading}
+          onDelete={handleDelete}
+        />
       </ContentSection>
       <BottomBar />
     </div>

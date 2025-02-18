@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api/axios"; // Axios 인스턴스 임포트
 import Header from "../../components/Header";
@@ -10,13 +10,43 @@ import "react-toastify/dist/ReactToastify.css"; // Toastify 스타일 추가
 import { useAppDispatch, useAppSelector } from "../../redux/hooks"; // Redux 디스패치 훅
 import { updateUserInfo } from "../../redux/slices/userSlice";
 
+// 확인 모달 컴포넌트
+const ConfirmModal = ({ isOpen, onConfirm, onCancel }: any) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white p-6 rounded shadow-lg">
+        <p className="text-lg mb-4">정말로 회원탈퇴 하시겠습니까?</p>
+        <div className="flex justify-end space-x-4">
+          <button
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+            onClick={onCancel}
+          >
+            취소
+          </button>
+          <button
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            onClick={onConfirm}
+          >
+            탈퇴
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const EditPersonal = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   // Redux 상태에서 초기값 가져오기
-  const { nickname: initialNickname, phoneNumber: initialPhoneNumber, address: initialAddress } =
-    useAppSelector((state) => state.user);
+  const {
+    nickname: initialNickname,
+    phoneNumber: initialPhoneNumber,
+    address: initialAddress,
+  } = useAppSelector((state) => state.user);
 
   // 로컬 상태 관리
   const [nickname, setNickname] = useState(initialNickname);
@@ -26,6 +56,9 @@ const EditPersonal = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false); // 필드가 수정되었는지 여부
+
+  // 모달 상태 관리
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // 회원 정보 조회 함수
   const fetchUserInfo = async () => {
@@ -51,7 +84,9 @@ const EditPersonal = () => {
       setAddress(response.data.address);
     } catch (err: any) {
       console.error("회원 정보 조회 실패:", err);
-      setError(err.response?.data?.message || "회원 정보를 불러오지 못했습니다.");
+      setError(
+        err.response?.data?.message || "회원 정보를 불러오지 못했습니다."
+      );
     } finally {
       setLoading(false);
     }
@@ -97,19 +132,23 @@ const EditPersonal = () => {
       const token = localStorage.getItem("jwt_access_token");
       if (!token) throw new Error("No access token found");
 
-      await api.post("/api/auth/signout", {}, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.post(
+        "/api/auth/signout",
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       dispatch({ type: "resetAllState" });
       localStorage.removeItem("kakao_access_token");
       localStorage.removeItem("jwt_access_token");
 
-    
-      navigate("/");
+      toast.success("로그아웃 되었습니다.");
+      setTimeout(() => navigate("/"), 2000);
     } catch (error) {
       console.error("로그아웃 실패:", error);
-      
+
       toast.error("로그아웃에 실패했습니다.");
     }
   };
@@ -128,13 +167,14 @@ const EditPersonal = () => {
       localStorage.removeItem("kakao_access_token");
       localStorage.removeItem("jwt_access_token");
 
-      toast.success("회원탈퇴가 완료되었습니다.");
       
-      navigate("/");
+      toast.success("회원탈퇴가 완료되었습니다."); // 성공 메시지 표시
+      // 루트 경로로 이동 
+      setTimeout(() => navigate("/"), 2000);
     } catch (error) {
       console.error("회원탈퇴 실패:", error);
 
-      toast.error("회원탈퇴에 실패했습니다. 다시 시도해주세요.");
+      toast.error("회원탈퇴에 실패했습니다. 다시 시도해주세요."); // 실패 메시지 표시
     }
   };
 
@@ -156,7 +196,7 @@ const EditPersonal = () => {
   return (
     <>
       <Header title="회원정보 수정" onBack={() => navigate(-1)} />
-      
+
       <ExceptTopContentSection>
         <div className="max-w-md mx-auto bg-white pb-6">
           {/* 닉네임 */}
@@ -166,7 +206,7 @@ const EditPersonal = () => {
             value={nickname}
             onChange={(value) => {
               setNickname(value);
-              setIsEditing(true); 
+              setIsEditing(true);
             }}
           />
 
@@ -187,7 +227,7 @@ const EditPersonal = () => {
             value={phoneNumber}
             onChange={(value) => {
               setPhoneNumber(value);
-              setIsEditing(true); 
+              setIsEditing(true);
             }}
           />
 
@@ -198,7 +238,7 @@ const EditPersonal = () => {
             value={address}
             onChange={(value) => {
               setAddress(value);
-              setIsEditing(true); 
+              setIsEditing(true);
             }}
           />
 
@@ -214,12 +254,22 @@ const EditPersonal = () => {
 
           {/* 로그아웃 | 회원탈퇴 */}
           <div className="flex text-xs justify-end items-center space-x-2">
-            <span onClick={handleLogout} className="cursor-pointer hover:text-orange transition-colors duration-[200ms]">로그아웃</span>
+            <span
+              onClick={handleLogout}
+              className="cursor-pointer hover:text-orange transition-colors duration-[200ms]"
+            >
+              로그아웃
+            </span>
             <span>|</span>
-            <span onClick={handleWithdraw} className="cursor-pointer hover:text-orange transition-colors duration-[200ms]">회원탈퇴</span>
+            <span
+              onClick={() => setIsModalOpen(true)} // 모달 열기
+              className="cursor-pointer hover:text-orange transition-colors duration-[200ms]"
+            >
+              회원탈퇴
+            </span>
           </div>
         </div>
-        
+
         {/* 저장 버튼 */}
         <footer className="fixed bottom-2 left-0 w-full p-4">
           {isEditing && hasChanges && !hasEmptyFields && (
@@ -233,10 +283,18 @@ const EditPersonal = () => {
         </footer>
 
         {/* ToastContainer */}
-        <ToastContainer position="bottom-center" autoClose={3000} />
-        
-        </ExceptTopContentSection>
-      
+        <ToastContainer position="bottom-center" autoClose={2000} />
+
+        {/* 확인 모달 */}
+        <ConfirmModal
+          isOpen={isModalOpen}
+          onConfirm={() => {
+            handleWithdraw();
+            setIsModalOpen(false);
+          }}
+          onCancel={() => setIsModalOpen(false)}
+        />
+      </ExceptTopContentSection>
     </>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api/axios";
 import Header from "../../components/Header";
@@ -6,7 +6,6 @@ import WideButton from "../../components/WideButton";
 import { addDevice } from "../../redux/slices/deviceSlice";
 import { useAppDispatch } from "../../redux/hooks";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
-import { log } from "console";
 
 const SerialNumberInput = () => {
   const navigate = useNavigate();
@@ -25,7 +24,6 @@ const SerialNumberInput = () => {
 
     try {
       const token = localStorage.getItem("jwt_access_token"); // 로컬 스토리지에서 토큰 가져오기
-      console.log(token);
 
       // axios로 백엔드에 시리얼 넘버 전송
       const response = await api.post(
@@ -38,14 +36,14 @@ const SerialNumberInput = () => {
         }
       );
 
-      console.log(response.data);
+      console.log(response.data.id);
 
       // 응답 데이터에서 필요한 정보를 추출
       const deviceData = {
         id: response.data.id,
         serialNumber: response.data.serialNumber,
-        userId: response.data.users[0]?.id || null, // 첫 번째 사용자 ID
-        catId: response.data.cat || null, // 연결된 고양이 ID (없으면 null)
+        userId: response.data.userId || null, // 첫 번째 사용자 ID
+        catId: response.data.catId || null, // 연결된 고양이 ID (없으면 null)
       };
 
       // Redux 상태에 기기 정보를 추가
@@ -89,7 +87,7 @@ const SerialNumberInput = () => {
                 error ? "border-red-500" : "border-gray-300"
               } rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
             />
-            {error && (
+            {error && ( 
               <p className="text-red-500 text-xs mt-1">
                 시리얼 넘버를 입력해주세요.
               </p>

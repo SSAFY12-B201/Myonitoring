@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import { api } from "../../api/axios"; // Axios 인스턴스 임포트
 import { RootState } from "../../redux/store";
 import TopBar from "../../components/TopBar";
 import BottomBar from "../../components/BottomBar";
@@ -44,12 +44,14 @@ const CatEyeInfo: React.FC = () => {
       if (!selectedCatId) return;
 
       try {
+        const token = localStorage.getItem("jwt_access_token");
+        if (!token) throw new Error("No access token found");
         setLoading(true);
-        const response = await axios.get(
+        const response = await api.get(
           `/api/eye/${selectedCatId}/detail?day=2025-02-08`,
           {
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbkBteWFpY3Jvc29mdC5jb20iLCJpZCI6MSwicm9sZSI6IkFETUlOIiwiYXV0aG9yaXRpZXMiOlsiUk9MRV9BRE1JTiJdLCJpYXQiOjE3MzkyNDU3NDksImV4cCI6MTc3MDc4MTc0OX0.Yr_U3xrz-WcyKL4xVzcKlWeooWS3AG0BU7-kYyyvD1vAJOzoYD3IeVOrLYeueyxGLuHNGutMP2448VOf0rj-xg`, // 실제 토큰 값 입력
+              Authorization: `Bearer ${token}`,
               Accept: "application/json", // JSON 응답 명시
             },
           }

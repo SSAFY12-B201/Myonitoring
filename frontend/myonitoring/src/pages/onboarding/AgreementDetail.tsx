@@ -1,13 +1,9 @@
-import { useLocation, useNavigate } from "react-router-dom"; // React Router 사용
+import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/Header";
 import termsDetails from "../../data/TermsDetails";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import { motion } from "framer-motion";
-import {
-  slideInVariants,
-  slideOutVariants,
-  defaultTransition,
-} from "../../animations";
+import { fadeVariants, fadeTransition } from "../../animations";
 
 const slideVariants = {
   initial: { x: "100%", opacity: 0 },
@@ -16,38 +12,31 @@ const slideVariants = {
 };
 
 const slideTransition = {
-  duration: 0.5,
+  duration: 0.3,
   ease: "easeInOut",
 };
 
 const AgreementDetail = () => {
-  const navigate = useNavigate(); // 화면 전환을 위한 useNavigate 훅
+  const navigate = useNavigate();
   const location = useLocation();
   const { type } = location.state || {}; // 전달받은 type 값
-  // 뒤로 가기 여부 확인
-  const isBackNavigation = location.state?.isBack;
 
-  // 동적으로 애니메이션 설정
-  const animationVariants = isBackNavigation
-    ? slideOutVariants
-    : slideInVariants;
-
+  // 약관 상세 데이터 가져오기
   const detail = termsDetails[type] || {
     title: "유효하지 않은 항목",
     content: [],
   };
 
   return (
-    <motion.div
-      initial="initial"
-      animate="animate"
-      exit="exit"
-      variants={animationVariants}
-      transition={defaultTransition}
-    >
+    <motion.div>
       <div>
         {/* 상단 헤더 */}
-        <Header title="약관 상세 내용" onBack={() => navigate(-1)} />
+        <Header
+          title="약관 상세 내용"
+          onBack={() =>
+            navigate("/agreements", { state: { fromDetail: true } })
+          }
+        />
 
         <ExceptTopContentSection>
           {/* 상세 내용 */}
