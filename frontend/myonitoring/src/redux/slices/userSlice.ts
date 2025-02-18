@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 interface userState {
-  nickname: string | null;
-  phoneNumber: string | null;
-  address: string | null;
+  nickname: string 
+  phoneNumber: string 
+  address: string 
 }
 
 const initialState:userState  = {

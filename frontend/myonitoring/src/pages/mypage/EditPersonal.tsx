@@ -144,8 +144,10 @@ const EditPersonal = () => {
       localStorage.removeItem("kakao_access_token");
       localStorage.removeItem("jwt_access_token");
 
-      toast.success("로그아웃 되었습니다.");
-      setTimeout(() => navigate("/"), 2000);
+      // 성공 메시지 표시 후 리다이렉트
+      toast.success("로그아웃 되었습니다.", {
+        onClose: () => navigate("/"), // 토스트가 닫힌 후 리다이렉트
+      });
     } catch (error) {
       console.error("로그아웃 실패:", error);
 
@@ -167,9 +169,8 @@ const EditPersonal = () => {
       localStorage.removeItem("kakao_access_token");
       localStorage.removeItem("jwt_access_token");
 
-      
       toast.success("회원탈퇴가 완료되었습니다."); // 성공 메시지 표시
-      // 루트 경로로 이동 
+      // 루트 경로로 이동
       setTimeout(() => navigate("/"), 2000);
     } catch (error) {
       console.error("회원탈퇴 실패:", error);
