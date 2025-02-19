@@ -61,22 +61,11 @@ public class FcmTokenService {
                 .build();
             
             fcmTokenRepository.save(fcmToken);
-
-            // Firebase 토픽 구독
-            subscribeToAlertsTopic(token);
+            log.info("FCM 토큰 저장 완료 - 사용자: {}, 토큰: {}", userId, token);
 
         } catch (Exception e) {
-            log.error("Failed to save FCM token", e);
-            throw new RuntimeException("Failed to save FCM token: " + e.getMessage(), e);
-        }
-    }
-
-    private void subscribeToAlertsTopic(String token) {
-        try {
-            FirebaseMessaging.getInstance().subscribeToTopic(Arrays.asList(token), "alerts");
-            log.info("Token subscribed to alerts topic: {}", token);
-        } catch (FirebaseMessagingException e) {
-            log.error("Failed to subscribe token to topic", e);
+            log.error("FCM 토큰 저장 실패", e);
+            throw new RuntimeException("FCM 토큰 저장 실패: " + e.getMessage(), e);
         }
     }
 
