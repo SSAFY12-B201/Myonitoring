@@ -243,11 +243,11 @@ const Reservation: React.FC = () => {
       <TopBar />
 
       <ContentSection>
-        <div className="bg-white w-60 mx-auto rounded-lg border border-gray-200 p-6 mb-10 text-center">
+        <div className="bg-white w-60 mx-auto rounded-lg border shadow-sm border-gray-200 p-6 mb-10 text-center">
           <h1 className="text-xl font-bold mb-4">총 {totalAmount}g 예약</h1>
           <button
             onClick={handleAdd}
-            className="inline-flex items-center px-5 py-2 bg-yellow text-black rounded-full"
+            className="inline-flex items-center px-5 py-2 custom-tap rounded-full"
           >
             일정 추가하기
           </button>
