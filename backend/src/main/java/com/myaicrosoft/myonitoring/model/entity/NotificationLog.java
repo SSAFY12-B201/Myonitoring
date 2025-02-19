@@ -19,7 +19,7 @@ public class NotificationLog {
     @JoinColumn(name = "cat_id")
     private Cat cat;
 
-    @Column(name = "notification_date_time", nullable = false)
+    @Column(name = "notification_date", nullable = false)  // DB 컬럼명과 정확히 일치
     private LocalDateTime notificationDateTime;
 
     // device(배급 이상), intake(섭취량 이상), eye(눈 건강 이상)
