@@ -4,7 +4,10 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import com.myaicrosoft.myonitoring.model.entity.Medical;
+import com.myaicrosoft.myonitoring.model.entity.NotificationLog;
+import com.myaicrosoft.myonitoring.model.entity.NotificationCategory;
 import com.myaicrosoft.myonitoring.repository.MedicalRepository;
+import com.myaicrosoft.myonitoring.repository.NotificationLogRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +28,8 @@ public class ScheduleNotificationService {
 
     private final MedicalRepository medicalRepository;
     private final ThreadPoolTaskScheduler taskScheduler; // ThreadPoolTaskScheduler 주입
+    private final NotificationService notificationService;
+    private final FcmTokenService fcmTokenService;
 
     /**
      * 유저 ID를 기반으로 Firebase로 알림 메시지를 전송하는 메서드
@@ -35,18 +40,31 @@ public class ScheduleNotificationService {
      */
     public void sendNotification(Long userId, String title, String body) {
         try {
-            Message message = Message.builder()
-                    .setNotification(Notification.builder()
-                            .setTitle(title)
-                            .setBody(body)
-                            .build())
-                    .setTopic("user-" + userId) // 유저 ID 기반 토픽 생성
-                    .build();
+            List<String> userTokens = fcmTokenService.getActiveTokensByUserId(userId);
+            
+            if (userTokens.isEmpty()) {
+                log.warn("사용자 {}의 활성화된 FCM 토큰이 없습니다.", userId);
+                return;
+            }
 
-            String response = FirebaseMessaging.getInstance().send(message);
-            log.info("Successfully sent notification to user {}: {}", userId, response);
+            for (String token : userTokens) {
+                Message message = Message.builder()
+                        .setNotification(Notification.builder()
+                                .setTitle(title)
+                                .setBody(body)
+                                .build())
+                        .setToken(token)
+                        .build();
+
+                try {
+                    String response = FirebaseMessaging.getInstance().send(message);
+                    log.info("알림 전송 성공 - 토큰: {}, 응답: {}", token, response);
+                } catch (Exception e) {
+                    log.error("알림 전송 실패 - 토큰: {}, 에러: {}", token, e.getMessage());
+                }
+            }
         } catch (Exception e) {
-            log.error("Error sending notification to user {}", userId, e);
+            log.error("알림 전송 중 오류 발생 - 사용자: {}, 에러: {}", userId, e.getMessage());
         }
     }
 
@@ -67,7 +85,14 @@ public class ScheduleNotificationService {
             LocalDateTime notificationTime = LocalDateTime.of(today, medical.getVisitTime()).minusHours(1); // 1시간 전 계산
 
             if (notificationTime.isAfter(LocalDateTime.now())) {
-                scheduleNotification(medical.getCat().getDevice().getUser().getId(), notificationTime, catName, medicalCategory, today, medical.getVisitTime());
+                scheduleNotification(
+                    medical.getCat().getDevice().getUser().getId(),
+                    notificationTime,
+                    catName,
+                    medicalCategory,
+                    today,
+                    medical.getVisitTime()
+                );
             } else {
                 log.warn("이미 지난 일정({})에 대한 알림은 예약하지 않습니다.", notificationTime);
             }
@@ -81,7 +106,10 @@ public class ScheduleNotificationService {
     private void scheduleNotification(Long userId, LocalDateTime notificationTime, String catName, String medicalCategory, LocalDate visitDate, LocalTime visitTime) {
         long delayMillis = Duration.between(LocalDateTime.now(), notificationTime).toMillis();
 
-        taskScheduler.schedule(() -> sendNotificationWithDetails(userId, catName, medicalCategory, visitDate, visitTime), Instant.now().plusMillis(delayMillis));
+        taskScheduler.schedule(
+            () -> sendNotificationWithDetails(userId, catName, medicalCategory, visitDate, visitTime),
+            Instant.now().plusMillis(delayMillis)
+        );
 
         log.info("유저 {}의 알림이 {}에 예약되었습니다.", userId, notificationTime);
     }
@@ -91,22 +119,10 @@ public class ScheduleNotificationService {
      */
     private void sendNotificationWithDetails(Long userId, String catName, String medicalCategory, LocalDate visitDate, LocalTime visitTime) {
         String title = "일정 알림";
-        String body = String.format("오늘(%s) %s에 %s의 %s 일정이 예정되어 있습니다.", visitDate, visitTime, catName, medicalCategory);
+        String body = String.format("오늘(%s) %s에 %s의 %s 일정이 예정되어 있습니다.", 
+                visitDate, visitTime, catName, medicalCategory);
 
-        try {
-            Message message = Message.builder()
-                    .setNotification(Notification.builder()
-                            .setTitle(title)
-                            .setBody(body)
-                            .build())
-                    .setTopic("user-" + userId)
-                    .build();
-
-            String response = FirebaseMessaging.getInstance().send(message);
-            log.info("유저 {}에게 성공적으로 알림 전송: {}", userId, body);
-        } catch (Exception e) {
-            log.error("유저 {}에게 알림 전송 실패: {}", userId, e.getMessage());
-        }
+        notificationService.sendNotification(userId, title, body);
     }
 
     /**

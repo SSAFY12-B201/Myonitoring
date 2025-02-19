@@ -69,4 +69,10 @@ public class Eye {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"))
     private User user;
+
+    @Column(name = "right_eye_image_url")
+    private String rightEyeImageUrl;
+
+    @Column(name = "left_eye_image_url")
+    private String leftEyeImageUrl;
 }

@@ -10,7 +10,7 @@ import java.util.*;
 @RequestMapping("/temp")
 public class TempController {
 
-    private final String EXTERNAL_API_URL = "http://192.168.30.34:8000";
+    private final String EXTERNAL_API_URL = "http://192.168.30.133:8000/api/schedule/update";
     private final RestTemplate restTemplate = new RestTemplate();
 
     @PostMapping("/schedule")

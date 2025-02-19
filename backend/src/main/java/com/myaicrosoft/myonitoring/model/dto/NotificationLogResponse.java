@@ -1,4 +1,4 @@
-package com.myaicrosoft.myonitoring.dto;
+package com.myaicrosoft.myonitoring.model.dto;
 
 import com.myaicrosoft.myonitoring.model.entity.NotificationCategory;
 import lombok.AllArgsConstructor;

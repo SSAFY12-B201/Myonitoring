@@ -1,7 +1,7 @@
 package com.myaicrosoft.myonitoring.service;
 
-import com.myaicrosoft.myonitoring.dto.NotificationLogResponse;
 import com.myaicrosoft.myonitoring.model.entity.NotificationLog;
+import com.myaicrosoft.myonitoring.model.dto.NotificationLogResponse;
 import com.myaicrosoft.myonitoring.repository.NotificationLogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class NotificationLogService {
                         Collectors.mapping(
                                 log -> new NotificationLogResponse(
                                         log.getId(),
-                                        log.getNotificationDateTime().toLocalTime().toString(), // 시간만 추출 (HH:mm:ss)
+                                        log.getNotificationDateTime().toLocalTime().toString(),
                                         log.getCategory(),
                                         log.getMessage()
                                 ),

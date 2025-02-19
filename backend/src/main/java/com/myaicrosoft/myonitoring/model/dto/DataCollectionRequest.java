@@ -49,6 +49,9 @@ public class DataCollectionRequest {
 
             @JsonProperty("corneal_ulcer_prob")
             private BigDecimal cornealUlcerProb;
+
+            @JsonProperty("image_url")
+            private String imageUrl;
         }
     }
 }
