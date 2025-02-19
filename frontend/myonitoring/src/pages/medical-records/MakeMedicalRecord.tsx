@@ -18,12 +18,6 @@ const MakeMedicalRecord = () => {
     기타: "OTHER",
   };
 
-  const reverseCategoryMapping: Record<string, string> = {
-    CHECKUP: "정기검진",
-    TREATMENT: "치료",
-    OTHER: "기타",
-  };
-
   // 초기 상태 (빈 값)
   const [record, setRecord] = useState({
     category: "",
