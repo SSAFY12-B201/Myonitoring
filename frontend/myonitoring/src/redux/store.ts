@@ -16,7 +16,6 @@ const store = configureStore({
     cat: catReducer,
     reservation: reservationReducer,
     medicalRecords: medicalRecordsReducer,
-    notification: notificationReducer,
     device: deviceReducer
   },
 });

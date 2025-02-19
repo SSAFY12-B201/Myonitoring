@@ -8,7 +8,7 @@ import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import infoCat from "/Cat_bg.png";
-
+import { uploadImageToFirebase } from "../../firebase/uploadImageToFirebase"; // Firebase 업로드 함수 가져오기
 
 // CatInfoState와 동일한 타입 사용
 interface CatInfoState {
@@ -28,7 +28,6 @@ const CatInfo = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-
   // Redux 상태에서 device 배열 가져오기
   const deviceId = useAppSelector((state) => {
     const devices = state.device; // Redux의 device 배열
@@ -37,7 +36,6 @@ const CatInfo = () => {
 
   console.log("선택된 디바이스 ID:", deviceId);
 
-  
   // 로컬 상태 관리
   const [formData, setFormData] = useState<CatInfoState>({
     image: null,
@@ -68,6 +66,18 @@ const CatInfo = () => {
   ) => {
     setFormData({ ...formData, [field]: value });
     setErrors({ ...errors, [field]: false });
+  };
+
+  // 이미지 업로드 핸들러
+  const handleImageUpload = async (file: File) => {
+    try {
+      const downloadURL = await uploadImageToFirebase(file); // Firebase에 업로드
+      handleInputChange("image", downloadURL); // 다운로드 URL을 formData.image에 저장
+      alert("이미지 업로드 성공!");
+    } catch (error) {
+      console.error("이미지 업로드 실패:", error);
+      alert("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   // 다음 버튼 클릭 핸들러
@@ -119,7 +129,7 @@ const CatInfo = () => {
         age: formData.age,
         weight: formData.weight || null, // 선택 항목은 null 처리
         characteristics: formData.characteristics || null, // 선택 항목은 null 처리
-        profileImageUrl: formData.image,
+        profileImageUrl: formData.image, // 업로드된 이미지 URL 추가
       };
 
       // 요청 데이터를 콘솔에 출력
@@ -186,13 +196,7 @@ const CatInfo = () => {
                 accept="image/*"
                 onChange={(event) => {
                   const file = event.target.files?.[0];
-                  if (!file) return;
-
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    handleInputChange("image", reader.result as string);
-                  };
-                  reader.readAsDataURL(file);
+                  if (file) handleImageUpload(file); // 파일 업로드 처리
                 }}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
