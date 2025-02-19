@@ -59,18 +59,18 @@ public class NotificationService {
             // 알림 로그는 항상 저장
             NotificationLog notificationLog = NotificationLog.builder()
                     .cat(cat)
-                    .notificationDateTime(LocalDateTime.now())
+                    .notificationDateTime(LocalDateTime.now())  // 이 시간이 notification_date 컬럼에 저장됨
                     .category(category)
                     .message(body)
                     .build();
             notificationLogRepository.save(notificationLog);
             
-            log.info("알림 로그 저장 완료 - 고양이: {}, 카테고리: {}", cat.getName(), category.getDescription());
+            log.info("알림 로그 저장 완료 - 고양이: {}, 카테고리: {}", cat.getName(), category);
 
         } catch (Exception e) {
             log.error("알림 처리 중 오류 발생 - 고양이: {}, 카테고리: {}, 에러: {}", 
-                    cat.getName(), category.getDescription(), e.getMessage());
-            throw e; // 상위 레벨에서 처리할 수 있도록 예외 전파
+                    cat.getName(), category, e.getMessage());
+            throw e;
         }
     }
 
