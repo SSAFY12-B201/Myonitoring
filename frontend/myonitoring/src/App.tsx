@@ -3,10 +3,10 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence } from "framer-motion";
 import { useAppSelector, useAppDispatch } from "./redux/hooks";
 import { login } from "./redux/slices/authSlice";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { setupForegroundMessageListener } from './firebase/config'; // 실제 경로로 수정해주세요
-import { MessagePayload } from 'firebase/messaging';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { setupForegroundMessageListener } from "./firebase/config"; // 실제 경로로 수정해주세요
+import { MessagePayload } from "firebase/messaging";
 
 // 페이지 컴포넌트 임포트
 import Splash from "./pages/onboarding/Splash";
@@ -36,7 +36,9 @@ import DeviceDetailedSettings from "./pages/mypage/DeviceDetailedSettings";
 import Notification from "./pages/Notification";
 import CatEyeInfo from "./pages/report/CatEyeInfo";
 import CatInfoEdit from "./pages/CatInfoEdit";
-import NotificationComponent from './components/FirebaseComponents/FBNotification.tsx';
+import Cam from "./pages/Cam";
+import NotificationComponent from "./components/FirebaseComponents/FBNotification.tsx";
+
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -70,10 +72,13 @@ const App: React.FC = () => {
         await setupForegroundMessageListener((message: MessagePayload) => {
           setLastMessage(message);
           if (message.notification) {
-            toast.info(`${message.notification.title}: ${message.notification.body}`, {
-              position: "bottom-center",
-              autoClose: 3000
-            });
+            toast.info(
+              `${message.notification.title}: ${message.notification.body}`,
+              {
+                position: "bottom-center",
+                autoClose: 3000,
+              }
+            );
           }
         });
       }
@@ -88,7 +93,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (lastMessage) {
-      console.log('New message received:', lastMessage);
+      console.log("New message received:", lastMessage);
       // 여기에 추가적인 메시지 처리 로직 구현 가능
     }
   }, [lastMessage]);
@@ -100,7 +105,7 @@ const App: React.FC = () => {
   return (
     <>
       <ToastContainer position="bottom-center" autoClose={2000} />{" "}
-      {/* ToastContainer 추가 */}
+      <NotificationComponent />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           {/* 공통 라우트 */}
@@ -118,7 +123,6 @@ const App: React.FC = () => {
           ) : (
             <>
               {/* 메인 페이지 */}
-              <NotificationComponent />
               <Route path="/user-info" element={<UserInfo />} />
               <Route path="/edit-personal" element={<EditPersonal />} />
               <Route path="/device-guide" element={<DeviceGuide />} />
@@ -158,6 +162,7 @@ const App: React.FC = () => {
               <Route path="/notification" element={<Notification />} />
               <Route path="/cateyeinfo" element={<CatEyeInfo />} />
               <Route path="/catinfoedit/:id" element={<CatInfoEdit />} />
+              <Route path="/cam" element={<Cam />} />
             </>
           )}
         </Routes>

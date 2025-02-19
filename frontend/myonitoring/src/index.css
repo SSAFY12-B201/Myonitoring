@@ -48,7 +48,7 @@ body {
 }
 
 .custom-button {
-  background: linear-gradient(90deg, #ffbd8a, #FFE76B); /* 그라데이션 배경 */
+  background: linear-gradient(100deg, #ffbd8a, #FFE76B); /* 그라데이션 배경 */
   color: white; /* 텍스트 색상 */
   font-size: 20px; /* 텍스트 크기 */
   font-weight: bold; /* 텍스트 굵기 */
@@ -63,14 +63,25 @@ body {
 }
 
 .custom-tap {
-  background: linear-gradient(90deg, #feb47b, #FFE76B); /* 그라데이션 배경 */
+  background: linear-gradient(12deg, #f0924a, #FFE76B); /* 그라데이션 배경 */
   color: white; /* 텍스트 색상 */
   font-weight: bold; /* 텍스트 굵기 */
   border: none; /* 테두리 제거 */
-  display: flex; /* 가운데 정렬을 위한 Flexbox */
-  align-items: center; /* 수직 가운데 정렬 */
-  justify-content: center; /* 수평 가운데 정렬 */
-  cursor: pointer; /* 마우스 커서 포인터로 변경 */
+}
+
+.custom-w {
+  background: linear-gradient(12deg, #f04a4a, #FFE76B); /* 그라데이션 배경 */
+  color: white; /* 텍스트 색상 */
+  font-weight: bold; /* 텍스트 굵기 */
+  border: none; /* 테두리 제거 */
+}
+
+.custom-none {
+  background: linear-gradient(10deg, #e1843c, #FFE76B); /* 그라데이션 정의 */
+  -webkit-background-clip: text; /* 텍스트에만 배경 클립 */
+  -webkit-text-fill-color: transparent; /* 텍스트를 투명하게 설정 */
+  font-weight: bold; /* 텍스트 굵기 */
+  border: none; /* 테두리 제거 */
 }
 
 
