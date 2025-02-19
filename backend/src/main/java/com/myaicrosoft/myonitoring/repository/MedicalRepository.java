@@ -2,6 +2,8 @@ package com.myaicrosoft.myonitoring.repository;
 
 import com.myaicrosoft.myonitoring.model.entity.Medical;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -40,4 +42,26 @@ public interface MedicalRepository extends JpaRepository<Medical, Long> {
      * @return 카테고리 목록을 포함한 데이터 (flag: 0 또는 1)
      */
     List<Medical> findByCatIdAndVisitDateOrderByVisitTimeDesc(Long catId, LocalDate day);
+
+    /**
+     * 오늘 날짜의 모든 Medical 데이터를 연관된 Cat, Device, User와 함께 조회합니다.
+     *
+     * @param visitDate 방문 날짜
+     * @return Medical 데이터 리스트
+     */
+    @Query("SELECT m FROM Medical m " +
+            "JOIN FETCH m.cat c " +
+            "JOIN FETCH c.device d " +
+            "JOIN FETCH d.user u " +
+            "WHERE m.visitDate = :visitDate")
+    List<Medical> findByVisitDateWithDetails(@Param("visitDate") LocalDate visitDate);
+
+    /**
+     * 오늘 날짜의 모든 Medical 데이터를 조회합니다.
+     *
+     * @param visitDate 방문 날짜
+     * @return Medical 데이터 리스트
+     */
+    List<Medical> findByVisitDate(LocalDate visitDate);
+
 }
