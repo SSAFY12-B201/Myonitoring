@@ -86,4 +86,11 @@ public class FcmTokenService {
             .map(FcmToken::getToken)
             .collect(Collectors.toList());
     }
+
+    public List<String> getActiveTokensByUserId(Long userId) {
+        return fcmTokenRepository.findByUserIdAndIsActiveTrue(userId)
+                .stream()
+                .map(FcmToken::getToken)
+                .collect(Collectors.toList());
+    }
 } 
