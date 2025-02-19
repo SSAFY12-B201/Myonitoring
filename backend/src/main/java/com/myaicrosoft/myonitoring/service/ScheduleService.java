@@ -116,4 +116,13 @@ public class ScheduleService {
         }
         scheduleRepository.deleteById(scheduleId);
     }
+
+    /**
+     * 스케줄 ID로 해당 고양이 ID를 조회하는 메서드
+     */
+    public Long getCatIdByScheduleId(Long scheduleId) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 스케줄을 찾을 수 없습니다. ID: " + scheduleId));
+        return schedule.getDevice().getCat().getId();
+    }
 }
