@@ -6,6 +6,11 @@ import com.myaicrosoft.myonitoring.model.dto.ScheduleRequestDto;
 import com.myaicrosoft.myonitoring.service.ScheduleService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.client.RestTemplate;
+import java.util.*;
+import org.springframework.http.HttpEntity;
 
 import java.util.List;
 
@@ -18,6 +23,8 @@ import java.util.List;
 public class ScheduleController {
 
     private final ScheduleService scheduleService;
+    private final RestTemplate restTemplate;
+    private final String EXTERNAL_API_URL = "http://192.168.30.34:8000";
 
     /**
      * 예약 스케줄 생성 API
@@ -30,7 +37,15 @@ public class ScheduleController {
     public ResponseEntity<Long> createSchedule(
             @PathVariable("catId") Long catId,
             @RequestBody ScheduleRequestDto request) {
+        // 스케줄 생성
         Long scheduleId = scheduleService.createSchedule(catId, request);
+        
+        // 외부 API로 전송할 전체 스케줄 데이터 조회
+        List<ScheduleResponseDto> allSchedules = scheduleService.getSchedules(catId);
+        
+        // 외부 API 호출
+        sendSchedulesToDevice(allSchedules);
+        
         return ResponseEntity.ok(scheduleId);
     }
 
@@ -58,7 +73,16 @@ public class ScheduleController {
     public ResponseEntity<Void> updateSchedule(
             @PathVariable("scheduleId") Long scheduleId,
             @RequestBody ScheduleRequestDto request) {
+        // 스케줄 업데이트
         scheduleService.updateSchedule(scheduleId, request);
+        
+        // 해당 스케줄의 catId 조회 및 전체 스케줄 데이터 조회
+        Long catId = scheduleService.getCatIdByScheduleId(scheduleId);
+        List<ScheduleResponseDto> allSchedules = scheduleService.getSchedules(catId);
+        
+        // 외부 API 호출
+        sendSchedulesToDevice(allSchedules);
+        
         return ResponseEntity.noContent().build();
     }
 
@@ -70,7 +94,16 @@ public class ScheduleController {
      */
     @PutMapping("/detail/{scheduleId}/active")
     public ResponseEntity<Void> toggleScheduleActive(@PathVariable("scheduleId") Long scheduleId) {
+        // 스케줄 활성화 상태 토글
         scheduleService.toggleScheduleActive(scheduleId);
+        
+        // 해당 스케줄의 catId 조회 및 전체 스케줄 데이터 조회
+        Long catId = scheduleService.getCatIdByScheduleId(scheduleId);
+        List<ScheduleResponseDto> allSchedules = scheduleService.getSchedules(catId);
+        
+        // 외부 API 호출
+        sendSchedulesToDevice(allSchedules);
+        
         return ResponseEntity.noContent().build();
     }
 
@@ -84,5 +117,38 @@ public class ScheduleController {
     public ResponseEntity<Void> deleteSchedule(@PathVariable("scheduleId") Long scheduleId) {
         scheduleService.deleteSchedule(scheduleId);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * 외부 디바이스로 스케줄 데이터를 전송하는 private 메서드
+     */
+    private void sendSchedulesToDevice(List<ScheduleResponseDto> schedules) {
+        List<Map<String, Object>> scheduleData = new ArrayList<>();
+        
+        // DTO를 외부 API 형식으로 변환
+        for (ScheduleResponseDto schedule : schedules) {
+            if (schedule.getIsActive()) {  // 활성화된 스케줄만 전송
+                Map<String, Object> scheduleMap = new HashMap<>();
+                scheduleMap.put("time", schedule.getTime().toString());
+                scheduleMap.put("amount", schedule.getAmount());
+                scheduleData.add(scheduleMap);
+            }
+        }
+
+        // HTTP 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // HTTP 요청 객체 생성
+        HttpEntity<List<Map<String, Object>>> requestEntity = 
+            new HttpEntity<>(scheduleData, headers);
+
+        try {
+            // 외부 API로 POST 요청 전송
+            restTemplate.postForEntity(EXTERNAL_API_URL, requestEntity, Void.class);
+        } catch (Exception e) {
+            // 외부 API 호출 실패 시 로그 기록 (실제 구현 시 로깅 프레임워크 사용 권장)
+            System.err.println("Failed to send schedules to device: " + e.getMessage());
+        }
     }
 }
