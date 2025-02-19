@@ -233,4 +233,34 @@ public class DataCollectionService {
                     cat.getName(), category, e.getMessage());
         }
     }
+
+    private Eye buildEyeEntity(Cat cat, DataCollectionRequest request) {
+        Eye.EyeBuilder eyeBuilder = Eye.builder()
+                .cat(cat)
+                .capturedDateTime(request.getDatetime());
+
+        for (DataCollectionRequest.Payload.EyeInfo eyeInfo : request.getData().getEyes()) {
+            if ("right".equalsIgnoreCase(eyeInfo.getEyeSide())) {
+                eyeBuilder
+                    .rightBlepharitisProb(eyeInfo.getBlepharitisProb())
+                    .rightConjunctivitisProb(eyeInfo.getConjunctivitisProb())
+                    .rightCornealSequestrumProb(eyeInfo.getCornealSequestrumProb())
+                    .rightNonUlcerativeKeratitisProb(eyeInfo.getNonUlcerativeKeratitisProb())
+                    .rightCornealUlcerProb(eyeInfo.getCornealUlcerProb())
+                    .rightEyeImageUrl(eyeInfo.getImageUrl());  // 이미지 URL 추가
+            } else if ("left".equalsIgnoreCase(eyeInfo.getEyeSide())) {
+                eyeBuilder
+                    .leftBlepharitisProb(eyeInfo.getBlepharitisProb())
+                    .leftConjunctivitisProb(eyeInfo.getConjunctivitisProb())
+                    .leftCornealSequestrumProb(eyeInfo.getCornealSequestrumProb())
+                    .leftNonUlcerativeKeratitisProb(eyeInfo.getNonUlcerativeKeratitisProb())
+                    .leftCornealUlcerProb(eyeInfo.getCornealUlcerProb())
+                    .leftEyeImageUrl(eyeInfo.getImageUrl());  // 이미지 URL 추가
+            }
+        }
+
+        Eye eye = eyeBuilder.build();
+        eye.setIsEyeDiseased(calculateIsEyeDiseased(eye));
+        return eye;
+    }
 }
