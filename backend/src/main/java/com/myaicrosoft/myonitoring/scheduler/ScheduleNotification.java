@@ -1,27 +1,19 @@
 package com.myaicrosoft.myonitoring.scheduler;
 
 import com.myaicrosoft.myonitoring.model.entity.Cat;
-import com.myaicrosoft.myonitoring.model.entity.Statistics;
-import com.myaicrosoft.myonitoring.model.entity.NotificationLog;
+import com.myaicrosoft.myonitoring.model.entity.IntakeStatistics;
 import com.myaicrosoft.myonitoring.model.entity.NotificationCategory;
 import com.myaicrosoft.myonitoring.repository.StatisticsRepository;
 import com.myaicrosoft.myonitoring.repository.NotificationLogRepository;
 import com.myaicrosoft.myonitoring.service.ScheduleNotificationService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
-import com.myaicrosoft.myonitoring.model.entity.IntakeStatistics;
 import com.myaicrosoft.myonitoring.repository.IntakeStatisticsRepository;
 import com.myaicrosoft.myonitoring.service.FcmTokenService;
 import com.myaicrosoft.myonitoring.service.NotificationService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -33,7 +25,6 @@ import java.util.List;
 @Slf4j
 public class ScheduleNotification {
 
-    private final StatisticsRepository statisticsRepository; // Statistics 데이터를 조회하는 Repository
     private final NotificationLogRepository notificationLogRepository; // 알림 로그 저장 Repository
     private final ScheduleNotificationService scheduleNotificationService; // Firebase 알림 전송 서비스
     private final IntakeStatisticsRepository intakeStatisticsRepository;

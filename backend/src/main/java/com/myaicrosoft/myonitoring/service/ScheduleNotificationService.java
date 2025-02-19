@@ -29,6 +29,7 @@ public class ScheduleNotificationService {
     private final MedicalRepository medicalRepository;
     private final ThreadPoolTaskScheduler taskScheduler; // ThreadPoolTaskScheduler 주입
     private final NotificationService notificationService;
+    private final FcmTokenService fcmTokenService;
 
     /**
      * 유저 ID를 기반으로 Firebase로 알림 메시지를 전송하는 메서드

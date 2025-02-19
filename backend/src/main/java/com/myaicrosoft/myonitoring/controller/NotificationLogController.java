@@ -1,6 +1,6 @@
 package com.myaicrosoft.myonitoring.controller;
 
-import com.myaicrosoft.myonitoring.dto.NotificationLogResponse;
+import com.myaicrosoft.myonitoring.model.dto.NotificationLogResponse;
 import com.myaicrosoft.myonitoring.service.NotificationLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -37,6 +37,7 @@ public class DataCollectionService {
     private final EyeRepository eyeRepository;
     private final FcmTokenService fcmTokenService;
     private final NotificationLogRepository notificationLogRepository;
+    private final NotificationService notificationService;
 
     /**
      * 수집된 데이터를 저장하는 메서드
@@ -157,25 +158,42 @@ public class DataCollectionService {
         double differencePercentage = (difference / configuredAmount) * 100;
 
         if (differencePercentage >= 50) {
-            String title = "사료 배급량 이상 감지";
-            String body = String.format("%s의 사료 배급량이 설정값과 %.1f%% 차이가 발생했습니다.", 
-                    cat.getName(), differencePercentage);
-            
-            // 알림 전송 및 로그 저장
-            sendNotificationWithLog(cat, title, body, NotificationCategory.DEVICE);
+            try {
+                Long userId = cat.getDevice().getUser().getId();
+                List<String> userTokens = fcmTokenService.getActiveTokensByUserId(userId);
+                
+                if (userTokens.isEmpty()) {
+                    // FCM 토큰이 없는 경우 로그만 남기고 계속 진행
+                    log.warn("사용자 {}의 활성화된 FCM 토큰이 없습니다. 알림 로그는 저장됩니다.", userId);
+                }
+
+                String title = "사료 배급량 이상 감지";
+                String body = String.format("%s의 사료 배급량이 설정값과 %.1f%% 차이가 발생했습니다.", 
+                        cat.getName(), differencePercentage);
+                
+                // 알림 전송 및 로그 저장 (토큰이 없어도 로그는 저장)
+                notificationService.sendNotificationWithLog(cat, title, body, NotificationCategory.DEVICE);
+                
+            } catch (Exception e) {
+                log.error("알림 처리 중 오류 발생 - 고양이: {}, 에러: {}", cat.getName(), e.getMessage());
+            }
         }
     }
 
     private void checkAndNotifyEyeDisease(Cat cat, List<DataCollectionRequest.Payload.EyeInfo> eyes) {
         for (DataCollectionRequest.Payload.EyeInfo eyeInfo : eyes) {
             if (isEyeDiseaseDetected(eyeInfo)) {
-                String title = "눈 건강 이상 감지";
-                String body = String.format("%s의 눈에서 이상 징후가 감지되었습니다. 상세 내용을 확인해주세요.", 
-                        cat.getName());
-                
-                // 알림 전송 및 로그 저장
-                sendNotificationWithLog(cat, title, body, NotificationCategory.EYE);
-                break; // 한 번만 알림
+                try {
+                    String title = "눈 건강 이상 감지";
+                    String body = String.format("%s의 눈에서 이상 징후가 감지되었습니다. 상세 내용을 확인해주세요.", 
+                            cat.getName());
+                    
+                    // 알림 전송 및 로그 저장
+                    notificationService.sendNotificationWithLog(cat, title, body, NotificationCategory.EYE);
+                    break; // 한 번만 알림
+                } catch (Exception e) {
+                    log.error("눈 건강 알림 처리 중 오류 발생 - 고양이: {}, 에러: {}", cat.getName(), e.getMessage());
+                }
             }
         }
     }
@@ -186,52 +204,6 @@ public class DataCollectionService {
                 eyeInfo.getCornealSequestrumProb().compareTo(BigDecimal.valueOf(0.5)) >= 0 ||
                 eyeInfo.getNonUlcerativeKeratitisProb().compareTo(BigDecimal.valueOf(0.5)) >= 0 ||
                 eyeInfo.getCornealUlcerProb().compareTo(BigDecimal.valueOf(0.5)) >= 0;
-    }
-
-    private void sendNotificationWithLog(Cat cat, String title, String body, NotificationCategory category) {
-        try {
-            Long userId = cat.getDevice().getUser().getId();
-            List<String> userTokens = fcmTokenService.getActiveTokensByUserId(userId);
-            
-            if (userTokens.isEmpty()) {
-                log.warn("사용자 {}의 활성화된 FCM 토큰이 없습니다.", userId);
-                return;
-            }
-
-            // FCM 알림 전송
-            for (String token : userTokens) {
-                Message message = Message.builder()
-                        .setNotification(Notification.builder()
-                                .setTitle(title)
-                                .setBody(body)
-                                .build())
-                        .setToken(token)
-                        .build();
-
-                try {
-                    String response = FirebaseMessaging.getInstance().send(message);
-                    log.info("알림 전송 성공 - 토큰: {}, 응답: {}", token, response);
-                } catch (Exception e) {
-                    log.error("알림 전송 실패 - 토큰: {}, 에러: {}", token, e.getMessage());
-                    continue;
-                }
-            }
-
-            // 알림 로그 저장
-            NotificationLog notificationLog = NotificationLog.builder()
-                    .cat(cat)
-                    .notificationDateTime(LocalDateTime.now())
-                    .category(category)
-                    .message(body)
-                    .build();
-            notificationLogRepository.save(notificationLog);
-            
-            log.info("알림 로그 저장 완료 - 고양이: {}, 카테고리: {}", cat.getName(), category);
-
-        } catch (Exception e) {
-            log.error("알림 처리 중 오류 발생 - 고양이: {}, 카테고리: {}, 에러: {}", 
-                    cat.getName(), category, e.getMessage());
-        }
     }
 
     private Eye buildEyeEntity(Cat cat, DataCollectionRequest request) {
