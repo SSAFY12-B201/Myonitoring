@@ -94,7 +94,16 @@ public class ScheduleController {
      */
     @PutMapping("/detail/{scheduleId}/active")
     public ResponseEntity<Void> toggleScheduleActive(@PathVariable("scheduleId") Long scheduleId) {
+        // 스케줄 활성화 상태 토글
         scheduleService.toggleScheduleActive(scheduleId);
+        
+        // 해당 스케줄의 catId 조회 및 전체 스케줄 데이터 조회
+        Long catId = scheduleService.getCatIdByScheduleId(scheduleId);
+        List<ScheduleResponseDto> allSchedules = scheduleService.getSchedules(catId);
+        
+        // 외부 API 호출
+        sendSchedulesToDevice(allSchedules);
+        
         return ResponseEntity.noContent().build();
     }
 
