@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAppSelector } from "../redux/hooks"; // 커스텀 훅 가져오기
 import { api } from "../api/axios"; // Axios 인스턴스 임포트
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify"; // Toastify 추가
 import Input from "../components/Input";
 import Header from "../components/Header";
 import WideButton from "../components/WideButton";
@@ -101,12 +102,14 @@ const CatInfoEdit: React.FC = () => {
           },
         }
       );
-      // alert("저장되었습니다.");
+      // 성공 메시지 표시 후 리다이렉트
+      toast.success("성공적으로 수정 되었습니다.", {
+        onClose: () => navigate("/"), // 토스트가 닫힌 후 리다이렉트
+      });
     } catch (error) {
       console.error("Failed to save cat details", error);
-      alert("저장 중 오류가 발생했습니다.");
+      toast.error("수정에 실패했습니다.");
     }
-    navigate("/home");
   };
 
   const handleDelete = async () => {
@@ -116,12 +119,13 @@ const CatInfoEdit: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      // alert("삭제되었습니다.");
+      toast.success("고양이 정보가 삭제되었습니다.", {
+        onClose: () => navigate("/"), // 토스트가 닫힌 후 리다이렉트
+      });
     } catch (error) {
       console.error("Failed to save cat details", error);
-      alert("저장 중 오류가 발생했습니다.");
+      toast.error("삭제 중 오류가 발생했습니다. 재시도 해주세요.");
     }
-    navigate("/home");
   };
 
   return (
@@ -315,6 +319,10 @@ const CatInfoEdit: React.FC = () => {
           textColor="text-white"
         />
       </footer>
+
+      {/* ToastContainer */}
+      <ToastContainer position="bottom-center" autoClose={2000} />
+
     </div>
   );
 };

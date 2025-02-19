@@ -90,7 +90,7 @@ const Home: React.FC = () => {
         {
           title: "총 섭취량",
           badge: `${data.total_intake}g`,
-          badgeColor: "text-orange text-xl font-extrabold",
+          badgeColor: "custom-none text-xl",
           description: "",
           image: "/food1.png",
           onClick: () => navigate("/graph"),
@@ -121,7 +121,7 @@ const Home: React.FC = () => {
               : data.intake_alert.flag === -1
               ? "감소"
               : "유지",
-          badgeColor: "text-orange text-xl font-extrabold",
+          badgeColor: "custom-none text-xl",
           description: "",
           onClick: () => navigate("/statistics"),
         },
@@ -130,8 +130,8 @@ const Home: React.FC = () => {
           badge: data.eye_alert.flag === 1 ? "의심 증상 발견" : "이상 없음",
           badgeColor:
             data.eye_alert.flag === 1
-              ? "bg-orange text-white"
-              : "bg-white text-orange border-2 border-orange",
+              ? "custom-w"
+              : "custom-tap",
           image: "/magnifier.png",
           description: "",
           onClick: () => navigate("/cateyeinfo"),
@@ -143,13 +143,13 @@ const Home: React.FC = () => {
               ? [
                   {
                     text: `${data.medical.data.length}개의 일정`,
-                    color: "bg-orange text-white",
+                    color: "custom-tap",
                   },
                 ]
               : [
                   {
-                    text: "기록 추가",
-                    color: "bg-white text-orange border-2 border-orange",
+                    text: "추가 하기",
+                    color: "custom-w",
                   },
                 ],
           image: "/health1.png",

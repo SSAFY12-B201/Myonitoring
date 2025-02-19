@@ -62,7 +62,7 @@ const Input: React.FC<InputProps> = ({
           value={value}
           onChange={handleInputChange}
           placeholder={placeholder}
-          className={`w-full px-4 py-2 border ${
+          className={`w-full px-2 py-2 border ${
             error ? "border-red-500" : "border-gray-300"
           } rounded-lg focus:outline-none focus:ring-2 ${
             error ? "focus:ring-red-500" : "focus:ring-gray-500"
@@ -73,7 +73,7 @@ const Input: React.FC<InputProps> = ({
         <select
           value={value}
           onChange={handleInputChange}
-          className={`w-full px-4 py-2 border ${
+          className={`w-full px-2 py-2 border ${
             error ? "border-red-500" : "border-gray-300"
           } rounded-lg focus:outline-none focus:ring-2 ${
             error ? "focus:ring-red-500" : "focus:ring-gray-500"
@@ -94,7 +94,7 @@ const Input: React.FC<InputProps> = ({
           value={value}
           onChange={handleInputChange}
           placeholder={placeholder}
-          className={`w-full px-4 py-2 border ${
+          className={`w-full px-2 py-2 border ${
             error ? "border-red-500" : "border-gray-300"
           } rounded-lg focus:outline-none focus:ring-2 ${
             error ? "focus:ring-red-500" : "focus:ring-gray-500"

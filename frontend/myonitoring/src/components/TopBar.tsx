@@ -5,7 +5,7 @@ import { api } from "../api/axios"; // Axios 인스턴스 사용
 import { Notifications, ChatBubbleOutline } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
-import { FaChevronRight } from "react-icons/fa"; // react-icons에서 아이콘 가져오기
+import { FaChevronRight, FaChevronDown } from "react-icons/fa"; // react-icons에서 아이콘 가져오기
 
 interface Cat {
   id: number;
@@ -95,7 +95,7 @@ const TopBar: React.FC = () => {
                 className="ml-2 text-gray-500 cursor-pointer text-xl"
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
-                &#9662; {/* ▼ 아이콘 */}
+                <FaChevronDown className="mt-1 h-4"/>
               </span>
             </>
           )}
@@ -104,12 +104,12 @@ const TopBar: React.FC = () => {
         {/* 오른쪽: 알림 및 챗봇 아이콘 */}
         <div className="flex items-center space-x-4">
           <Notifications
-            className="text-gray-700"
+            className="text-gray-600"
             style={{ fontSize: 24 }}
             onClick={() => navigate("/notification")} // 알림 페이지로 이동
           />
           <ChatBubbleOutline
-            className="text-gray-700"
+            className="text-gray-600"
             style={{ fontSize: 24 }}
           />
         </div>
