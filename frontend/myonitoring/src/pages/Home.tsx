@@ -11,6 +11,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
 
   const [data, setData] = useState<any>({
+    cat_image: "", 
     total_intake: 0,
     intake_alert: { flag: 0 },
     eye_alert: { flag: 0 },
@@ -64,6 +65,7 @@ const Home: React.FC = () => {
         const fetchedData = response.data || {};
 
         setData({
+          cat_image: fetchedData.cat_image || "", 
           total_intake: fetchedData.total_intake || 0,
           intake_alert: fetchedData.intake_alert || { flag: 0 },
           eye_alert: fetchedData.eye_alert || { flag: 0 },
@@ -96,12 +98,12 @@ const Home: React.FC = () => {
           onClick: () => navigate("/graph"),
         },
         {
-          title: "섭취 통계 변화",
+          title: "식사량 변화",
           chartData:
             data.intake_alert.flag === 1
               ? [
                   { name: "Day 1", value: 20 },
-                  { name: "Day 2", value: 40 },
+                  { name: "Day 2", value: 50 },
                   { name: "Day 3", value: 100 },
                 ]
               : data.intake_alert.flag === -1
@@ -111,7 +113,7 @@ const Home: React.FC = () => {
                   { name: "Day 3", value: 20 },
                 ]
               : [
-                  { name: "Day 1", value: 15 },
+                  { name: "Day 1", value: 20 },
                   { name: "Day 2", value: 20 },
                   { name: "Day 3", value: 20 },
                 ],
@@ -120,7 +122,7 @@ const Home: React.FC = () => {
               ? "증가"
               : data.intake_alert.flag === -1
               ? "감소"
-              : "유지",
+              : "이상 없음",
           badgeColor: "custom-none text-xl",
           description: "",
           onClick: () => navigate("/statistics"),
@@ -170,9 +172,9 @@ const Home: React.FC = () => {
             <div className="relative">
               <img
                 src={
-                  loading || error
+                  loading || error || !data.cat_image 
                     ? "/Cat_bg.png"
-                    : data.cat_image || "/Cat_bg.png"
+                    : data.cat_image
                 }
                 alt="고양이"
                 className="w-32 h-32 md:w-24 md:h-24 rounded-full "

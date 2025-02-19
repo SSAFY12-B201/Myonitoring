@@ -34,10 +34,15 @@ interface ImageData {
 
 interface CatEyeData {
   date_time?: string;
-  images?: string;
+  images?: {
+    left: string;
+    right: string;
+  };
   data?: DiseaseData[];
   message?: string; // 증상이 없을 때 메시지
 }
+
+const today = new Date().toISOString().split("T")[0]; // 오늘 날짜 (YYYY-MM-DD)
 
 const CatEyeInfo: React.FC = () => {
   const [data, setData] = useState<CatEyeData | null>(null); // 데이터를 저장할 상태
@@ -57,7 +62,7 @@ const CatEyeInfo: React.FC = () => {
         if (!token) throw new Error("No access token found");
         setLoading(true);
         const response = await api.get(
-          `/api/eye/${selectedCatId}/detail?day=2025-02-08`,
+          `/api/eye/${selectedCatId}/detail?day=${today}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -102,6 +107,30 @@ const CatEyeInfo: React.FC = () => {
 
                   <hr className="mt-6 mb-6 border-gray-300" />
 
+                  {/* 이미지 데이터 렌더링 */}
+                  {data.images && (
+                    <div className="flex justify-center items-center space-x-4 mt-6">
+                      {/* 왼쪽 눈 이미지 */}
+                      {data.images.left && (
+                        <img
+                          src={data.images.left}
+                          alt="왼쪽 눈 이미지"
+                          className="w-36 h-28 rounded-lg shadow-sm border-4 border-gray-500"
+                        />
+                      )}
+                      {/* 오른쪽 눈 이미지 */}
+                      {data.images.right && (
+                        <img
+                          src={data.images.right}
+                          alt="오른쪽 눈 이미지"
+                          className="w-36 h-28 rounded-lg shadow-sm border-4 border-gray-500"
+                        />
+                      )}
+                    </div>
+                  )}
+
+                  <hr className="mt-6 mb-6 border-gray-300" />
+
                   {/* 안구 건강 상태 메시지 */}
                   <div className="p-6 bg-green-50 rounded-lg border border-green-300 shadow-sm">
                     <h1 className="text-lg font-bold text-green-700 mb-2">
@@ -114,11 +143,19 @@ const CatEyeInfo: React.FC = () => {
                 <>
                   {/* 증상이 있을 경우 */}
                   <div>
-                    {/* 제목 */}
-                    <h1 className="text-lg font-bold text-black">
-                      묘니터링 AI 분석 결과{" "}
-                      <span className="text-red-500">의심 증상 발견</span>
-                    </h1>
+                  <div className="flex items-center">
+                      {/* 아이콘 */}
+                      <img
+                        src="/bell.png"
+                        alt="알림 아이콘"
+                        className="w-6 h-6 mr-2" // 아이콘 크기와 간격 조정
+                      />
+                      {/* 제목 */}
+                      <h1 className="text-xl font-bold text-black">
+                        AI 분석 결과{" "}
+                        <span className="text-red-500">의심 증상 발견</span>
+                      </h1>
+                    </div>
                     {/* 부제목 */}
                     <p className="text-sm text-gray-800 mt-2">
                       아래와 같은 증상이 있을 수 있습니다.
@@ -131,6 +168,30 @@ const CatEyeInfo: React.FC = () => {
                         : "날짜 정보 없음"}
                     </p>
                   </div>
+
+                  <hr className="mt-6 mb-6 border-gray-300" />
+
+                  {/* 이미지 데이터 렌더링 */}
+                  {data.images && (
+                    <div className="flex justify-center items-center space-x-4 mt-6">
+                      {/* 왼쪽 눈 이미지 */}
+                      {data.images.left && (
+                        <img
+                          src={data.images.left}
+                          alt="왼쪽 눈 이미지"
+                          className="w-36 h-28 rounded-3xl shadow-sm border-4 border-orange"
+                        />
+                      )}
+                      {/* 오른쪽 눈 이미지 */}
+                      {data.images.right && (
+                        <img
+                          src={data.images.right}
+                          alt="오른쪽 눈 이미지"
+                          className="w-36 h-28 rounded-3xl shadow-sm border-4 border-orange"
+                        />
+                      )}
+                    </div>
+                  )}
 
                   <hr className="mt-6 mb-6 border-gray-300" />
 

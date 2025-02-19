@@ -164,7 +164,12 @@ const Notification: React.FC = () => {
                           </h3>
                           {/* 시간 */}
                           <span className="text-xs text-gray-400">
-                            {item.time}
+                            {(() => {
+                              const [hours, minutes, secondsWithMs] =
+                                item.time.split(":");
+                              const [seconds] = secondsWithMs.split("."); // 밀리초 제거
+                              return `${hours}:${minutes}:${seconds}`; // HH:mm:ss 형식으로 반환
+                            })()}
                           </span>
                         </div>
                         {/* 메시지 */}
