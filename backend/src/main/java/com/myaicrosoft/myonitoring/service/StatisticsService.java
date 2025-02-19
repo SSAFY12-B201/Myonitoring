@@ -107,14 +107,6 @@ public class StatisticsService {
         Statistics yesterdayStat = statisticsRepository.findByCatIdAndStatDate(catId, yesterday)
                 .orElseThrow(() -> new IllegalArgumentException("해당 날짜의 통계 데이터를 찾을 수 없습니다. 날짜: " + yesterday));
 
-        // change_days와 change_status 처리 로직 추가
-        int changeDays = yesterdayStat.getChangeDays();
-        int changeStatus = yesterdayStat.getChangeStatus();
-        if (changeDays <= 1) {
-            changeDays = 0; // change_days가 1 이하인 경우 0으로 설정
-            changeStatus = 0; // change_status도 0으로 설정
-        }
-
         // 응답 DTO 생성 및 반환
         return new StatisticsResponseDto(
                 yesterdayStat.getAverage7d(),
@@ -122,8 +114,8 @@ public class StatisticsService {
                 yesterdayStat.getChange7d(),
                 yesterdayStat.getChange30d(),
                 yesterdayStat.getTotalIntake(), // totalIntake는 그대로 사용하지만 이름을 변경하여 응답에 포함해야 함.
-                changeDays,
-                changeStatus
+                yesterdayStat.getChangeDays(),
+                yesterdayStat.getChangeStatus()
         );
     }
 
