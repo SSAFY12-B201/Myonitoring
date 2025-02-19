@@ -18,6 +18,7 @@ import com.google.firebase.messaging.Notification;
 import com.myaicrosoft.myonitoring.model.entity.IntakeStatistics;
 import com.myaicrosoft.myonitoring.repository.IntakeStatisticsRepository;
 import com.myaicrosoft.myonitoring.service.FcmTokenService;
+import com.myaicrosoft.myonitoring.service.NotificationService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -37,6 +38,7 @@ public class ScheduleNotification {
     private final ScheduleNotificationService scheduleNotificationService; // Firebase 알림 전송 서비스
     private final IntakeStatisticsRepository intakeStatisticsRepository;
     private final FcmTokenService fcmTokenService;
+    private final NotificationService notificationService;
 
     /**
      * 매일 자정에 실행되는 스케줄링 작업 (의료 일정 알림 예약)
@@ -51,7 +53,7 @@ public class ScheduleNotification {
     /**
      * 매일 오전 10시에 실행되는 스케줄링 작업 (섭취량 이상 알림 전송)
      */
-    @Scheduled(cron = "0 0 10 * * *") // 매일 오전 9시에 실행
+    @Scheduled(cron = "0 0 10 * * *", zone = "Asia/Seoul")
     public void checkIntakeAnomalies() {
         try {
             List<IntakeStatistics> statistics = intakeStatisticsRepository.findByChangeDaysGreaterThanEqual(2);
@@ -62,57 +64,14 @@ public class ScheduleNotification {
                 int changeDays = stat.getChangeDays();
                 int changeStatus = stat.getChangeStatus();
 
-                if (changeDays >= 2) { // changeDays가 2 이상인 경우만 알림 전송
+                if (changeDays >= 2) {
                     Cat cat = stat.getCat();
                     String title = "섭취량 이상 감지";
                     String body = String.format("고양이 %s의 섭취량 이상이 감지되었습니다!\n" +
                                     "%d일 연속 섭취량이 %s하였으니, %s의 건강 상태를 확인해주세요.",
                             catName, changeDays, (changeStatus == -1 ? "감소" : "증가"), catName);
 
-                    log.info("파이어베이스로 전송되는 데이터:");
-                    log.info("제목: {}", title);
-                    log.info("내용: {}", body);
-
-                    // FCM 토큰 기반 알림 전송
-                    Long userId = cat.getDevice().getUser().getId();
-                    List<String> userTokens = fcmTokenService.getActiveTokensByUserId(userId);
-
-                    if (userTokens.isEmpty()) {
-                        log.warn("사용자 {}의 활성화된 FCM 토큰이 없습니다.", userId);
-                        return;
-                    }
-
-                    for (String token : userTokens) {
-                        Message message = Message.builder()
-                                .setNotification(Notification.builder()
-                                        .setTitle(title)
-                                        .setBody(body)
-                                        .build())
-                                .setToken(token)
-                                .build();
-
-                        try {
-                            String response = FirebaseMessaging.getInstance().send(message);
-                            log.info("알림 전송 성공 - 토큰: {}, 응답: {}", token, response);
-                        } catch (Exception e) {
-                            log.error("알림 전송 실패 - 토큰: {}, 에러: {}", token, e.getMessage());
-                            continue;
-                        }
-                    }
-
-                    // NotificationLog 엔티티에 데이터 저장
-                    NotificationLog notificationLog = NotificationLog.builder()
-                            .cat(cat)
-                            .notificationDateTime(LocalDateTime.now())
-                            .category(NotificationCategory.INTAKE)
-                            .message(body)
-                            .build();
-                    notificationLogRepository.save(notificationLog);
-
-                    log.info("Firebase로 섭취량 이상 알림 전송 및 로그 저장 완료 (고양이: {}, 유저 ID: {})",
-                            catName, userId);
-                } else {
-                    log.info("섭취량 이상 데이터가 없어 알림이 전송되지 않았습니다 (고양이: {}).", catName);
+                    notificationService.sendNotificationWithLog(cat, title, body, NotificationCategory.INTAKE);
                 }
             });
         } catch (Exception e) {

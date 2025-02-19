@@ -28,8 +28,7 @@ public class ScheduleNotificationService {
 
     private final MedicalRepository medicalRepository;
     private final ThreadPoolTaskScheduler taskScheduler; // ThreadPoolTaskScheduler 주입
-    private final FcmTokenService fcmTokenService;
-    private final NotificationLogRepository notificationLogRepository;
+    private final NotificationService notificationService;
 
     /**
      * 유저 ID를 기반으로 Firebase로 알림 메시지를 전송하는 메서드
@@ -122,34 +121,7 @@ public class ScheduleNotificationService {
         String body = String.format("오늘(%s) %s에 %s의 %s 일정이 예정되어 있습니다.", 
                 visitDate, visitTime, catName, medicalCategory);
 
-        try {
-            List<String> userTokens = fcmTokenService.getActiveTokensByUserId(userId);
-            
-            if (userTokens.isEmpty()) {
-                log.warn("사용자 {}의 활성화된 FCM 토큰이 없습니다.", userId);
-                return;
-            }
-
-            for (String token : userTokens) {
-                Message message = Message.builder()
-                        .setNotification(Notification.builder()
-                                .setTitle(title)
-                                .setBody(body)
-                                .build())
-                        .setToken(token)
-                        .build();
-
-                try {
-                    String response = FirebaseMessaging.getInstance().send(message);
-                    log.info("일정 알림 전송 성공 - 사용자: {}, 토큰: {}", userId, token);
-                } catch (Exception e) {
-                    log.error("일정 알림 전송 실패 - 토큰: {}, 에러: {}", token, e.getMessage());
-                }
-            }
-        } catch (Exception e) {
-            log.error("일정 알림 전송 중 오류 발생 - 사용자: {}, 고양이: {}, 에러: {}", 
-                    userId, catName, e.getMessage());
-        }
+        notificationService.sendNotification(userId, title, body);
     }
 
     /**

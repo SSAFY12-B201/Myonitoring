@@ -8,10 +8,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "notification_records") // 테이블 이름 지정
 @Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class NotificationLog {
 
     @Id
@@ -19,10 +16,10 @@ public class NotificationLog {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cat_id", nullable = false) // 외래 키 이름 지정
+    @JoinColumn(name = "cat_id")
     private Cat cat;
 
-    @Column(nullable = false)
+    @Column(name = "notification_date_time", nullable = false)
     private LocalDateTime notificationDateTime;
 
     // device(배급 이상), intake(섭취량 이상), eye(눈 건강 이상)
@@ -30,6 +27,14 @@ public class NotificationLog {
     @Column(nullable = false)
     private NotificationCategory category;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 500)
     private String message;
+
+    @Builder
+    public NotificationLog(Cat cat, LocalDateTime notificationDateTime, NotificationCategory category, String message) {
+        this.cat = cat;
+        this.notificationDateTime = notificationDateTime;
+        this.category = category;
+        this.message = message;
+    }
 }
