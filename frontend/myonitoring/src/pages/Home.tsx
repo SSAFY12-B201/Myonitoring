@@ -190,7 +190,7 @@ const Home: React.FC = () => {
               className="col-span-2 md:col-span-1 flex items-center
   justify-center py-3 px-8 border border-gray-200 rounded-lg
   font-bold text-gray-600 shadow-sm mb-2"
-              onClick={() => console.log("CCTV 버튼 클릭!")}
+              onClick={() => navigate("/cam")}
             >
               {/* 버튼 텍스트 */}
               <span className="text-md flex items-center space-x-2">

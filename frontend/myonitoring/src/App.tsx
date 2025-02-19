@@ -36,7 +36,9 @@ import DeviceDetailedSettings from "./pages/mypage/DeviceDetailedSettings";
 import Notification from "./pages/Notification";
 import CatEyeInfo from "./pages/report/CatEyeInfo";
 import CatInfoEdit from "./pages/CatInfoEdit";
+import Cam from "./pages/Cam";
 import NotificationComponent from "./components/FirebaseComponents/FBNotification.tsx";
+
 
 const App: React.FC = () => {
   const location = useLocation();
@@ -160,6 +162,7 @@ const App: React.FC = () => {
               <Route path="/notification" element={<Notification />} />
               <Route path="/cateyeinfo" element={<CatEyeInfo />} />
               <Route path="/catinfoedit/:id" element={<CatInfoEdit />} />
+              <Route path="/cam" element={<Cam />} />
             </>
           )}
         </Routes>

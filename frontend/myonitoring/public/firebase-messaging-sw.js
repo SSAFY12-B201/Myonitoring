@@ -32,7 +32,7 @@ self.addEventListener('message', (event) => {
           const notificationTitle = payload.notification?.title || 'New Message';
           const notificationOptions = {
             body: payload.notification?.body || '',
-            icon: '/logo_cat.png',
+            icon: '/Cat.png',
             data: payload.data,
             timestamp: new Date().getTime()
           };
