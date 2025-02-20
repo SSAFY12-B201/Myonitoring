@@ -4,7 +4,6 @@ import authReducer from './slices/authSlice';
 import catReducer from './slices/catSlice';
 import reservationReducer from './slices/reservationsSlice';
 import medicalRecordsReducer from './slices/medicalRecordsSlice';
-import notificationReducer from './slices/notificationSlice';
 import deviceReducer from './slices/deviceSlice';
 
 
