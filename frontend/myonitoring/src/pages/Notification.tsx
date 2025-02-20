@@ -57,8 +57,6 @@ const Notification: React.FC = () => {
 
   // 알림 데이터 가져오기
   useEffect(() => {
-    console.log("Current selectedCatId:", selectedCatId); // 선택된 고양이 ID 출력
-
     const fetchNotifications = async () => {
       if (!selectedCatId) {
         console.warn("No selectedCatId found. Skipping API call."); // 경고 메시지 출력
@@ -77,8 +75,6 @@ const Notification: React.FC = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        console.log("Fetched Notifications:", response.data); // API 응답 데이터 출력
 
         setNotifications(response.data); // 알림 데이터 설정
         setError(null); // 에러 초기화
@@ -106,7 +102,7 @@ const Notification: React.FC = () => {
         navigate("/cateyeinfo");
         break;
       default:
-        console.warn("Unknown category:", category);
+        navigate("/home");
     }
   };
 

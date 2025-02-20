@@ -102,7 +102,6 @@ const CatInfo = () => {
     }
 
     try {
-      console.log("try문 시작");
       const token = localStorage.getItem("jwt_access_token"); // 토큰 가져오기
 
       // 중성화 여부를 true/false로 변환
@@ -116,8 +115,6 @@ const CatInfo = () => {
           ? "F"
           : null;
 
-      // 디바이스 ID 확인
-      console.log(deviceId);
       if (!deviceId) {
         throw new Error("Device ID is not available");
       }
@@ -136,9 +133,6 @@ const CatInfo = () => {
         profileImageUrl: formData.image, // 업로드된 이미지 URL 추가
       };
 
-      // 요청 데이터를 콘솔에 출력
-      console.log("API 요청 데이터:", requestData);
-
       // API 요청 보내기
       const response = await api.post("/api/cats", requestData, {
         headers: {
@@ -154,7 +148,6 @@ const CatInfo = () => {
       // Redux 선택된 고양이 상태 업데이트 (선택된 고양이 ID)
       if (response.data.id) {
         dispatch(setSelectedCatId(response.data.id)); // 응답 데이터에서 고양이 ID 저장
-        console.log("선택된 고양이 ID:", response.data.id);
       }
 
       // 다음 단계로 이동

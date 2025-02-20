@@ -17,15 +17,6 @@ const Agreement = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 뒤로 가기 여부 확인 (상세 페이지에서 돌아온 경우)
-  const isBackNavigation = location.state?.fromDetail || false;
-  console.log(isBackNavigation);
-
-  // 동적 애니메이션 설정
-  // const animationVariants = isBackNavigation
-  //   ? slideOutVariants // 뒤로 가기 애니메이션
-  //   : slideInVariants; // 앞으로 가기 애니메이션
-
   const handleAllCheck = () => {
     const newValue = !allChecked;
     setAllChecked(newValue);

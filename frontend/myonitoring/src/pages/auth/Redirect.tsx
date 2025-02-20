@@ -37,15 +37,11 @@ const Redirect: React.FC = () => {
     const code = new URL(window.location.href).searchParams.get("code");
 
     if (code) {
-      // 카카오 인증 코드를 백엔드로 전달
-      console.log(code);
       api
         .post(`/api/auth/kakao/authenticate`, null, {
           params: { code }, // URL 파라미터로 인증 코드 전달
         })
         .then((response) => {
-          console.log("Response:", response.data);
-
           // 카카오 토큰 저장
           const authToken = response.data.auth_token;
           // 로컬 스토리지에 토큰 저장 (선택 사항)
