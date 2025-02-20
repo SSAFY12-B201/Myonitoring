@@ -1,0 +1,434 @@
+[
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T14:45:17",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 63
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T14:46:03",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 11
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T14:46:32",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T14:47:06",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T14:50:38",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 12
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T14:51:12",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 3
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T15:18:26",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 6
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T15:20:16",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 6
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T15:21:02",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T15:21:49",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 7
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T15:59:56",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:00:18",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 4
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:01:24",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:01:56",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:02:14",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 75
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:02:43",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:03:08",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:03:23",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 1
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:03:37",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 38
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:05:04",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 4
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:07:28",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 1
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:08:00",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:16:13",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:17:00",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 36
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:18:34",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 1
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:20:39",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:20:53",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T16:21:00",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T20:39:46",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 1
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T20:41:17",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T20:42:08",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T20:43:13",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T20:48:20",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T20:49:33",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 158
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T20:49:53",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T20:51:02",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T20:55:20",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T21:01:42",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 3
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T21:09:55",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T21:15:42",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T21:17:32",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T21:25:20",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T21:25:45",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 3
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T21:26:41",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 15
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T21:48:01",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T21:48:09",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 1
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T21:49:03",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 2
+    }
+  },
+  {
+    "serial_number": "SN123456",
+    "datetime": "2025-02-20T21:49:48",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0
+    }
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "serial_number": "SN123456",
+  "datetime": "2025-02-20T16:05:12",
+  "type": "eye",
+  "data": {
+    "eyes": [
+      {
+        "eye_side": "right",
+        "blepharitis_prob": 0.3,
+        "conjunctivitis_prob": 0.1,
+        "corneal_sequestrum_prob": 0.4,
+        "non_ulcerative_keratitis_prob": 0.45,
+        "corneal_ulcer_prob": 0.11,
+        "image_url": null
+      },
+      {
+        "eye_side": "left",
+        "blepharitis_prob": 0.26,
+        "conjunctivitis_prob": 0.1,
+        "corneal_sequestrum_prob": 0.64,
+        "non_ulcerative_keratitis_prob": 0.55,
+        "corneal_ulcer_prob": 0.2,
+        "image_url": null
+      }
+    ]
+  }
+}
