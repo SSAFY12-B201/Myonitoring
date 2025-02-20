@@ -57,6 +57,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Eye> eyes;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FcmToken> fcmTokens;
+
     public enum Provider {
         LOCAL, KAKAO, GOOGLE, NAVER
     }
