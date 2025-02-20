@@ -74,8 +74,8 @@ AI 얼굴 인식과 IoT 기술을 활용해 고양이의 안구 상태와 섭취
 - 사용자 프로필 및 고양이 정보(이름, 나이, 체중 등) 등록 및 관리.
 
 <div style="display: flex; justify-content: center; gap: 10px;">
-![카카오회원가입](/uploads/f881ed3e4f0a987bd28b53cdce79d42b/카카오회원가입.gif)
-![회원정보등록](/uploads/713cd2df2a9e6169deafafa11dc3c4ed/회원정보등록.gif)
+![카카오로그인](/uploads/979f336b6a325e5d52e352d29c606778/카카오로그인.gif)
+![회원등록](/uploads/79978e230c269422ec08af92d892ec29/회원등록.gif)
 </div>
 <br>
 
@@ -264,7 +264,7 @@ frontend/myonitoring/
 | Back-end  | Java 17, Spring Boot 3.0+, Python 3.9, FastAPI           |
 | Database  | MySQL                                                    |
 | Infra     | Docker, Jenkins, nginx, AWS(EC2), Firebase               |
-| AI        | YOLO (TensorFlow/PyTorch), MobileNet                     |
+| AI        | YOLO v11, MobileNet v2                    |
 
 <br>
 
