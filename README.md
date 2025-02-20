@@ -264,7 +264,7 @@ frontend/myonitoring/
 | Back-end  | Java 17, Spring Boot 3.0+, Python 3.9, FastAPI           |
 | Database  | MySQL                                                    |
 | Infra     | Docker, Jenkins, nginx, AWS(EC2), Firebase               |
-| AI        | YOLO (TensorFlow/PyTorch), MobileNet                     |
+| AI        | YOLO v11, MobileNet v2                    |
 
 <br>
 
