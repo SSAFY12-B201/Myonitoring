@@ -48,6 +48,6 @@ public class Cat {
     @Column(columnDefinition = "TEXT")
     private String characteristics;
 
-    @Column(length = 255)
+    @Column(length = 2048)
     private String profileImageUrl;
 }
