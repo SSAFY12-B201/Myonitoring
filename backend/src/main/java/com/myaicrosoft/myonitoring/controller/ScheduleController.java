@@ -11,6 +11,9 @@ import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 import java.util.*;
 import org.springframework.http.HttpEntity;
+import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -21,6 +24,11 @@ import java.util.List;
 @RequiredArgsConstructor // final 필드에 대한 생성자를 자동으로 생성
 @RequestMapping("/schedule") // Schedule 관련 API의 기본 경로 설정
 public class ScheduleController {
+
+    private static final Logger log = LoggerFactory.getLogger(ScheduleController.class);
+
+    @Value("${external.api.enabled:false}")
+    private boolean externalApiEnabled;
 
     private final ScheduleService scheduleService;
     private final RestTemplate restTemplate;
@@ -123,6 +131,11 @@ public class ScheduleController {
      * 외부 디바이스로 스케줄 데이터를 전송하는 private 메서드
      */
     private void sendSchedulesToDevice(List<ScheduleResponseDto> schedules) {
+        if (!externalApiEnabled) {
+            log.debug("External API is disabled. Skipping schedule sync.");
+            return;
+        }
+        
         List<Map<String, Object>> scheduleData = new ArrayList<>();
         
         // DTO를 외부 API 형식으로 변환
@@ -146,9 +159,9 @@ public class ScheduleController {
         try {
             // 외부 API로 POST 요청 전송
             restTemplate.postForEntity(EXTERNAL_API_URL, requestEntity, Void.class);
+            log.info("Successfully sent {} schedules to device", scheduleData.size());
         } catch (Exception e) {
-            // 외부 API 호출 실패 시 로그 기록 (실제 구현 시 로깅 프레임워크 사용 권장)
-            System.err.println("Failed to send schedules to device: " + e.getMessage());
+            log.error("Failed to send schedules to device: {}", e.getMessage(), e);
         }
     }
 }
