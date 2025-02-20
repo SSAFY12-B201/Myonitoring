@@ -46,6 +46,16 @@ public class EyeService {
         // 0.5 이상인 확률만 필터링하여 반환 데이터 생성
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("date_time", eye.getCapturedDateTime().toString());
+        
+        // 이미지 URL 추가
+        Map<String, String> images = new LinkedHashMap<>();
+        if (eye.getLeftEyeImageUrl() != null) {
+            images.put("left", eye.getLeftEyeImageUrl());
+        }
+        if (eye.getRightEyeImageUrl() != null) {
+            images.put("right", eye.getRightEyeImageUrl());
+        }
+        response.put("images", images);
 
         List<Map<String, Map<String, BigDecimal>>> filteredData = new ArrayList<>();
 

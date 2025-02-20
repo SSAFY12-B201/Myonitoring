@@ -160,4 +160,16 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 사용자를 찾을 수 없습니다. ID: " + id));
         return UserResponseDto.from(user);
     }
+
+    @Transactional
+    public void removeRefreshToken(String refreshToken) {
+        // 리프레시 토큰으로 사용자를 찾아서 토큰 제거
+        User user = userRepository.findByRefreshToken(refreshToken)
+                .orElse(null);
+        
+        if (user != null) {
+            user.setRefreshToken(null);
+            userRepository.save(user);
+        }
+    }
 } 

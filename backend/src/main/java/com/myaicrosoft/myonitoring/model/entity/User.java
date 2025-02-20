@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import java.util.List;
 
 @Getter
 @Setter
@@ -45,6 +46,19 @@ public class User {
 
     @Column(length = 255)
     private String phoneNumber;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean isProfileCompleted = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Device> devices;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Eye> eyes;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FcmToken> fcmTokens;
 
     public enum Provider {
         LOCAL, KAKAO, GOOGLE, NAVER

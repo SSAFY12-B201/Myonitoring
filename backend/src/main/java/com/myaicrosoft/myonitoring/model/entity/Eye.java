@@ -19,8 +19,15 @@ public class Eye {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "cat_id", nullable = false) // 외래 키 이름 지정
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+        name = "cat_id",
+        nullable = false,
+        foreignKey = @ForeignKey(
+            name = "fk_eye_cat",
+            foreignKeyDefinition = "FOREIGN KEY (cat_id) REFERENCES cats(id) ON DELETE CASCADE"
+        )
+    )
     private Cat cat;
 
     @Column(nullable = false)
@@ -58,4 +65,14 @@ public class Eye {
 
     @Column(nullable = false)
     private Boolean isEyeDiseased;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, foreignKeyDefinition = "FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE"))
+    private User user;
+
+    @Column(name = "right_eye_image_url")
+    private String rightEyeImageUrl;
+
+    @Column(name = "left_eye_image_url")
+    private String leftEyeImageUrl;
 }

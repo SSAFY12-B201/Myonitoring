@@ -1,0 +1,9 @@
+{
+  "serial_number": "SN123456",
+  "datetime": "2025-02-20T20:55:20",
+  "type": "intake",
+  "data": {
+    "duration": 0,
+    "amount": 0
+  }
+}

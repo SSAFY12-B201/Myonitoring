@@ -1,0 +1,4 @@
+# config.py
+
+API_URL = "https://myonitoring.site/api/data-collection"
+API_TOKEN = "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJzZW95dW4tamVAZGF1bS5uZXQiLCJpZCI6Miwicm9sZSI6IlVTRVIiLCJhdXRob3JpdGllcyI6WyJST0xFX1VTRVIiXSwiaWF0IjoxNzM5OTQ3MDc1LCJleHAiOjE3NzE0ODMwNzV9.N5olh9BkTVy3YQ1feBQ5yzCdTJyPJor5y_rOAkYKCJEqc6YY2jRBei_JDsf9EseB8QyetSb5t_AB8AsbrICi3A"  # 실제 토큰으로 변경

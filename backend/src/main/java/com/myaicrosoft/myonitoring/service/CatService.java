@@ -41,8 +41,7 @@ public class CatService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 기기를 찾을 수 없습니다. ID: " + request.getDeviceId()));
 
         // 기기의 소유자 확인
-        boolean isOwner = device.getUsers().stream()
-                .anyMatch(user -> user.getId().equals(userId));
+        boolean isOwner = device.getUser().getId().equals(securityUtil.getCurrentUserId());
         if (!isOwner) {
             throw new IllegalArgumentException("해당 기기의 소유자가 아닙니다.");
         }
@@ -56,7 +55,6 @@ public class CatService {
                 .birthDate(request.getBirthDate())
                 .age(request.getAge())
                 .weight(request.getWeight())
-                .targetDailyIntake(request.getTargetDailyIntake())
                 .characteristics(request.getCharacteristics())
                 .profileImageUrl(request.getProfileImageUrl())
                 .build();
@@ -90,8 +88,7 @@ public class CatService {
         // 고양이의 소유자 확인
         Device device = cat.getDevice();
         if (device != null) {
-            boolean isOwner = device.getUsers().stream()
-                    .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
+            boolean isOwner = device.getUser().getId().equals(securityUtil.getCurrentUserId());
             if (!isOwner) {
                 throw new IllegalArgumentException("해당 고양이의 조회 권한이 없습니다.");
             }
@@ -106,7 +103,6 @@ public class CatService {
                 cat.getBirthDate(),
                 cat.getAge(),
                 cat.getWeight(),
-                cat.getTargetDailyIntake(),
                 cat.getCharacteristics(),
                 cat.getProfileImageUrl()
         );
@@ -121,43 +117,41 @@ public class CatService {
      */
     @Transactional
     public CatDetailResponseDto updateCat(Long catId, CatUpdateRequest request) {
+        // 1. 기존 고양이 데이터 조회
         Cat existingCat = catRepository.findById(catId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 고양이를 찾을 수 없습니다. ID: " + catId));
 
-        // 고양이의 소유자 확인
-        Device device = existingCat.getDevice();
-        if (device != null) {
-            boolean isOwner = device.getUsers().stream()
-                    .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
-            if (!isOwner) {
-                throw new IllegalArgumentException("해당 고양이의 수정 권한이 없습니다.");
-            }
+        // 2. 필수 필드 업데이트 (요청 데이터로 덮어쓰기)
+        if (request.getName() == null || request.getBreed() == null || request.getGender() == null ||
+                request.getIsNeutered() == null || request.getBirthDate() == null || request.getAge() == null) {
+            throw new IllegalArgumentException("필수 데이터가 누락되었습니다.");
         }
 
-        // 요청 데이터가 존재할 경우에만 업데이트 수행
-        if (request.getName() != null) existingCat.setName(request.getName());
-        if (request.getBreed() != null) existingCat.setBreed(request.getBreed());
-        if (request.getGender() != null) existingCat.setGender(request.getGender());
-        if (request.getIsNeutered() != null) existingCat.setIsNeutered(request.getIsNeutered());
-        if (request.getBirthDate() != null) existingCat.setBirthDate(request.getBirthDate());
-        if (request.getAge() != null) existingCat.setAge(request.getAge());
-        if (request.getWeight() != null) existingCat.setWeight(request.getWeight());
-        if (request.getTargetDailyIntake() != null) existingCat.setTargetDailyIntake(request.getTargetDailyIntake());
-        if (request.getCharacteristics() != null) existingCat.setCharacteristics(request.getCharacteristics());
-        if (request.getProfileImageUrl() != null) existingCat.setProfileImageUrl(request.getProfileImageUrl());
+        existingCat.setName(request.getName());
+        existingCat.setBreed(request.getBreed());
+        existingCat.setGender(request.getGender());
+        existingCat.setIsNeutered(request.getIsNeutered());
+        existingCat.setBirthDate(request.getBirthDate());
+        existingCat.setAge(request.getAge());
+
+        // 3. 선택 필드 업데이트 (null 허용)
+        existingCat.setCharacteristics(request.getCharacteristics());     // null 가능
+        existingCat.setProfileImageUrl(request.getProfileImageUrl());     // null 가능
+
+        // 4. 저장 후 DTO 반환
+        Cat updatedCat = catRepository.save(existingCat);
 
         return new CatDetailResponseDto(
-                existingCat.getId(),
-                existingCat.getName(),
-                existingCat.getBreed(),
-                existingCat.getGender(),
-                existingCat.getIsNeutered(),
-                existingCat.getBirthDate(),
-                existingCat.getAge(),
-                existingCat.getWeight(),
-                existingCat.getTargetDailyIntake(),
-                existingCat.getCharacteristics(),
-                existingCat.getProfileImageUrl()
+                updatedCat.getId(),
+                updatedCat.getName(),
+                updatedCat.getBreed(),
+                updatedCat.getGender(),
+                updatedCat.getIsNeutered(),
+                updatedCat.getBirthDate(),
+                updatedCat.getAge(),
+                updatedCat.getWeight(),
+                updatedCat.getCharacteristics(),
+                updatedCat.getProfileImageUrl()
         );
     }
 
@@ -174,8 +168,7 @@ public class CatService {
         // 고양이의 소유자 확인
         Device device = cat.getDevice();
         if (device != null) {
-            boolean isOwner = device.getUsers().stream()
-                    .anyMatch(user -> user.getId().equals(securityUtil.getCurrentUserId()));
+            boolean isOwner = device.getUser().getId().equals(securityUtil.getCurrentUserId());
             if (!isOwner) {
                 throw new IllegalArgumentException("해당 고양이의 삭제 권한이 없습니다.");
             }

@@ -1,20 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-// 초기 상태 정의
 interface CatInfoState {
-  image: string | null; // 이미지 URL 또는 Base64 문자열
-  name: string; // 이름 (필수)
-  breed: string; // 묘종 (선택)
-  gender: "남아" | "여아" | ""; // 성별 (라디오박스)
-  neutered: "중성화 전" | "중성화 완료" | ""; // 중성화 여부 (드롭다운)
-  birthdate: string; // 생년월일 (날짜, 필수)
-  age: number | null; // 나이 (숫자, 필수)
-  weight: number | null; // 몸무게 (숫자, 선택)
-  characteristics: string; // 특징 (텍스트, 선택)
+  image: string | null;
+  name: string;
+  breed: string;
+  gender: "남아" | "여아" | "";
+  neutered: "중성화 전" | "중성화 완료" | "";
+  birthdate: string;
+  age: number | null;
+  weight: number | null;
+  characteristics: string;
+  selectedCatId: number | null;
 }
 
 const initialState: CatInfoState = {
-  image: null, // 초기값은 null
+  image: null,
   name: "",
   breed: "",
   gender: "",
@@ -23,6 +23,7 @@ const initialState: CatInfoState = {
   age: null,
   weight: null,
   characteristics: "",
+  selectedCatId: null,
 };
 
 const catSlice = createSlice({
@@ -30,13 +31,20 @@ const catSlice = createSlice({
   initialState,
   reducers: {
     updateCatInfo(state, action: PayloadAction<Partial<CatInfoState>>) {
-      return { ...state, ...action.payload }; // 상태 업데이트
+      return { ...state, ...action.payload };
     },
     resetCatInfo() {
-      return initialState; // 초기 상태로 리셋
+      return initialState;
     },
+    setSelectedCatId(state, action: PayloadAction<number>) {
+      state.selectedCatId = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase("resetAllState", () => initialState); // 상태 초기화
   },
 });
 
-export const { updateCatInfo, resetCatInfo } = catSlice.actions;
+export const { updateCatInfo, resetCatInfo, setSelectedCatId } =
+  catSlice.actions;
 export default catSlice.reducer;

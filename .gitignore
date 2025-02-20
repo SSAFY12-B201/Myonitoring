@@ -1,19 +1,16 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,windows,react,reactnative,flask
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,windows,react,reactnative,flask
 
-### Flask ###
 instance/*
 !instance/.gitignore
 .webassets-cache
 
-### Flask.Python Stack ###
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
 # C extensions
 *.so
+
+# Firebase
+backend/src/main/resources/myonitoring-firebase-adminsdk-fbsvc-78c9791370.json
+
 
 # Distribution / packaging
 .Python

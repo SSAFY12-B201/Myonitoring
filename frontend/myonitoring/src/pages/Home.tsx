@@ -1,122 +1,226 @@
-import React from "react";
-import LocalDiningIcon from "@mui/icons-material/LocalDining";
-import WarningIcon from "@mui/icons-material/Warning";
-import EyeIcon from "@mui/icons-material/Visibility";
-import MedicalServicesIcon from "@mui/icons-material/MedicalServices";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store";
 import TopBar from "../components/TopBar";
 import BottomBar from "../components/BottomBar";
-
-// 공통 클래스 정의
-const barClass =
-  "flex items-center justify-between bg-white border border-[#D0D0D0] rounded-lg p-4 cursor-pointer";
-const titleClass = "block text-lg font-bold";
-const descriptionClass = "text-sm text-gray-500";
+import HomeComponentBar from "../components/HomeComponents/HomeComponentBar";
+import { useNavigate } from "react-router-dom";
+import { api } from "../api/axios"; // Axios 인스턴스 사용
 
 const Home: React.FC = () => {
-  const currentDate = new Date().toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  const navigate = useNavigate();
+
+  const [data, setData] = useState<any>({
+    cat_image: "",
+    total_intake: 0,
+    intake_alert: { flag: 0 },
+    eye_alert: { flag: 0 },
+    medical: { data: [] },
   });
+  const [loading, setLoading] = useState<boolean>(true); // 로딩 상태
+  const [error, setError] = useState<string | null>(null); // 에러 상태
+
+  // 현재 날짜를 ISO 형식으로 변환 (YYYY-MM-DD)
+  const today = new Date().toISOString().split("T")[0];
+
+  // Redux에서 selectedCatId 가져오기
+  const selectedCatId = useSelector(
+    (state: RootState) => state.cat.selectedCatId
+  );
+
+  // API 데이터 가져오기
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!selectedCatId) {
+        console.warn("selectedCatId가 null입니다.");
+        return;
+      }
+
+      try {
+        setLoading(true); // 로딩 시작
+
+        const token = localStorage.getItem("jwt_access_token"); // 로컬 스토리지에서 토큰 가져오기
+
+        if (token) {
+          console.log("로그인 상태: true"); // 로그인 상태 콘솔 출력
+        } else {
+          console.log("로그인 상태: false"); // 로그인 상태 콘솔 출력
+        }
+
+        if (!token) {
+          throw new Error("토큰이 없습니다.");
+        }
+
+        // Axios 요청 보내기
+        const response = await api.get(
+          `/api/main/${selectedCatId}?day=${today}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
+          }
+        );
+
+        const fetchedData = response.data || {};
+
+        setData({
+          cat_image: fetchedData.cat_image || "",
+          total_intake: fetchedData.total_intake || 0,
+          intake_alert: fetchedData.intake_alert || { flag: 0 },
+          eye_alert: fetchedData.eye_alert || { flag: 0 },
+          medical: fetchedData.medical || { data: [] }, // 기본값 설정
+        });
+
+        setError(null); // 에러 초기화
+      } catch (err) {
+        console.error("데이터 로드 실패:", err);
+        setError("데이터를 불러오는 중 오류가 발생했습니다."); // 에러 메시지 설정
+      } finally {
+        setLoading(false); // 로딩 종료
+      }
+    };
+
+    if (selectedCatId !== null) {
+      fetchData(); // selectedCatId가 유효할 때만 호출
+    }
+  }, [selectedCatId, today]); // selectedCatId 또는 오늘 날짜가 변경되면 다시 fetch
+
+  // barsData 동적 생성
+  const barsData = data
+    ? [
+        {
+          title: "총 섭취량",
+          badge: `${data.total_intake}g`,
+          badgeColor: "custom-none text-xl",
+          description: "",
+          image: "/food1.png",
+          onClick: () => navigate("/graph"),
+        },
+        {
+          title: "식사량 변화",
+          chartData:
+            data.intake_alert.flag === 1
+              ? [
+                  { name: "Day 1", value: 20 },
+                  { name: "Day 2", value: 50 },
+                  { name: "Day 3", value: 100 },
+                ]
+              : data.intake_alert.flag === -1
+              ? [
+                  { name: "Day 1", value: 50 },
+                  { name: "Day 2", value: 30 },
+                  { name: "Day 3", value: 20 },
+                ]
+              : [
+                  { name: "Day 1", value: 20 },
+                  { name: "Day 2", value: 20 },
+                  { name: "Day 3", value: 20 },
+                ],
+          badge:
+            data.intake_alert.flag === 1
+              ? "증가"
+              : data.intake_alert.flag === -1
+              ? "감소"
+              : "이상 없음",
+          badgeColor: "custom-none text-xl",
+          description: "",
+          onClick: () => navigate("/statistics"),
+        },
+        {
+          title: "안구 건강",
+          badge: data.eye_alert.flag === 1 ? "의심 증상 발견" : "이상 없음",
+          badgeColor: data.eye_alert.flag === 1 ? "custom-w" : "custom-tap",
+          image: "/magnifier.png",
+          description: "",
+          onClick: () => navigate("/cateyeinfo"),
+        },
+        {
+          title: "의료 기록",
+          badges:
+            data?.medical?.data?.length > 0
+              ? [
+                  {
+                    text: `${data.medical.data.length}개의 일정`,
+                    color: "custom-tap",
+                  },
+                ]
+              : [
+                  {
+                    text: "추가 하기",
+                    color: "custom-w",
+                  },
+                ],
+          image: "/health1.png",
+          description: "",
+          onClick: () => navigate("/medical-records"),
+        },
+      ]
+    : [];
 
   return (
-    <>
-    <TopBar />
-      <div className="relative min-h-screen">
-        {/* 날짜 바 */}
-        <div className="w-full text-center py-2 text-lg font-bold">
-          {currentDate}
-        </div>
+    <div>
+      <div className="min-h-screen flex flex-col bg-cover bg-center">
+        <TopBar />
 
-        {/* 고양이 프로필 */}
-        <div className="flex flex-col items-center mt-4">
-          <img
-            src="../public/logo_cat.png"
-            alt="고양이"
-            className="w-24 h-24 rounded-full"
-          />
-          <h1 className="text-xl font-semibold mt-2">가을이</h1>
-        </div>
-
-        {/* 바 컴포넌트들 */}
-        <div className="w-full mt-6 space-y-4 px-5">
-          {/* 섭취량 그래프 바 */}
-          <div
-            className={barClass}
-            onClick={() => alert("섭취량 그래프 페이지로 이동")}
-          >
-            <div className="flex items-center space-x-4">
-              <LocalDiningIcon style={{ fontSize: 24, color: "#000" }} />
-              <div>
-                <span className={titleClass}>섭취량 그래프</span>
-                <span className={`${descriptionClass} flex items-center`}>
-                  <span className="bg-yellow-300 px-2 py-1 rounded-full mr-2 text-black font-bold">
-                    25g
-                  </span>
-                  을 섭취했습니다.
-                </span>
-              </div>
+        <div className="relative mt-14 ">
+          {/* 고양이 프로필 */}
+          <div className="flex flex-col items-center mt-4">
+            <div className="relative">
+              <img
+                src={
+                  loading || error || !data.cat_image
+                    ? "/Cat_bg.png"
+                    : data.cat_image
+                }
+                alt="고양이"
+                className="w-32 h-32 md:w-24 md:h-24 rounded-full "
+              />
             </div>
-            <ChevronRightIcon style={{ color: "#FFD700" }} />
           </div>
 
-          {/* 섭취량 이상 알림 바 */}
+          {/* 바 컴포넌트와 버튼 */}
           <div
-            className={barClass}
-            onClick={() => alert("섭취량 이상 알림 페이지로 이동")}
+            className="grid grid-cols-2 gap-x-4 gap-y-4 p-4 px-6
+            md:grid-cols-3 lg:grid-cols-4 "
           >
-            <div className="flex items-center space-x-4">
-              <div>
-                <span className={titleClass}>섭취량 증감</span>
-                <span className={descriptionClass}>
-                  섭취량 특이사항이 발견되지 않았습니다.
-                </span>
-              </div>
-            </div>
-            <ChevronRightIcon style={{ color: "#FFD700" }} />
-          </div>
+            {/* 버튼 */}
+            <button
+              className="col-span-2 md:col-span-1 flex items-center
+  justify-center py-3 px-8 border border-gray-200 rounded-lg
+  font-bold text-gray-600 shadow-sm mb-2"
+              onClick={() =>
+                (window.location.href = "http://192.168.30.133:8000/stream")
+              }
+            >
+              {/* 버튼 텍스트 */}
+              <span className="text-md flex items-center space-x-2">
+                {/* 이미지 추가 */}
+                <img
+                  src="/cam.png" // public 폴더의 cam.png 경로
+                  alt="캠 아이콘"
+                  className="h-7 w-7" // 아이콘 크기 조정
+                />
+                <span>묘니터링 캠 보러 가기</span>
+              </span>
+            </button>
 
-          {/* 안구 건강 위험바 */}
-          <div
-            className={barClass}
-            onClick={() => alert("섭취량 그래프 페이지로 이동")}
-          >
-            <div className="flex items-center space-x-4">
-              <EyeIcon style={{ fontSize: 24, color: "#000" }} />
-              <div>
-                <span className={titleClass}>안구 건강</span>
-                <span className={`${descriptionClass} flex items-center`}>
-                  <span className="bg-red-500 px-2 py-1 rounded-full mr-2 text-white font-bold">
-                    안검염
-                  </span>
-                  이 발견되었습니다.
-                </span>
-              </div>
-            </div>
-            <ChevronRightIcon style={{ color: "#FFD700" }} />
-          </div>
-
-          {/* 의료 기록 바 */}
-          <div
-            className={barClass}
-            onClick={() => alert("의료 기록 페이지로 이동")}
-          >
-            <div className="flex items-center space-x-4">
-              <MedicalServicesIcon style={{ fontSize: 24, color: "#FF0505" }} />
-              <div>
-                <span className={titleClass}>의료 기록</span>
-                <span className={descriptionClass}>
-                  14:00 웰케어 동물병원 정기 검진
-                </span>
-              </div>
-            </div>
-            <ChevronRightIcon style={{ color: "#FFD700" }} />
+            {/* 바 컴포넌트들 */}
+            {loading ? (
+              <p className="text-center text-gray-600">로딩 중...</p>
+            ) : error ? (
+              <p className="text-center text-red-500">{error}</p>
+            ) : (
+              barsData.map((bar, index) => (
+                <HomeComponentBar key={index} {...bar} />
+              ))
+            )}
           </div>
         </div>
+
+        <BottomBar />
       </div>
-    <BottomBar />
-    </>
+    </div>
   );
 };
 

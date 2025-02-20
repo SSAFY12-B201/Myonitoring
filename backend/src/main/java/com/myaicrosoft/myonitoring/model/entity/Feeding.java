@@ -19,7 +19,14 @@ public class Feeding {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cat_id", nullable = false) // 외래 키 이름 지정
+    @JoinColumn(
+        name = "cat_id",
+        nullable = false,
+        foreignKey = @ForeignKey(
+            name = "fk_feeding_cat",
+            foreignKeyDefinition = "FOREIGN KEY (cat_id) REFERENCES cats(id) ON DELETE CASCADE"
+        )
+    )
     private Cat cat;
 
     @Column(nullable = false)

@@ -8,7 +8,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title, onBack }) => {
   return (
-    <header className="flex items-center p-4">
+    <header className="flex items-center p-4 ml-2">
       {onBack && (
         <button onClick={onBack} className="text-gray-500 text-lg">
           <span>&#x276E;</span>

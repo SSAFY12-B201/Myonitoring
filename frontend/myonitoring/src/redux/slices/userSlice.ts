@@ -1,6 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
+interface userState {
+  nickname: string 
+  phoneNumber: string 
+  address: string 
+}
+
+const initialState:userState  = {
   nickname: "",
   phoneNumber: "",
   address: "",
@@ -16,6 +22,9 @@ const userSlice = createSlice({
     resetUserInfo() {
       return initialState;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase("resetAllState", () => initialState); // 상태 초기화
   },
 });
 

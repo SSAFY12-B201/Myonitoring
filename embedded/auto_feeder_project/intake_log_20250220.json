@@ -1,0 +1,266 @@
+[
+  {
+    "serial_number": "SN1234",
+    "datetime": "2025-02-20T12:16:00",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0,
+      "images": []
+    }
+  },
+  {
+    "serial_number": "SN1234",
+    "datetime": "2025-02-20T12:16:21",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0,
+      "images": [
+        "data/images/img_20250220_121603.jpg",
+        "data/images/img_20250220_121606.jpg",
+        "data/images/img_20250220_121608.jpg",
+        "data/images/img_20250220_121609.jpg",
+        "data/images/img_20250220_121611.jpg",
+        "data/images/img_20250220_121613.jpg",
+        "data/images/img_20250220_121615.jpg",
+        "data/images/img_20250220_121616.jpg",
+        "data/images/img_20250220_121618.jpg",
+        "data/images/img_20250220_121619.jpg"
+      ]
+    }
+  },
+  {
+    "serial_number": "SN1234",
+    "datetime": "2025-02-20T12:16:34",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0,
+      "images": [
+        "data/images/img_20250220_121603.jpg",
+        "data/images/img_20250220_121606.jpg",
+        "data/images/img_20250220_121608.jpg",
+        "data/images/img_20250220_121609.jpg",
+        "data/images/img_20250220_121611.jpg",
+        "data/images/img_20250220_121613.jpg",
+        "data/images/img_20250220_121615.jpg",
+        "data/images/img_20250220_121616.jpg",
+        "data/images/img_20250220_121618.jpg",
+        "data/images/img_20250220_121619.jpg",
+        "data/images/img_20250220_121621.jpg",
+        "data/images/img_20250220_121623.jpg",
+        "data/images/img_20250220_121626.jpg",
+        "data/images/img_20250220_121627.jpg",
+        "data/images/img_20250220_121630.jpg",
+        "data/images/img_20250220_121631.jpg",
+        "data/images/img_20250220_121634.jpg"
+      ]
+    }
+  },
+  {
+    "serial_number": "SN1234",
+    "datetime": "2025-02-20T12:17:10",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 1,
+      "images": [
+        "data/images/img_20250220_121603.jpg",
+        "data/images/img_20250220_121606.jpg",
+        "data/images/img_20250220_121608.jpg",
+        "data/images/img_20250220_121609.jpg",
+        "data/images/img_20250220_121611.jpg",
+        "data/images/img_20250220_121613.jpg",
+        "data/images/img_20250220_121615.jpg",
+        "data/images/img_20250220_121616.jpg",
+        "data/images/img_20250220_121618.jpg",
+        "data/images/img_20250220_121619.jpg",
+        "data/images/img_20250220_121621.jpg",
+        "data/images/img_20250220_121623.jpg",
+        "data/images/img_20250220_121626.jpg",
+        "data/images/img_20250220_121627.jpg",
+        "data/images/img_20250220_121630.jpg",
+        "data/images/img_20250220_121631.jpg",
+        "data/images/img_20250220_121634.jpg"
+      ]
+    }
+  },
+  {
+    "serial_number": "SN1234",
+    "datetime": "2025-02-20T12:17:55",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0,
+      "images": [
+        "data/images/img_20250220_121603.jpg",
+        "data/images/img_20250220_121606.jpg",
+        "data/images/img_20250220_121608.jpg",
+        "data/images/img_20250220_121609.jpg",
+        "data/images/img_20250220_121611.jpg",
+        "data/images/img_20250220_121613.jpg",
+        "data/images/img_20250220_121615.jpg",
+        "data/images/img_20250220_121616.jpg",
+        "data/images/img_20250220_121618.jpg",
+        "data/images/img_20250220_121619.jpg",
+        "data/images/img_20250220_121621.jpg",
+        "data/images/img_20250220_121623.jpg",
+        "data/images/img_20250220_121626.jpg",
+        "data/images/img_20250220_121627.jpg",
+        "data/images/img_20250220_121630.jpg",
+        "data/images/img_20250220_121631.jpg",
+        "data/images/img_20250220_121634.jpg"
+      ]
+    }
+  },
+  {
+    "serial_number": "SN1234",
+    "datetime": "2025-02-20T12:18:32",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0,
+      "images": [
+        "data/images/img_20250220_121603.jpg",
+        "data/images/img_20250220_121606.jpg",
+        "data/images/img_20250220_121608.jpg",
+        "data/images/img_20250220_121609.jpg",
+        "data/images/img_20250220_121611.jpg",
+        "data/images/img_20250220_121613.jpg",
+        "data/images/img_20250220_121615.jpg",
+        "data/images/img_20250220_121616.jpg",
+        "data/images/img_20250220_121618.jpg",
+        "data/images/img_20250220_121619.jpg",
+        "data/images/img_20250220_121621.jpg",
+        "data/images/img_20250220_121623.jpg",
+        "data/images/img_20250220_121626.jpg",
+        "data/images/img_20250220_121627.jpg",
+        "data/images/img_20250220_121630.jpg",
+        "data/images/img_20250220_121631.jpg",
+        "data/images/img_20250220_121634.jpg"
+      ]
+    }
+  },
+  {
+    "serial_number": "SN1234",
+    "datetime": "2025-02-20T12:18:46",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 2,
+      "images": [
+        "data/images/img_20250220_121603.jpg",
+        "data/images/img_20250220_121606.jpg",
+        "data/images/img_20250220_121608.jpg",
+        "data/images/img_20250220_121609.jpg",
+        "data/images/img_20250220_121611.jpg",
+        "data/images/img_20250220_121613.jpg",
+        "data/images/img_20250220_121615.jpg",
+        "data/images/img_20250220_121616.jpg",
+        "data/images/img_20250220_121618.jpg",
+        "data/images/img_20250220_121619.jpg",
+        "data/images/img_20250220_121621.jpg",
+        "data/images/img_20250220_121623.jpg",
+        "data/images/img_20250220_121626.jpg",
+        "data/images/img_20250220_121627.jpg",
+        "data/images/img_20250220_121630.jpg",
+        "data/images/img_20250220_121631.jpg",
+        "data/images/img_20250220_121634.jpg"
+      ]
+    }
+  },
+  {
+    "serial_number": "SN1234",
+    "datetime": "2025-02-20T12:19:11",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0,
+      "images": [
+        "data/images/img_20250220_121603.jpg",
+        "data/images/img_20250220_121606.jpg",
+        "data/images/img_20250220_121608.jpg",
+        "data/images/img_20250220_121609.jpg",
+        "data/images/img_20250220_121611.jpg",
+        "data/images/img_20250220_121613.jpg",
+        "data/images/img_20250220_121615.jpg",
+        "data/images/img_20250220_121616.jpg",
+        "data/images/img_20250220_121618.jpg",
+        "data/images/img_20250220_121619.jpg",
+        "data/images/img_20250220_121621.jpg",
+        "data/images/img_20250220_121623.jpg",
+        "data/images/img_20250220_121626.jpg",
+        "data/images/img_20250220_121627.jpg",
+        "data/images/img_20250220_121630.jpg",
+        "data/images/img_20250220_121631.jpg",
+        "data/images/img_20250220_121634.jpg"
+      ]
+    }
+  },
+  {
+    "serial_number": "SN1234",
+    "datetime": "2025-02-20T12:19:20",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 2,
+      "images": [
+        "data/images/img_20250220_121603.jpg",
+        "data/images/img_20250220_121606.jpg",
+        "data/images/img_20250220_121608.jpg",
+        "data/images/img_20250220_121609.jpg",
+        "data/images/img_20250220_121611.jpg",
+        "data/images/img_20250220_121613.jpg",
+        "data/images/img_20250220_121615.jpg",
+        "data/images/img_20250220_121616.jpg",
+        "data/images/img_20250220_121618.jpg",
+        "data/images/img_20250220_121619.jpg",
+        "data/images/img_20250220_121621.jpg",
+        "data/images/img_20250220_121623.jpg",
+        "data/images/img_20250220_121626.jpg",
+        "data/images/img_20250220_121627.jpg",
+        "data/images/img_20250220_121630.jpg",
+        "data/images/img_20250220_121631.jpg",
+        "data/images/img_20250220_121634.jpg"
+      ]
+    }
+  },
+  {
+    "serial_number": "SN1234",
+    "datetime": "2025-02-20T12:20:08",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 0,
+      "images": [
+        "data/images/img_20250220_121603.jpg",
+        "data/images/img_20250220_121606.jpg",
+        "data/images/img_20250220_121608.jpg",
+        "data/images/img_20250220_121609.jpg",
+        "data/images/img_20250220_121611.jpg",
+        "data/images/img_20250220_121613.jpg",
+        "data/images/img_20250220_121615.jpg",
+        "data/images/img_20250220_121616.jpg",
+        "data/images/img_20250220_121618.jpg",
+        "data/images/img_20250220_121619.jpg",
+        "data/images/img_20250220_121621.jpg",
+        "data/images/img_20250220_121623.jpg",
+        "data/images/img_20250220_121626.jpg",
+        "data/images/img_20250220_121627.jpg",
+        "data/images/img_20250220_121630.jpg",
+        "data/images/img_20250220_121631.jpg",
+        "data/images/img_20250220_121634.jpg"
+      ]
+    }
+  },
+  {
+    "serial_number": "SN1234",
+    "datetime": "2025-02-20T12:48:24",
+    "type": "intake",
+    "data": {
+      "duration": 1,
+      "amount": 16
+    }
+  }
+]

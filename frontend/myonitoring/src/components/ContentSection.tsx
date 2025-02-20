@@ -8,7 +8,7 @@ interface ContentSectionProps {
 
 const ContentSection: React.FC<ContentSectionProps> = ({ children, className }) => {
   return (
-    <div className={`px-8 py-5 ${className}`}>
+    <div className={`px-8 py-5 mt-20 ${className}`}>
       {children}
     </div>
   );

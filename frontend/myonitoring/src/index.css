@@ -1,3 +1,6 @@
+/* Google Fonts에서 Noto Sans KR 가져오기 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -9,7 +12,7 @@
 }
 
 :root {
-  --font-primary: 'Gidugu', sans-serif;
+  --font-primary: 'Noto Sans KR', sans-serif; /* Noto Sans KR을 기본 폰트로 설정 */
   --font-secondary: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
 
   --color-bg-light: #ffffff;
@@ -22,8 +25,65 @@
 /* 글로벌 스타일 */
 body {
   margin: 0;
-  font-family: var(--font-secondary); /* Tailwind 기본값과 일치 */
+  font-family: var(--font-primary); /* 기본 폰트를 Noto Sans KR로 변경 */
 }
+
+@keyframes fadeInScale {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.custom-fade-in-scale {
+  animation: fadeInScale 1s ease-in-out;
+}
+
+.custom-button {
+  background: linear-gradient(100deg, #ffbd8a, #FFE76B); /* 그라데이션 배경 */
+  color: white; /* 텍스트 색상 */
+  font-size: 20px; /* 텍스트 크기 */
+  font-weight: bold; /* 텍스트 굵기 */
+  border: none; /* 테두리 제거 */
+  border-radius: 50%; /* 동그란 버튼 */
+  display: flex; /* 가운데 정렬을 위한 Flexbox */
+  align-items: center; /* 수직 가운데 정렬 */
+  justify-content: center; /* 수평 가운데 정렬 */
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.08); /* 그림자 효과 */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* 애니메이션 효과 */
+  cursor: pointer; /* 마우스 커서 포인터로 변경 */
+}
+
+.custom-tap {
+  background: linear-gradient(12deg, #f0924a, #FFE76B); /* 그라데이션 배경 */
+  color: white; /* 텍스트 색상 */
+  font-weight: bold; /* 텍스트 굵기 */
+  border: none; /* 테두리 제거 */
+}
+
+.custom-w {
+  background: linear-gradient(12deg, #f04a4a, #FFE76B); /* 그라데이션 배경 */
+  color: white; /* 텍스트 색상 */
+  font-weight: bold; /* 텍스트 굵기 */
+  border: none; /* 테두리 제거 */
+}
+
+.custom-none {
+  background: linear-gradient(10deg, #e1843c, #FFE76B); /* 그라데이션 정의 */
+  -webkit-background-clip: text; /* 텍스트에만 배경 클립 */
+  -webkit-text-fill-color: transparent; /* 텍스트를 투명하게 설정 */
+  font-weight: bold; /* 텍스트 굵기 */
+  border: none; /* 테두리 제거 */
+}
+
 
 /* 반응형 레이아웃 */
 .container {
@@ -36,3 +96,4 @@ body {
     color: red; /* 필요하다면 유지 */
   }
 }
+
