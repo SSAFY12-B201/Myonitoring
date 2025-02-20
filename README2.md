@@ -64,8 +64,8 @@ AIoT 기술을 활용한 고양이 안구 상태와 섭취량 실시간 추적 �
 ### **1. 스플래쉬 화면 및 메인 화면**
 
 <div style="display: flex; justify-content: center; gap: 10px;">
-  <img src="frontend/myonitoring/public/readme/스플래쉬화면.gif" width="300">
-  <img src="frontend/myonitoring/public/readme/메인화면.gif" width="300">
+![스플래쉬화면](/uploads/903bb858fa9f936bb0020ae1d55034ee/스플래쉬화면.gif)
+![메인화면](/uploads/9a4d843c5e961c1fe3315c0fb753f238/메인화면.gif)
 </div>
 <br>
 
@@ -80,7 +80,7 @@ AIoT 기술을 활용한 고양이 안구 상태와 섭취량 실시간 추적 �
 - 사료량 부족 또는 기기 이상 발생 시 사용자에게 알림 전송.
 
 <div style="text-align: center;">
-  <img src="frontend/myonitoring/public/readme/급식 예약.gif" width="300">
+![급식_예약](/uploads/71a345e8cdf29637f0dc1f0544d25c08/급식_예약.gif)
 </div>
 <br>
 
@@ -89,7 +89,7 @@ AIoT 기술을 활용한 고양이 안구 상태와 섭취량 실시간 추적 �
 - 기기 정보 확인 가능.
 - 기기 별로 고양이 등록 가능.
   <div style="text-align: center;">
-  <img src="frontend/myonitoring/public/readme/기기관리.gif" width="300">
+![기기관리](/uploads/b5a864347e261be5508dd20397160b2c/기기관리.gif)
 </div>
 <br>
 
@@ -99,7 +99,7 @@ AIoT 기술을 활용한 고양이 안구 상태와 섭취량 실시간 추적 �
 - AI 기반 분석을 통해 안구 질환(충혈, 각막 손상 등) 이상 확률 표시.
 - 이상 징후 발견 시 상세 리포트 생성 및 푸쉬 알림 전송.
   <div style="text-align: center;">
-  <img src="frontend/myonitoring/public/readme/안구페이지.gif" width="300">
+![안구페이지](/uploads/56a5f33c28b750799fdfc6e626c509d5/안구페이지.gif)
 </div>
 <br>
 
@@ -109,8 +109,8 @@ AIoT 기술을 활용한 고양이 안구 상태와 섭취량 실시간 추적 �
 - 일별, 주별 섭취량 기록을 상세히 확인 가능.
 - 섭취량이 지속적으로 증가하거나 감소하는 경우 섭취량 이상 리포트 생성 및 알림 전송.
   <div style="display: flex; justify-content: center; gap: 10px;">
-  <img src="frontend/myonitoring/public/readme/섭취량 그래프.gif" width="300">
-  <img src="frontend/myonitoring/public/readme/통계 페이지.gif" width="300">
+![섭취량_그래프](/uploads/35342d5e8793b4dc174474255efae978/섭취량_그래프.gif)
+![통계_페이지](/uploads/854cd50e816e1abef334353178246e4e/통계_페이지.gif)
 </div>
 <br>
 
@@ -124,7 +124,7 @@ AIoT 기술을 활용한 고양이 안구 상태와 섭취량 실시간 추적 �
 - 사용자는 정기검진, 치료, 기타 카테고리별로 의료 일정(제목, 설명, 병원, 날짜)을 등록, 수정, 삭제 가능.
 - 기간 설정을 통해 특정 기간 내의 의료 일정 조회 가능.
   <div style="text-align: center;">
-  <img src="frontend/myonitoring/public/readme/의료기록.gif" width="300">
+![의료기록](/uploads/a461ef06be34386579c2cf30c05c6a6a/의료기록.gif)
 </div>
 
 <br>
@@ -140,19 +140,16 @@ AIoT 기술을 활용한 고양이 안구 상태와 섭취량 실시간 추적 �
 ## 📃 설계 및 산출물
 
 ### 유저 플로우
-  <img src="frontend/myonitoring/public/readme/user_flow.png">
+![user_flow](/uploads/50a48b3980dfd5caef3478cfa4c94241/user_flow.png)
 
 ### 와이어프레임
-  <img src="frontend/myonitoring/public/readme/wireframe.png">
+![wireframe](/uploads/6a61a194e9aa59ac09ab94a52e8c2ce8/wireframe.png)
 
 
 ### 시스템 아키텍처
 
-![시스템 아키텍처](images/system_architecture.png)
 
 ### ERD
-
-![ERD](images/erd.png)
 
 ### 요구사항 명세서
 
