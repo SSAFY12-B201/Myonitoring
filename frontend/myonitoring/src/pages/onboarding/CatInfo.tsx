@@ -3,6 +3,7 @@ import { api } from "../../api/axios";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setSelectedCatId, updateCatInfo } from "../../redux/slices/catSlice"; // Redux 액션 가져오기
 import { useNavigate } from "react-router-dom";
+// import {ensureAuthenticated} from "../../firebase/ensureAuthenticated";
 import Input from "../../components/Input";
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
@@ -68,17 +69,22 @@ const CatInfo = () => {
     setErrors({ ...errors, [field]: false });
   };
 
-  // 이미지 업로드 핸들러
-  const handleImageUpload = async (file: File) => {
-    try {
-      const downloadURL = await uploadImageToFirebase(file); // Firebase에 업로드
-      handleInputChange("image", downloadURL); // 다운로드 URL을 formData.image에 저장
-      alert("이미지 업로드 성공!");
-    } catch (error) {
-      console.error("이미지 업로드 실패:", error);
-      alert("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
-    }
+
+  // 이미지 변경 핸들러 (Firebase 업로드 제거)
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+  
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prev) => ({
+        ...prev,
+        image: reader.result as string, // Base64 또는 Data URL로 변환된 이미지 저장
+      }));
+    };
+    reader.readAsDataURL(file);
   };
+  
 
   // 다음 버튼 클릭 핸들러
   const handleNext = async () => {
@@ -196,7 +202,7 @@ const CatInfo = () => {
                 accept="image/*"
                 onChange={(event) => {
                   const file = event.target.files?.[0];
-                  if (file) handleImageUpload(file); // 파일 업로드 처리
+                  if (file) handleImageChange; // 파일 업로드 처리
                 }}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
