@@ -8,7 +8,8 @@ COPY myonitoring/ .
 RUN npm install
 RUN npm install @rollup/rollup-linux-x64-gnu
 RUN npm install @heroicons/react
-
+RUN npm install uuid
+RUN npm install @types/uuid --save-dev
 # 이미지 디렉토리 복사 위치 변경
 COPY myonitoring/src/assets/images /app/src/assets/images
 
