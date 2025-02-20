@@ -53,7 +53,7 @@ const LoginSignUp: React.FC = () => {
       id: "google",
       icon: googleIcon,
       alt: "구글 로고",
-      text: activeTab === "login" ? "구글 로그인" : "구글로 가입하기기",
+      text: activeTab === "login" ? "구글 로그인" : "구글로 가입하기",
       bgColor: "#FFFFFF", // 구글 색상 코드 (흰색)
     },
   ];
