@@ -189,7 +189,7 @@ const EditPersonal = () => {
     address !== initialAddress;
 
   const hasEmptyFields =
-    !nickname.trim() || !phoneNumber.trim() || !address.trim();
+    !nickname?.trim() || !phoneNumber?.trim() || !address?.trim();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
