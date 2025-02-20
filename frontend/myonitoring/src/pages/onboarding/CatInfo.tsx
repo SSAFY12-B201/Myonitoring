@@ -3,12 +3,13 @@ import { api } from "../../api/axios";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setSelectedCatId, updateCatInfo } from "../../redux/slices/catSlice"; // Redux 액션 가져오기
 import { useNavigate } from "react-router-dom";
+// import { ensureAuthenticated } from "../../firebase/ensureAuthenticated";
 import Input from "../../components/Input";
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
 import ExceptTopContentSection from "../../components/ExceptTopContentSection";
 import infoCat from "/Cat_bg.png";
-
+import { uploadImageToFirebase } from "../../firebase/uploadImageToFirebase"; // Firebase 업로드 함수 가져오기
 
 // CatInfoState와 동일한 타입 사용
 interface CatInfoState {
@@ -28,7 +29,6 @@ const CatInfo = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-
   // Redux 상태에서 device 배열 가져오기
   const deviceId = useAppSelector((state) => {
     const devices = state.device; // Redux의 device 배열
@@ -37,7 +37,6 @@ const CatInfo = () => {
 
   console.log("선택된 디바이스 ID:", deviceId);
 
-  
   // 로컬 상태 관리
   const [formData, setFormData] = useState<CatInfoState>({
     image: null,
@@ -68,6 +67,21 @@ const CatInfo = () => {
   ) => {
     setFormData({ ...formData, [field]: value });
     setErrors({ ...errors, [field]: false });
+  };
+
+  // 이미지 변경 핸들러 (Firebase 업로드 제거)
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setFormData((prev) => ({
+        ...prev,
+        image: reader.result as string, // Base64 또는 Data URL로 변환된 이미지 저장
+      }));
+    };
+    reader.readAsDataURL(file);
   };
 
   // 다음 버튼 클릭 핸들러
@@ -119,7 +133,7 @@ const CatInfo = () => {
         age: formData.age,
         weight: formData.weight || null, // 선택 항목은 null 처리
         characteristics: formData.characteristics || null, // 선택 항목은 null 처리
-        profileImageUrl: formData.image,
+        profileImageUrl: formData.image, // 업로드된 이미지 URL 추가
       };
 
       // 요청 데이터를 콘솔에 출력
@@ -184,16 +198,7 @@ const CatInfo = () => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (!file) return;
-
-                  const reader = new FileReader();
-                  reader.onloadend = () => {
-                    handleInputChange("image", reader.result as string);
-                  };
-                  reader.readAsDataURL(file);
-                }}
+                onChange={handleImageChange} // 올바른 함수 호출
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
             </div>

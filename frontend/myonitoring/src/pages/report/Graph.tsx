@@ -70,7 +70,7 @@ const Graph: React.FC = () => {
     try {
       const token = localStorage.getItem("jwt_access_token");
       if (!token) throw new Error("No access token found");
-      
+
       const response = await api.get(
         `/api/intake/${selectedCatId}/detail?day=${date}`,
         {
@@ -106,8 +106,10 @@ const Graph: React.FC = () => {
     monday.setDate(monday.getDate() - monday.getDay() + 1); // 월요일 계산
     const weekStart = monday.toISOString().split("T")[0]; // YYYY-MM-DD 형식
 
-    fetchWeeklyData(weekStart);
-  }, [currentMonday]);
+    if (selectedCatId) {
+      fetchWeeklyData(weekStart);
+    }
+  }, [currentMonday, selectedCatId]);
 
   // 날짜 이동 핸들러 (이전 주/다음 주)
   const handleWeekChange = (direction: number) => {

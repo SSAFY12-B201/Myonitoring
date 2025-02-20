@@ -119,7 +119,7 @@ const MedicalList: React.FC<MedicalListProps> = ({ records, isLoading, onDelete 
                     ? "치료"
                     : "기타"}
                 </span>
-                <h3 className="font-semibold text-base">{record.title}</h3>
+                <h3 className="font-semibold text-base">{record.title.length > 15 ? `${record.title.slice(0, 15)}...` : record.title}</h3>
               </div>
               {/* 날짜 및 시간 */}
               <p className="text-sm text-gray-500 mt-2 flex items-center gap-2">
