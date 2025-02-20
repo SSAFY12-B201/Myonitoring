@@ -64,8 +64,8 @@ AIoT 기술을 활용한 고양이 안구 상태와 섭취량 실시간 추적 �
 ### 1. 스플래쉬 화면 및 메인 화면
 
 <div style="display: flex; justify-content: center; gap: 10px;">
-![회원정보등록](/uploads/3752e28a5ded89a57932dee6aa69399a/회원정보등록.mp4)
-![카카오회원가입](/uploads/fd53fa43ae28ea9e6eeb05d8d0b89ef0/카카오회원가입.mp4)
+![스플래쉬화면](/uploads/903bb858fa9f936bb0020ae1d55034ee/스플래쉬화면.gif)
+![메인화면](/uploads/9a4d843c5e961c1fe3315c0fb753f238/메인화면.gif)
 </div>
 <br>
 
@@ -146,8 +146,87 @@ AIoT 기술을 활용한 고양이 안구 상태와 섭취량 실시간 추적 �
 ## 📁 프로젝트 구조
 
 ### Back-end
+```bash
+backend/
+├── src/
+│   ├── main/
+│   │   ├── java/
+│   │   │   └── com/myaicrosoft/myonitoring/
+│   │   │       ├── controller/           # REST API 컨트롤러
+│   │   │       │   ├── CatController.java
+│   │   │       │   ├── DataCollectionController.java
+│   │   │       │   ├── DeviceController.java
+│   │   │       │   ├── EyeController.java
+│   │   │       │   ├── MainPageController.java
+│   │   │       │   ├── MedicalController.java
+│   │   │       │   ├── ScheduleController.java
+│   │   │       │   ├── StatisticsController.java
+│   │   │       │   └── TestController.java
+│   │   │       ├── model/               # 데이터 모델
+│   │   │       │   ├── dto/            # Data Transfer Objects
+│   │   │       │   │   ├── AlertRequest.java
+│   │   │       │   │   ├── DataCollectionRequest.java
+│   │   │       │   │   ├── MedicalRequest.java
+│   │   │       │   │   ├── MedicalResponseDto.java
+│   │   │       │   │   ├── MedicalDetailResponseDto.java
+│   │   │       │   │   ├── ScheduleRequestDto.java
+│   │   │       │   │   └── ScheduleResponseDto.java
+│   │   │       │   └── entity/         # JPA 엔티티
+│   │   │       │       └── MedicalCategory.java
+│   │   │       ├── service/            # 비즈니스 로직
+│   │   │       │   └── DeviceService.java
+│   │   │       └── util/               # 유틸리티 클래스
+│   │   │           └── JwtProvider.java
+│   │   └── resources/                  # 리소스 파일들
+│   └── test/                          # 테스트 코드
+│       └── resources/
+│           └── application.properties  # 테스트용 설정
+└── Dockerfile                         # Docker 빌드 설정
+```
+
 
 ### Front-end
+```bash
+frontend/myonitoring/
+├── public/
+│   ├── readme/          # README 관련 이미지 파일들
+│   ├── logo_cat.png     # PWA 아이콘
+│   └── vite.svg         # Vite 기본 아이콘
+├── src/
+│   ├── api/
+│   │   └── axios.ts     # Axios 설정 및 인스턴스
+│   ├── assets/
+│   │   ├── fonts/       # 폰트 파일들
+│   │   └── images/      # 이미지 리소스
+│   ├── components/      # 재사용 가능한 컴포넌트들
+│   │   ├── ContentSection.tsx
+│   │   ├── ExceptTopContentSection.tsx
+│   │   ├── Header.tsx
+│   │   ├── Input.tsx
+│   │   ├── TopBar.tsx
+│   │   └── WideButton.tsx
+│   ├── firebase/        # Firebase 관련 설정
+│   │   ├── config.ts
+│   │   └── uploadImageToFirebase.ts
+│   ├── pages/          # 페이지 컴포넌트들
+│   │   ├── auth/
+│   │   │   └── Redirect.tsx
+│   │   └── medical-records/
+│   │       └── MakeMedicalRecord.tsx
+│   ├── redux/          # Redux 상태 관리
+│   │   ├── hooks.ts
+│   │   ├── store.ts
+│   │   └── slices/
+│   ├── animations.ts   # 애니메이션 설정
+│   ├── index.css      # 전역 스타일
+│   └── main.tsx       # 앱 진입점
+├── index.html
+├── package.json
+├── tailwind.config.js  # Tailwind CSS 설정
+├── tsconfig.json      # TypeScript 설정
+└── vite.config.ts     # Vite 설정
+```
+
 
 <br>
 
