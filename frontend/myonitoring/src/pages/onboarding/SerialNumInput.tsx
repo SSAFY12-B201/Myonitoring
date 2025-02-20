@@ -42,10 +42,11 @@ const SerialNumberInput = () => {
       const deviceData = {
         id: response.data.id,
         serialNumber: response.data.serialNumber,
-        userId: response.data.userId || null, // 첫 번째 사용자 ID
-        catId: response.data.catId || null, // 연결된 고양이 ID (없으면 null)
+        userId: response.data.userId || null,
+        catId: response.data.catId || null,
+        registrationDate: response.data.registrationDate || new Date().toISOString(), // 기본값: 현재 날짜
+        catName: response.data.catName || "등록되지 않은 고양이", // 기본값 설정
       };
-
       // Redux 상태에 기기 정보를 추가
       dispatch(addDevice(deviceData));
 

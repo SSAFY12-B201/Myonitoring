@@ -31,7 +31,7 @@ const Cam: React.FC = () => {
 
      
       <ExceptTopContentSection>
-        <h3>캠 페이지지</h3>
+        <h3>캠 페이지</h3>
       </ExceptTopContentSection>
     </>
   );

@@ -75,12 +75,12 @@ const Statistics: React.FC = () => {
     highlightColor: "",
   };
 
-  if (statsData?.changeDays >= 2) {
+  if (statsData?.changeDays >= 1) {
     warningMessage = `${statsData.changeDays}일 연속 섭취량이 ${
       statsData.changeStatus === 1 ? "증가" : "감소"
     }했습니다.`;
     warningContent =
-      "건강상의 이상 신호가 간주됩니다. 전문적인 상담을 받는 것이 권장됩니다.";
+      "48시간 연속적인 섭취량의 증감이 관찰될 경우, 이는 건강 이상 신호로 간주됩니다.";
     warningStyle = {
       bgColor: statsData.changeDays >= 4 ? "bg-[#FFBF29]" : "bg-[#FFE5AA]",
       titleColor: "text-black",
@@ -129,12 +129,14 @@ const Statistics: React.FC = () => {
                     </p>
                     <div className="flex justify-between items-center w-full">
                       <p className="text-gray-800 font-bold text-2xl">
-                        {statsData?.change7d ? `${statsData.change7d}%` : "-"}
+                        {statsData?.change7d !== undefined
+                          ? `${(statsData.change7d * 100).toFixed(1)}%` // 100을 곱하고 소수점 2자리까지 표시
+                          : "-"}
                       </p>
                       {statsData?.change7d ? (
                         <span
                           className={`text-lg font-bold ${
-                            Math.abs(statsData.change7d) >= 20
+                            Math.abs(statsData.change7d * 100) >= 20
                               ? "text-red-500" // 빨간색
                               : "text-gray-500" // 회색
                           }`}
@@ -154,12 +156,14 @@ const Statistics: React.FC = () => {
                     </p>
                     <div className="flex justify-between items-center w-full">
                       <p className="text-gray-800 font-bold text-2xl">
-                        {statsData?.change30d ? `${statsData.change30d}%` : "-"}
+                        {statsData?.change30d !== undefined
+                          ? `${(statsData.change30d * 100).toFixed(1)}%` // 100을 곱하고 소수점 2자리까지 표시
+                          : "-"}
                       </p>
                       {statsData?.change30d ? (
                         <span
                           className={`text-lg font-bold ${
-                            Math.abs(statsData.change30d) >= 20
+                            Math.abs(statsData.change30d * 100) >= 20
                               ? "text-red-500" // 빨간색
                               : "text-gray-500" // 회색
                           }`}
@@ -179,24 +183,26 @@ const Statistics: React.FC = () => {
 
             {/* 경고 알림 박스 */}
             {!showNoDataMessage && (
-            <div className={`mt-6 rounded-lg p-4 mb-6 ${warningStyle.bgColor}`}>
-              <p
-                className={`font-bold text-md mb-2 ${warningStyle.titleColor}`}
+              <div
+                className={`mt-6 rounded-lg p-4 mb-6 ${warningStyle.bgColor}`}
               >
-                {warningMessage.split(/(증가|감소)/).map((word, idx) =>
-                  word === "증가" || word === "감소" ? (
-                    <span key={idx} className={warningStyle.highlightColor}>
-                      {word}
-                    </span>
-                  ) : (
-                    word
-                  )
-                )}
-              </p>
-              <p className={`leading-relaxed ${warningStyle.contentColor}`}>
-                {warningContent}
-              </p>
-            </div>
+                <p
+                  className={`font-bold text-md mb-2 ${warningStyle.titleColor}`}
+                >
+                  {warningMessage.split(/(증가|감소)/).map((word, idx) =>
+                    word === "증가" || word === "감소" ? (
+                      <span key={idx} className={warningStyle.highlightColor}>
+                        {word}
+                      </span>
+                    ) : (
+                      word
+                    )
+                  )}
+                </p>
+                <p className={`leading-relaxed ${warningStyle.contentColor}`}>
+                  {warningContent}
+                </p>
+              </div>
             )}
 
             {/* 하단 설명 */}
