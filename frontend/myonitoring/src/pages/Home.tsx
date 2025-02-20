@@ -11,7 +11,7 @@ const Home: React.FC = () => {
   const navigate = useNavigate();
 
   const [data, setData] = useState<any>({
-    cat_image: "", 
+    cat_image: "",
     total_intake: 0,
     intake_alert: { flag: 0 },
     eye_alert: { flag: 0 },
@@ -65,7 +65,7 @@ const Home: React.FC = () => {
         const fetchedData = response.data || {};
 
         setData({
-          cat_image: fetchedData.cat_image || "", 
+          cat_image: fetchedData.cat_image || "",
           total_intake: fetchedData.total_intake || 0,
           intake_alert: fetchedData.intake_alert || { flag: 0 },
           eye_alert: fetchedData.eye_alert || { flag: 0 },
@@ -130,10 +130,7 @@ const Home: React.FC = () => {
         {
           title: "안구 건강",
           badge: data.eye_alert.flag === 1 ? "의심 증상 발견" : "이상 없음",
-          badgeColor:
-            data.eye_alert.flag === 1
-              ? "custom-w"
-              : "custom-tap",
+          badgeColor: data.eye_alert.flag === 1 ? "custom-w" : "custom-tap",
           image: "/magnifier.png",
           description: "",
           onClick: () => navigate("/cateyeinfo"),
@@ -172,7 +169,7 @@ const Home: React.FC = () => {
             <div className="relative">
               <img
                 src={
-                  loading || error || !data.cat_image 
+                  loading || error || !data.cat_image
                     ? "/Cat_bg.png"
                     : data.cat_image
                 }
@@ -192,7 +189,9 @@ const Home: React.FC = () => {
               className="col-span-2 md:col-span-1 flex items-center
   justify-center py-3 px-8 border border-gray-200 rounded-lg
   font-bold text-gray-600 shadow-sm mb-2"
-              onClick={() => navigate("/cam")}
+              onClick={() =>
+                (window.location.href = "http://192.168.30.133:8000/stream")
+              }
             >
               {/* 버튼 텍스트 */}
               <span className="text-md flex items-center space-x-2">
