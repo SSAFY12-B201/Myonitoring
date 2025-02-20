@@ -36,8 +36,6 @@ const SerialNumberInput = () => {
         }
       );
 
-      console.log(response.data.id);
-
       // 응답 데이터에서 필요한 정보를 추출
       const deviceData = {
         id: response.data.id,

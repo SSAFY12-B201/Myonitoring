@@ -28,7 +28,6 @@ const LoginSignUp: React.FC = () => {
       window.location.href = KAKAO_AUTH_URL;
     } catch (error) {
       console.error('Failed to fetch OAuth configuration:', error);
-      // 에러 처리 - 사용자에게 알림을 보여줄 수 있습니다
     }
   };
 

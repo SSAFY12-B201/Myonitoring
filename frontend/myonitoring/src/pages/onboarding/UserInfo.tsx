@@ -81,8 +81,6 @@ const UserInfo = () => {
         }
       );
 
-      console.log(response.data);
-
       // Redux 유저 정보 업데이트 (입력 완료된 데이터 저장)
       dispatch(updateUserInfo(formData));
 
