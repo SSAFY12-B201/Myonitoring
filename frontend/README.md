@@ -112,6 +112,9 @@ AIoT 기술을 활용한 고양이 안구 상태와 섭취량 실시간 추적 �
 ![시스템 아키텍처](images/system_architecture.png)
 ### ERD
 ![ERD](images/erd.png)
+### 요구사항 명세서
+### 기능 명세서
+### API 명세서
 
 
 <br>
@@ -122,8 +125,8 @@ AIoT 기술을 활용한 고양이 안구 상태와 섭취량 실시간 추적 �
 |------------|--------------------------------------------------------------------------------------------|
 | Back-end   | Spring Boot (3.0+), REST API, MySQL, firebase  |
 | Front-end  | React, Vite, TypeScrip, PWA(Progressive Web App), Redux,Tailwind CSS
-| Embede/AI   | OpenCV          |
-| DevOps     | Docker, AWS (EC2, S3)         |
+| Embedded/AI   | OpenCV          |
+| DevOps     | Docker, AWS (EC2, S3), Jenkins         |
 
 
 
