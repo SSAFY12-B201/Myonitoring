@@ -3,7 +3,7 @@ import { api } from "../../api/axios";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { setSelectedCatId, updateCatInfo } from "../../redux/slices/catSlice"; // Redux 액션 가져오기
 import { useNavigate } from "react-router-dom";
-// import {ensureAuthenticated} from "../../firebase/ensureAuthenticated";
+// import { ensureAuthenticated } from "../../firebase/ensureAuthenticated";
 import Input from "../../components/Input";
 import Header from "../../components/Header";
 import WideButton from "../../components/WideButton";
@@ -69,12 +69,11 @@ const CatInfo = () => {
     setErrors({ ...errors, [field]: false });
   };
 
-
   // 이미지 변경 핸들러 (Firebase 업로드 제거)
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-  
+
     const reader = new FileReader();
     reader.onloadend = () => {
       setFormData((prev) => ({
@@ -84,7 +83,6 @@ const CatInfo = () => {
     };
     reader.readAsDataURL(file);
   };
-  
 
   // 다음 버튼 클릭 핸들러
   const handleNext = async () => {
@@ -200,10 +198,7 @@ const CatInfo = () => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(event) => {
-                  const file = event.target.files?.[0];
-                  if (file) handleImageChange; // 파일 업로드 처리
-                }}
+                onChange={handleImageChange} // 올바른 함수 호출
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
             </div>
