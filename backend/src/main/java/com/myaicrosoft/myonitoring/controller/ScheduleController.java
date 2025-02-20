@@ -24,7 +24,7 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
     private final RestTemplate restTemplate;
-    private final String EXTERNAL_API_URL = "http://192.168.30.34:8000";
+    private final String EXTERNAL_API_URL = "http://192.168.81.77:8000";
 
     /**
      * 예약 스케줄 생성 API
