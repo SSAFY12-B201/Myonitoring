@@ -30,7 +30,7 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: "묘니터링 Myonitoring Pet Care",
+        name: "묘니터링",
         short_name: "묘니터링",
         theme_color: "#000000",
         background_color: "#ffffff",
@@ -39,12 +39,12 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "/logo_cat.png",
+            src: "/Cat.png",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/logo_cat.png",
+            src: "/Cat.png",
             sizes: "512x512",
             type: "image/png",
           },
