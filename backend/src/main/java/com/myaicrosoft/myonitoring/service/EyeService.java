@@ -43,6 +43,24 @@ public class EyeService {
         // 가장 최신 데이터 가져오기
         Eye eye = latestDiseasedData.get();
 
+        // 질병이 없는 경우에도 이미지 URL과 함께 메시지 반환
+        if (!eye.getIsEyeDiseased()) {
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("message", "안구 건강 의심 증상이 발견되지 않았습니다.");
+            
+            // 이미지 URL 추가
+            Map<String, String> images = new LinkedHashMap<>();
+            if (eye.getLeftEyeImageUrl() != null) {
+                images.put("left", eye.getLeftEyeImageUrl());
+            }
+            if (eye.getRightEyeImageUrl() != null) {
+                images.put("right", eye.getRightEyeImageUrl());
+            }
+            response.put("images", images);
+            
+            return response;
+        }
+
         // 0.5 이상인 확률만 필터링하여 반환 데이터 생성
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("date_time", eye.getCapturedDateTime().toString());
