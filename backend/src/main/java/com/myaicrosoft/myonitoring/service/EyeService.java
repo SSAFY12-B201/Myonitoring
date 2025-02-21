@@ -35,10 +35,10 @@ public class EyeService {
         Optional<Eye> latestDiseasedData = eyeRepository.findTopByCatIdAndCapturedDateTimeBetweenAndIsEyeDiseasedOrderByCapturedDateTimeDesc(
                 catId, startOfDay, endOfDay, true);
 
-        // 데이터가 없는 경우 메시지 반환
-        if (latestDiseasedData.isEmpty()) {
-            return Map.of("message", "안구 건강 의심 증상이 발견되지 않았습니다.");
-        }
+        // // 질병 데이터가 없는 경우 메시지 반환
+        // if (latestDiseasedData.isEmpty()) {
+        //     return Map.of("message", "안구 건강 의심 증상이 발견되지 않았습니다.");
+        // }
 
         // 가장 최신 데이터 가져오기
         Eye eye = latestDiseasedData.get();
