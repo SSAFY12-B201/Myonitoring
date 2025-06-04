@@ -1,6 +1,6 @@
 # Myonitoring
 
-![readme_myonitoring_logo](/uploads/2629107e5905d1ed6c1701d6397e2ab4/readme_myonitoring_logo.png)
+![readme_myonitoring_logo](/assets/readme_myonitoring_logo.png)
 
 ## 🐾 프로젝트 개요
 
@@ -63,8 +63,9 @@ AI 얼굴 인식과 IoT 기술을 활용해 고양이의 안구 상태와 섭취
 ### 1. 스플래쉬 화면 및 메인 화면
 
 <div style="display: flex; justify-content: center; gap: 10px;">
-![스플래쉬화면](/uploads/903bb858fa9f936bb0020ae1d55034ee/스플래쉬화면.gif)
-![메인화면](/uploads/9a4d843c5e961c1fe3315c0fb753f238/메인화면.gif)
+
+![스플래쉬화면](/assets/스플래쉬화면.gif)
+![메인화면](/assets/메인화면.gif)
 </div>
 <br>
 
@@ -73,9 +74,9 @@ AI 얼굴 인식과 IoT 기술을 활용해 고양이의 안구 상태와 섭취
 - 사용자는 카카오 계정을 통해 간편하게 회원가입 및 로그인 가능.
 - 사용자 프로필 및 고양이 정보(이름, 나이, 체중 등) 등록 및 관리.
 
-<div style="display: flex; justify-content: center; gap: 10px;">
-![카카오로그인](/uploads/979f336b6a325e5d52e352d29c606778/카카오로그인.gif)
-![회원등록](/uploads/79978e230c269422ec08af92d892ec29/회원등록.gif)
+  <div style="display: flex; justify-content: center; gap: 10px;">
+![카카오로그인](/assets/카카오로그인.gif)
+![회원등록](/assets/회원등록.gif)
 </div>
 <br>
 
@@ -85,8 +86,8 @@ AI 얼굴 인식과 IoT 기술을 활용해 고양이의 안구 상태와 섭취
 - 기기와 고양이 별로 사료 배급 예약 및 배급 실행 가능.
 - 사료량 부족 또는 기기 이상 발생 시 사용자에게 알림 전송.
 
-<div style="text-align: center;">
-![급식_예약](/uploads/71a345e8cdf29637f0dc1f0544d25c08/급식_예약.gif)
+  <div style="text-align: center;">
+![급식_예약](/assets/급식_예약.gif)
 </div>
 <br>
 
@@ -95,7 +96,7 @@ AI 얼굴 인식과 IoT 기술을 활용해 고양이의 안구 상태와 섭취
 - 기기 정보 확인 가능.
 - 기기 별로 고양이 등록 가능.
   <div style="text-align: center;">
-![기기관리](/uploads/b5a864347e261be5508dd20397160b2c/기기관리.gif)
+![기기관리](/assets/기기관리.gif)
 </div>
 <br>
 
@@ -105,7 +106,7 @@ AI 얼굴 인식과 IoT 기술을 활용해 고양이의 안구 상태와 섭취
 - AI 기반 분석을 통해 안구 질환(충혈, 각막 손상 등) 이상 확률 표시.
 - 이상 징후 발견 시 상세 리포트 생성 및 푸쉬 알림 전송.
   <div style="text-align: center;">
-![안구페이지](/uploads/56a5f33c28b750799fdfc6e626c509d5/안구페이지.gif)
+![안구페이지](/assets/안구페이지.gif)
 </div>
 <br>
 
@@ -116,8 +117,8 @@ AI 얼굴 인식과 IoT 기술을 활용해 고양이의 안구 상태와 섭취
 - 일별, 주별 섭취량 기록을 상세히 확인 가능.
 - 섭취량이 지속적으로 증가하거나 감소하는 경우 섭취량 이상 리포트 생성 및 알림 전송.
   <div style="display: flex; justify-content: center; gap: 10px;">
-![섭취량_그래프](/uploads/35342d5e8793b4dc174474255efae978/섭취량_그래프.gif)
-![통계_페이지](/uploads/854cd50e816e1abef334353178246e4e/통계_페이지.gif)
+![섭취량_그래프](/assets/섭취량_그래프.gif)
+![통계_페이지](/assets/통계_페이지.gif)
 </div>
 <br>
 
@@ -128,7 +129,7 @@ AI 얼굴 인식과 IoT 기술을 활용해 고양이의 안구 상태와 섭취
 - 어플 내 "묘니터링 캠 보러가기기" 버튼으로 간편하게 실시간 화면 제공.
 
   <div style="display: flex; justify-content: center; gap: 10px;">
-![묘니터링캠](/uploads/d064c396e2843b1b0c4768b428c44432/묘니터링캠.gif)
+![묘니터링캠](/assets/묘니터링캠.gif)
 </div>
 <br>
 
@@ -137,7 +138,7 @@ AI 얼굴 인식과 IoT 기술을 활용해 고양이의 안구 상태와 섭취
 - 사용자는 정기검진, 치료, 기타 카테고리별로 의료 일정(제목, 설명, 병원, 날짜)을 등록, 수정, 삭제 가능.
 - 기간 설정을 통해 특정 기간 내의 의료 일정 조회 가능.
   <div style="text-align: center;">
-![의료기록](/uploads/a461ef06be34386579c2cf30c05c6a6a/의료기록.gif)
+![의료기록](/assets/의료기록.gif)
 </div>
 
 <br>
@@ -232,26 +233,26 @@ frontend/myonitoring/
 ## 📃 설계 및 산출물
 
 ### 유저 플로우
-![user_flow](/uploads/50a48b3980dfd5caef3478cfa4c94241/user_flow.png)
+![user_flow](/assets/user_flow.png)
 
 ### 와이어프레임
-![wireframe](/uploads/6a61a194e9aa59ac09ab94a52e8c2ce8/wireframe.png)
+![wireframe](/assets/wireframe.png)
 
 
 ### 시스템 아키텍처
-![시스템_아키텍쳐](/uploads/1c025f5402ff7a3cfb4be6ab0d4ff32f/시스템_아키텍쳐.png)
+![시스템_아키텍쳐](/assets/시스템_아키텍쳐.png)
 
 ### ERD
-![ERD](/uploads/40853508981d9e76647cd3c2753805df/ERD.png)
+![ERD](/assets/ERD.png)
 
 ### 요구사항 명세서
-[요구사항명세서.pdf](/uploads/3f0d91ebd6ed9cda7b8bc3b4e4a0fc71/요구사항명세서.pdf)
+[요구사항명세서.pdf](/assets/요구사항명세서.pdf)
 
 ### 기능 명세서
-[기능_명세서.pdf](/uploads/685e5002f05455b3d73719ddf56ec81a/기능_명세서.pdf)
+[기능_명세서.pdf](/assets/기능_명세서.pdf)
 
 ### API 명세서
-[API_명세서_.pdf](/uploads/2b79c413f52fa487c958d945ccbc7caf/API_명세서_.pdf)
+[API_명세서_.pdf](/assets/API_명세서_.pdf)
 
 
 <br>
